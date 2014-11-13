@@ -4,71 +4,77 @@
 
 package main
 
-import "fmt"
+import (
+	_"fmt"
+	"fmt"
+)
 
 // hub maintains the set of active connections and broadcasts messages to the
 // connections.
-type hub struct {
+type Hub struct {
 	// Registered connections.
 	connections map[*connection]bool
 
+	// Handle the last message in the given connection
+	bindNew chan string
+
 	// Inbound messages from the connections.
-	broadcast chan *connection
+	broadcast chan []byte
 
 	// Register requests from the connections.
 	register chan *connection
 
 	// Unregister requests from connections.
 	unregister chan *connection
-}
 
+	lightning Lightning
+}
+/*
 var h = hub{
-	broadcast:   make(chan *connection),
+	broadcast:   make(chan []byte),
 	register:    make(chan *connection),
 	unregister:  make(chan *connection),
 	connections: make(map[*connection]bool),
-}
+	lightning:   Lightning{
+		make([]Profile, 0),
+		make(chan ConnectionMessage),
+	},
+}*/
 
-func (h *hub) run() {
+func (h *Hub) run() {
+	go h.lightning.run()
+
 	for {
 		select {
 		case c := <-h.register:
+			fmt.Println("registering a connection to hub")
 			h.connections[c] = true
-
-			// returning the current state to the new connection
-//			c.send <-  GetCurrentState()
 
 		case c := <-h.unregister:
 			if _, ok := h.connections[c]; ok {
 				delete(h.connections, c)
 				close(c.send)
 			}
-		case c := <-h.broadcast:
 
-			fmt.Println("@")
+		case ref := <-h.bindNew:
 
-
-			// getting the message from inbox
-			m := <- c.inbox
-
-			answer, broadcastMessage := ProcessMessage(m)
-
-			if len(answer) > 1 {
-				// generating answer and sending it back to the connection
-				c.send <- answer
+			// bind all connections to new item
+			for c := range h.connections {
+				cm := ConnectionBinding{ref, c, Message{}}
+				bind <- cm
 			}
 
-			if len(broadcastMessage) > 1 {
-				// forwarding the broadcast message to all other connections
-				for oc := range h.connections {
-//					if oc != c {
-						select {
-						case oc.send <- broadcastMessage:
-						default:
-							close(oc.send)
-							delete(h.connections, oc)
-						}
-//					}
+		case m := <-h.broadcast:
+
+			fmt.Println("broadcasting message: ", string(m))
+
+			// sending the message to all connections
+			for c := range h.connections {
+				select {
+				case c.send <- m:
+				default:
+					close(c.send)
+					delete(h.connections, c)
 				}
 			}
 		}

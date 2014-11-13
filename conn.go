@@ -6,10 +6,9 @@ package main
 
 import (
 	"github.com/gorilla/websocket"
-	"log"
-	"net/http"
 	"time"
 	"fmt"
+	"encoding/json"
 )
 
 const (
@@ -31,6 +30,11 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+type registration struct {
+	subscription string
+	hub          Hub
+}
+
 // connection is an middleman between the websocket connection and the hub.
 type connection struct {
 	// The websocket connection.
@@ -39,25 +43,73 @@ type connection struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
-	inbox chan []byte
+	bind chan ConnectionBinding
+
+	registered chan registration
+
+    referencedHubMap map[string]Hub
+}
+
+func (c *connection) run() {
+
+	for {
+		select {
+		case r := <-c.registered:
+			fmt.Println("connection is registerd to ", r.subscription)
+			c.referencedHubMap[r.subscription] = r.hub
+			fmt.Println("reference map size is ", len(c.referencedHubMap))
+		}
+	}
 }
 
 // readPump pumps messages from the websocket connection to the hub.
 func (c *connection) readPump() {
 	defer func() {
-		h.unregister <- c
+		// un-registering from all hubs
+		for _, h := range c.referencedHubMap {
+			h.unregister <- c
+		}
 		c.ws.Close()
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
 	c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, mes, err := c.ws.ReadMessage()
+		_, m, err := c.ws.ReadMessage()
 		if err != nil {
 			break
 		}
-		c.inbox <- mes
-		h.broadcast <- c
+		fmt.Println("connection received message")
+		fmt.Println(string(m))
+		fmt.Println("reference map size is ", len(c.referencedHubMap))
+
+		var message Message
+		var responseObject Response
+
+		err = json.Unmarshal([]byte(string(m[:])), &message)
+		if err != nil {
+			fmt.Println("error while parsing message: ", err)
+			responseObject = Response {message.Rid, "", 400, nil, "error while parsing message"}
+			response, _ := json.Marshal(responseObject)
+			c.send <- []byte(response)    // sending the answer back to the connection
+			return
+		}
+		ref := message.Ref
+
+		hub, ok := c.referencedHubMap[ref]
+
+		cm := ConnectionBinding{message.Ref, c, message}
+		if ok {
+			fmt.Println("hub exists for message")
+			// if hub exists, send message to hub
+			hub.lightning.handle <- cm
+		} else {
+			fmt.Println("hub doesn't exist for message")
+			// if no hub exists, bind to the related hub
+			fmt.Println(bind)
+			bind <- cm
+		}
+
 
 	}
 }
@@ -91,22 +143,4 @@ func (c *connection) writePump() {
 			}
 		}
 	}
-}
-
-// serverWs handles websocket requests from the peer.
-func serveWs(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", 405)
-		return
-	}
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Println("err")
-		log.Println(err)
-		return
-	}
-	c := &connection{send: make(chan []byte, 256), inbox: make(chan []byte, 256), ws: ws}
-	h.register <- c
-	go c.writePump()
-	c.readPump()
 }
