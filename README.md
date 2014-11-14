@@ -20,20 +20,31 @@ using the following commands.
 
 # API DOCUMENTATION
 
-## Create Profile
-While joining to the system for the first time
+## Create Object
 
 **REQUEST**
 
 ```
 {
 	rid: 123123123,
-	cmd: 'create',
+	cmd: 'post',
+	res: 'Profile',
     body: {
-    	id:	'jsdjNBKJSBDalsdhbasdabnslduaDlsajdn',
-    	name: 'Emrullah',
-        surname: 'Lüleci',
-        avatar: 'https://graph.facebook.com/eluleci/picture?type=large'
+    	className: 'Profile',       // domain of the object type
+        key: 'value',
+    }
+}
+```
+
+**RESPONSE**
+
+```
+{
+	rid: 123123123,
+	cmd: 'post',
+	status: 200,                    // status code
+    body: {
+    	id: 'ID',                   // id of the new object
     }
 }
 ```
@@ -45,10 +56,12 @@ While joining to the system for the first time
 
 ```
 {
-	tx: 123123123,
-	cmd: 'update',
-	data: {
-        image: ''
+	rid: 123123123,
+	cmd: 'post',
+	body: {
+	    id: 'ID',                   // id of the object to update
+    	className: 'Profile',       // domain of the object type
+        key: 'value',
 	}
 }
 ```

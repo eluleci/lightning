@@ -15,7 +15,7 @@ import (
 var addr = flag.String("addr", ":8080", "http service address")
 var homeTempl = template.Must(template.ParseFiles("home.html"))
 
-var bind chan ConnectionBinding
+var bind chan ConnectionRequest
 var connections []*connection
 var referenceHubMap map[string]Hub
 
@@ -47,15 +47,15 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	c := &connection{send: make(chan []byte, 256), registered: make(chan registration, 256), ws: ws, referencedHubMap : make(map[string]Hub)}
 	connections = append(connections, c)
 	fmt.Println("got new connection. #", len(connections))
-	go c.run()
+	//	go c.run()
 	go c.writePump()
-	c.readPump()
+	go c.readPump()
 }
 
 func main() {
 
 	referenceHubMap = make(map[string]Hub)
-	bind = make(chan ConnectionBinding, 256)
+	bind = make(chan ConnectionRequest, 256)
 	go runMain()
 
 	flag.Parse()
@@ -73,40 +73,68 @@ func runMain() {
 		select {
 		case cm := <-bind:
 
-			fmt.Println("binding connection in main")
-			res := cm.reference
-			fmt.Println("searching hub for subscription: ", res)
+			//			fmt.Println("binding connection in main")
+			res := cm.message.Res
+			id := cm.message.Body["id"]
+			if id != nil {
+				res += "/"+id.(string)
+			}
+			fmt.Println("searching hub for resource: ", res)
 
 			hub, ok := referenceHubMap[res]
 
 			if !ok {
-				fmt.Println("no hub found for ", res)
 				// creating a new hub
-				broadcast := make(chan []byte)
-				bindNew := make(chan string)
-				hub = Hub{
-					register:    make(chan *connection),
-					unregister:  make(chan *connection),
-					broadcast:   broadcast,
-					bindNew: bindNew,
-					connections: make(map[*connection]bool),
-					lightning:   Lightning{
-						make([]interface {}, 0),
-						make(chan ConnectionBinding),
-						broadcast,
-						bindNew,
-					},
+				hub = createHubForResource(res)
+
+				if id == nil {
+					fmt.Println("no hub found for resource DOMAIN ", res)
+
+					m := Message{}
+					m.Res = res
+					createDomainRequest := ConnectionRequest {
+						nil,
+						m,
+					}
+					hub.lightning.handle <- createDomainRequest        // request for creating empty list
+
 				}
-				go hub.run()
 				referenceHubMap[res] = hub
+				fmt.Println("added new hub to central map")
+				for i := range referenceHubMap {
+					fmt.Println(i)
+				}
 			}
-			hub.register <- cm.connection
+		hub.register <- cm.connection
 			registration := registration {
 				res,
 				hub,
 			}
-			cm.connection.registered <- registration
-			hub.lightning.handle <- cm
+			if cm.connection != nil {
+				cm.connection.registered <- registration
+			}
+		hub.lightning.handle <- cm
 		}
 	}
+}
+
+func createHubForResource(res string) Hub {
+	fmt.Println("creating hub for resource ", res)
+	broadcast := make(chan []byte)
+	bindNew := make(chan Message)
+	hub := Hub {
+		register:    make(chan *connection),
+		unregister:  make(chan *connection),
+		broadcast:   broadcast,
+		bindNew: bindNew,
+		connections: make(map[*connection]bool),
+		lightning:   Lightning{
+			make(map[string]interface{}),
+			make(chan ConnectionRequest),
+			broadcast,
+			bindNew,
+		},
+	}
+	go hub.run()
+	return hub
 }

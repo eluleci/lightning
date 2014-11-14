@@ -43,7 +43,7 @@ type connection struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
-	bind chan ConnectionBinding
+	bind chan ConnectionRequest
 
 	registered chan registration
 
@@ -81,7 +81,7 @@ func (c *connection) readPump() {
 		}
 		fmt.Println("connection received message")
 		fmt.Println(string(m))
-		fmt.Println("reference map size is ", len(c.referencedHubMap))
+//		fmt.Println("reference map size is ", len(c.referencedHubMap))
 
 		var message Message
 		var responseObject Response
@@ -94,11 +94,11 @@ func (c *connection) readPump() {
 			c.send <- []byte(response)    // sending the answer back to the connection
 			return
 		}
-		ref := message.Ref
+		res := message.Res
 
-		hub, ok := c.referencedHubMap[ref]
+		hub, ok := c.referencedHubMap[res]
 
-		cm := ConnectionBinding{message.Ref, c, message}
+		cm := ConnectionRequest{c, message}
 		if ok {
 			fmt.Println("hub exists for message")
 			// if hub exists, send message to hub
@@ -106,7 +106,6 @@ func (c *connection) readPump() {
 		} else {
 			fmt.Println("hub doesn't exist for message")
 			// if no hub exists, bind to the related hub
-			fmt.Println(bind)
 			bind <- cm
 		}
 

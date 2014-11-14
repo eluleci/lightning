@@ -16,7 +16,7 @@ type Hub struct {
 	connections map[*connection]bool
 
 	// Handle the last message in the given connection
-	bindNew chan string
+	bindNew chan Message
 
 	// Inbound messages from the connections.
 	broadcast chan []byte
@@ -47,7 +47,7 @@ func (h *Hub) run() {
 	for {
 		select {
 		case c := <-h.register:
-			fmt.Println("registering a connection to hub")
+			fmt.Println("registering a new connection to hub ")
 			h.connections[c] = true
 
 		case c := <-h.unregister:
@@ -56,11 +56,13 @@ func (h *Hub) run() {
 				close(c.send)
 			}
 
-		case ref := <-h.bindNew:
+		case message := <-h.bindNew:
+
+			fmt.Println("binding all connections to newly created resource: " + message.Res)
 
 			// bind all connections to new item
 			for c := range h.connections {
-				cm := ConnectionBinding{ref, c, Message{}}
+				cm := ConnectionRequest{c, message}
 				bind <- cm
 			}
 
