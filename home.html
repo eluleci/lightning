@@ -37,15 +37,74 @@
                 }
                 var message = {
                     rid: 123123123,
-                    cmd: 'create',
-                    ref: {
-                        type: 'profile'
-                    },
+                    cmd: 'post',
+                    res: '/profile',
                     body: {
                         name: 'Emrullah',
                         surname: 'Lüleci',
                         avatar: 'https://graph.facebook.com/eluleci/picture?type=large'
                     }
+                }
+
+                conn.send(JSON.stringify(message));
+                return false
+            });
+
+            $("#getProfile").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'get',
+                    res: '/profile/' + msg.val()
+                }
+
+                conn.send(JSON.stringify(message));
+                return false
+            });
+
+            $("#getProfiles").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'get',
+                    res: '/profile'
+                }
+
+                conn.send(JSON.stringify(message));
+                return false
+            });
+
+
+            $("#addAddress").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'post',
+                    res: '/profile/' + msg.val() + '/address/',
+                    body: {
+                        street: 'Yamac Sok',
+                        no: '23'
+                    }
+                }
+
+                conn.send(JSON.stringify(message));
+                return false
+            });
+
+            $("#getAddresses").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'get',
+                    res: '/profile/' + msg.val() + '/address'
                 }
 
                 conn.send(JSON.stringify(message));
@@ -110,6 +169,10 @@
     <input type="submit" value="Send"/>
     <input type="text" id="msg" size="64"/>
     <button id="createProfile">Create profile</button>
+    <button id="getProfile">Get profile</button>
+    <button id="getProfiles">Get profiles</button>
+    <button id="addAddress">Add address</button>
+    <button id="getAddresses">Get addresses</button>
 </form>
 </body>
 </html>

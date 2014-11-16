@@ -15,9 +15,8 @@ import (
 var addr = flag.String("addr", ":8080", "http service address")
 var homeTempl = template.Must(template.ParseFiles("home.html"))
 
-var bind chan ConnectionRequest
-var connections []*connection
-var referenceHubMap map[string]Hub
+var rootHub Hub
+var connections []*Connection
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -44,19 +43,16 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	c := &connection{send: make(chan []byte, 256), registered: make(chan registration, 256), ws: ws, referencedHubMap : make(map[string]Hub)}
+	c := &Connection{send: make(chan Message, 256), ws: ws}
 	connections = append(connections, c)
 	fmt.Println("got new connection. #", len(connections))
-	//	go c.run()
-	go c.writePump()
-	go c.readPump()
+	c.run()
 }
 
 func main() {
 
-	referenceHubMap = make(map[string]Hub)
-	bind = make(chan ConnectionRequest, 256)
-	go runMain()
+	rootHub = createHub("/")
+	go rootHub.run()
 
 	flag.Parse()
 	http.HandleFunc("/", serveHome)
@@ -67,6 +63,7 @@ func main() {
 	}
 }
 
+/*
 func runMain() {
 
 	for {
@@ -74,6 +71,7 @@ func runMain() {
 		case cm := <-bind:
 
 			//			fmt.Println("binding connection in main")
+			resDomain := cm.message.Res
 			res := cm.message.Res
 			id := cm.message.Body["id"]
 			if id != nil {
@@ -84,26 +82,34 @@ func runMain() {
 			hub, ok := referenceHubMap[res]
 
 			if !ok {
-				// creating a new hub
-				hub = createHubForResource(res)
+				// creating a new hub for object
+//				hub = createHubForResource(res)
 
-				if id == nil {
-					fmt.Println("no hub found for resource DOMAIN ", res)
+				// checking hub for domain
+				hub, ok := referenceHubMap[resDomain]
+				if !ok {
+					// creating a new hub for domain
+					fmt.Println("No hub found for domain: ", resDomain)
+
+					var subscribe chan RequestWrapper
+					var appendHub chan RequestWrapper
+					go runHub(subscribe, appendHub)
+					referenceHubMap[resDomain] = subscribe
 
 					m := Message{}
-					m.Res = res
-					createDomainRequest := ConnectionRequest {
+					m.Res = resDomain
+					m.Cmd = "create"
+					createDomainRequest := RequestWrapper {
 						nil,
 						m,
 					}
-					hub.lightning.handle <- createDomainRequest        // request for creating empty list
+					subscribe <- createDomainRequest        // request for creating empty list
+				}
 
-				}
-				referenceHubMap[res] = hub
-				fmt.Println("added new hub to central map")
-				for i := range referenceHubMap {
-					fmt.Println(i)
-				}
+				var subscribe chan RequestWrapper
+				var appendHub chan RequestWrapper
+				go runHub(subscribe, appendHub)
+				referenceHubMap[res] = subscribe
 			}
 		hub.register <- cm.connection
 			registration := registration {
@@ -116,9 +122,11 @@ func runMain() {
 		hub.lightning.handle <- cm
 		}
 	}
-}
+}*/
+/*
 
 func createHubForResource(res string) Hub {
+
 	fmt.Println("creating hub for resource ", res)
 	broadcast := make(chan []byte)
 	bindNew := make(chan Message)
@@ -130,7 +138,7 @@ func createHubForResource(res string) Hub {
 		connections: make(map[*connection]bool),
 		lightning:   Lightning{
 			make(map[string]interface{}),
-			make(chan ConnectionRequest),
+			make(chan RequestWrapper),
 			broadcast,
 			bindNew,
 		},
@@ -138,3 +146,4 @@ func createHubForResource(res string) Hub {
 	go hub.run()
 	return hub
 }
+*/
