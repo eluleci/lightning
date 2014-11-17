@@ -5,16 +5,7 @@ type Message struct {
 	Rid                      int `json:"rid,omitempty"`
 	Status                   int `json:"status"`
 	Res                      string `json:"res,omitempty"`
-	Command                  string `json:"cmd"`
+	Command                  string `json:"cmd,omitempty"`
 	Parameters               string `json:"params,omitempty"`
 	Body                map[string]interface{} `json:"body,omitempty"`
-}
-
-type Response struct {
-
-	Rid                      int `json:"rid"`
-	Ref                      string `json:"ref,omitempty"`
-	Status                   int `json:"status"`
-	Body                     interface{} `json:"body,omitempty"`
-	Error                    string `json:"error,omitempty"`
 }

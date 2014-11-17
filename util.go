@@ -11,3 +11,10 @@ func randSeq(n int) string {
 	}
 	return string(b)
 }
+
+func createErrorMessage(rid, status int, messageContent string) (message Message) {
+	_ = messageContent
+	message.Rid = rid
+	message.Status = status
+	return
+}

@@ -13,7 +13,7 @@ const (
 	writeWait = 10 * time.Second
 
 	// Time allowed to read the next pong message from the peer.
-	pongWait = 60 * time.Second
+	pongWait = 30 * time.Second
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
@@ -36,21 +36,56 @@ type Connection struct {
 	send chan Message
 
 	subscribed chan Subscription
+
+	subscriptions  map[string]Subscription
+
+	tearDown chan bool
 }
 
 func (c *Connection) run() {
+	// tearDownCount is used for waiting both writePump and readPump jobs to be down for closing all channels
+	tearDownCount := 2
+
+	defer func() {
+		fmt.Println("Connection is teared down.")
+		// un-registering from all hubs
+		for _, h := range c.subscriptions {
+			h.unsubscriptionChannel <- c.send
+		}
+		c.ws.Close()
+		close(c.send)
+		close(c.subscribed)
+		close(c.tearDown)
+	}()
+
 	go c.writePump()
-	c.readPump()
+	go c.readPump()
+
+	for {
+		select {
+		case subscription := <-c.subscribed:
+			fmt.Println("Connection subscribed to res: " + subscription.res)
+			c.subscriptions[subscription.res] = subscription
+		case down := <-c.tearDown:
+			if down {
+				tearDownCount--
+				if tearDownCount == 0 {
+					return
+				}
+			}
+		}
+	}
+
 }
 
 // readPump pumps messages from the websocket connection to the hub.
 func (c *Connection) readPump() {
 	defer func() {
-		// un-registering from all hubs
-		//		for _, h := range c.referencedHubMap {
-		//			h.unregister <- c
-		//		}
-		c.ws.Close()
+		go func() {
+			if c.tearDown != nil {
+				c.tearDown <- true
+			}
+		}()
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
@@ -60,7 +95,7 @@ func (c *Connection) readPump() {
 		if err != nil {
 			break
 		}
-		fmt.Println("connection received message")
+		fmt.Println("Connection received message")
 		fmt.Println(string(m))
 
 		var message Message
@@ -68,22 +103,39 @@ func (c *Connection) readPump() {
 		err = json.Unmarshal([]byte(string(m[:])), &message)
 		if err != nil {
 			fmt.Println("error while parsing message: ", err)
-			answer := Message{}
-			answer.Rid = message.Rid
-			answer.Status = 400
+			answer := createErrorMessage(message.Rid, 400, "Error while parsing message")
 			c.send <- answer    // sending the answer back to the connection
-			return
-		}
-		// making sure that the resource has a correct path (ex: "/type/id/type/id")
-		message.Res = "/"+strings.Trim(message.Res, "/")
+		} else {
+			// making sure that the resource has a correct path (ex: "/type/id/type/id")
+			message.Res = "/"+strings.Trim(message.Res, "/")
 
-		rw := RequestWrapper{
-			message.Res,
-			message,
-			c.send,
-		}
-		rootHub.inbox <- rw
+			rw := RequestWrapper{
+				message.Res,
+				message,
+				c.send,
+				c.subscribed,
+			}
 
+			subscription, exists := c.subscriptions[message.Res]
+			if exists {
+				fmt.Println("Connection has subscription for " + message.Res)
+				subscription.inboxChannel <- rw
+			} else {
+				var inbox chan RequestWrapper
+				for k, v := range c.subscriptions {
+					if strings.Index(message.Res, k) > -1 {
+						fmt.Println("Connection has subscription for a parent of " + message.Res)
+						inbox = v.inboxChannel
+						break
+					}
+				}
+				if inbox == nil {
+					fmt.Println("Connection has no subscription for " + message.Res)
+					inbox = rootHub.inbox
+				}
+				inbox <- rw
+			}
+		}
 	}
 }
 
@@ -97,8 +149,12 @@ func (c *Connection) write(mt int, payload []byte) error {
 func (c *Connection) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
+		go func() {
+			if c.tearDown != nil {
+				c.tearDown <- true
+			}
+		}()
 		ticker.Stop()
-		c.ws.Close()
 	}()
 	for {
 		select {

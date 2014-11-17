@@ -5,7 +5,7 @@ import "fmt"
 type ModelHolder struct {
 	model            map[string]interface{}
 	handle           chan RequestWrapper
-	broadcastChannel chan Message
+	broadcastChannel chan RequestWrapper
 }
 
 func (mh *ModelHolder) run() {
@@ -27,6 +27,7 @@ func (mh *ModelHolder) run() {
 				answer.Body = make(map[string]interface{})
 				answer.Body["id"] = mh.model["id"]
 				requestWrapper.listener <- answer
+
 			} else {
 				// this is a regular message for the object
 				fmt.Println("MH(" + mh.model["id"].(string) + "): Handling regular message.")
@@ -37,6 +38,9 @@ func (mh *ModelHolder) run() {
 					for k, v := range message.Body {
 						mh.model[k] = v
 					}
+					// broadcasting the updates
+					mh.broadcastChannel <- requestWrapper
+
 				} else if message.Command == "get" {
 					answer := Message{}
 					answer.Rid = requestWrapper.message.Rid
