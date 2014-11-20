@@ -1,35 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Chat Example</title>
-    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-    <script type="text/javascript">
+<title>Chat Example</title>
+<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
         $(function () {
 
             var conn;
-            var msg = $("#msg");
+            var msg = document.getElementById("msg")
             var log = $("#log");
+
+            function output(inp) {
+                document.body.appendChild(document.createElement('pre')).innerHTML = inp;
+            }
+
+            function syntaxHighlight(json) {
+                json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    var cls = 'number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'key';
+                        } else {
+                            cls = 'string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+            }
+
+            // var obj = {a:1, 'b':'foo', c:[false,'false',null, 'null', {d:{e:1.3e5,f:'1.3e5'}}]};
+            // var str = JSON.stringify(obj, undefined, 4);
+
+            // output(str);
+            // output(syntaxHighlight(str));
+
+
+            function syntaxHighlight(json) {
+                if (typeof json != 'string') {
+                     json = JSON.stringify(json, undefined, 2);
+                }
+                json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    var cls = 'number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) {
+                            cls = 'key';
+                        } else {
+                            cls = 'string';
+                        }
+                    } else if (/true|false/.test(match)) {
+                        cls = 'boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+            }
 
             function appendLog(msg) {
                 var d = log[0]
                 var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-                msg.appendTo(log)
+                // msg.appendTo(log)
+                log.append($("<pre/>").text(msg))
                 if (doScroll) {
                     d.scrollTop = d.scrollHeight - d.clientHeight;
                 }
             }
 
-            $("#form").submit(function () {
-                if (!conn) {
-                    return false;
-                }
-                if (!msg.val()) {
-                    return false;
-                }
-                conn.send(msg.val());
-                msg.val("");
-                return false
-            });
+            function sendMessage(message) {
+                console.log(message)
+
+                var rid = Math.floor(Math.random() * 100000000);
+                message.rid = rid;
+                msg = JSON.stringify(message)
+                conn.send(msg);
+
+                var messageContainer = document.createElement('div')
+                messageContainer.id = rid
+                document.body.appendChild(messageContainer)
+                var messageDom = createMessageDom(message)
+                if(messageDom) messageContainer.appendChild(messageDom)
+            }
+
+            function createMessageDom(message) {
+                var msgDom = document.createElement('pre')
+                msgDom.innerHTML = syntaxHighlight(JSON.stringify(message, undefined, 4));
+                return msgDom
+            }
 
             $("#createProfile").on('click', function () {
                 if (!conn) {
@@ -45,8 +107,23 @@
                         avatar: 'https://graph.facebook.com/eluleci/picture?type=large'
                     }
                 }
+                sendMessage(message)
+                return false
+            });
 
-                conn.send(JSON.stringify(message));
+            $("#updateProfile").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'post',
+                    res: '/Profile/' + document.getElementById("msg").value,
+                    body: {
+                        name: 'Haydar'
+                    }
+                }
+                sendMessage(message)
                 return false
             });
 
@@ -54,13 +131,13 @@
                 if (!conn) {
                     return false;
                 }
+                debugger;
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/Profile/' + msg.val()
+                    res: '/Profile/' + document.getElementById("msg").value
                 }
-
-                conn.send(JSON.stringify(message));
+                sendMessage(message)
                 return false
             });
 
@@ -73,8 +150,7 @@
                     cmd: 'get',
                     res: '/Profile'
                 }
-
-                conn.send(JSON.stringify(message));
+                sendMessage(message)
                 return false
             });
 
@@ -86,14 +162,13 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'post',
-                    res: '/Profile/' + msg.val() + '/address/',
+                    res: '/Profile/'  + document.getElementById("msg").value + '/address/',
                     body: {
                         street: 'Yamac Sok',
                         no: '23'
                     }
                 }
-
-                conn.send(JSON.stringify(message));
+                sendMessage(message)
                 return false
             });
 
@@ -104,10 +179,9 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/Profile/' + msg.val() + '/address'
+                    res: '/Profile/'  + document.getElementById("msg").value + '/address'
                 }
-
-                conn.send(JSON.stringify(message));
+                sendMessage(message)
                 return false
             });
 
@@ -117,50 +191,54 @@
                     appendLog($("<div><b>Connection closed.</b></div>"))
                 }
                 conn.onmessage = function (evt) {
-                    appendLog($("<div/>").text(evt.data))
+                    var obj = JSON.parse(evt.data);
+                    console.log(obj)
+                    if(obj.rid){
+                        // response message
+                        var messageContainer = document.getElementById(obj.rid);
+                        var messageDom = createMessageDom(obj)
+                        if(messageDom) messageContainer.appendChild(messageDom)
+
+                    } else {
+                        // push message
+                        var str = JSON.stringify(obj, undefined, 4);
+                        output(syntaxHighlight(str));
+                    }
                 }
             } else {
                 appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"))
             }
         });
-    </script>
-    <style type="text/css">
-        html {
-            overflow: hidden;
-        }
+</script>
+<style type="text/css">
 
-        body {
-            overflow: hidden;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            background: gray;
-        }
+    body {
+        box-sizing: border-box;
+    }
 
-        #log {
-            background: white;
-            margin: 0;
-            padding: 0.5em 0.5em 0.5em 0.5em;
-            position: absolute;
-            top: 0.5em;
-            left: 0.5em;
-            right: 0.5em;
-            bottom: 3em;
-            overflow: auto;
-        }
+    pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+    .string { color: #888888; }
+    .number { color: darkorange; }
+    .boolean { color: blue; }
+    .null { color: magenta; }
+    .key { color: green; }
 
-        #form {
-            padding: 0 0.5em 0 0.5em;
-            margin: 0;
-            position: absolute;
-            bottom: 1em;
-            left: 0px;
-            width: 100%;
-            overflow: hidden;
-        }
+    #form {
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    }
 
-    </style>
+    div {
+        overflow: auto;
+    }
+
+    div > pre {
+        float: left;
+        width: 48%;
+        overflow-x: scroll;
+    }
+</style>
 </head>
 <body>
 
@@ -170,6 +248,7 @@
     <input type="text" id="msg" size="64"/>
     <button id="createProfile">Create profile</button>
     <button id="getProfile">Get profile</button>
+    <button id="updateProfile">Update profile</button>
     <button id="getProfiles">Get profiles</button>
     <button id="addAddress">Add address</button>
     <button id="getAddresses">Get addresses</button>

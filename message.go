@@ -3,7 +3,7 @@ package main
 type Message struct {
 
 	Rid                      int `json:"rid,omitempty"`
-	Status                   int `json:"status"`
+	Status                   int `json:"status,omitempty"`
 	Res                      string `json:"res,omitempty"`
 	Command                  string `json:"cmd,omitempty"`
 	Parameters               string `json:"params,omitempty"`

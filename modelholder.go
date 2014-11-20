@@ -41,9 +41,16 @@ func (mh *ModelHolder) run() {
 					for k, v := range message.Body {
 						mh.model[k] = v
 					}
+
+					// returning response
+					answer := Message{}
+					answer.Rid = requestWrapper.message.Rid
+					answer.Res = mh.res
+					answer.Status = 200
+					requestWrapper.listener <- answer
+
 					// broadcasting the updates
-					requestWrapper.message.Res = mh.res
-					requestWrapper.message.Body = nil
+					requestWrapper.message.Rid = 0
 					mh.broadcastChannel <- requestWrapper
 
 				} else if message.Command == "get" {
