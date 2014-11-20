@@ -33,13 +33,6 @@
                 });
             }
 
-            // var obj = {a:1, 'b':'foo', c:[false,'false',null, 'null', {d:{e:1.3e5,f:'1.3e5'}}]};
-            // var str = JSON.stringify(obj, undefined, 4);
-
-            // output(str);
-            // output(syntaxHighlight(str));
-
-
             function syntaxHighlight(json) {
                 if (typeof json != 'string') {
                      json = JSON.stringify(json, undefined, 2);
@@ -188,7 +181,7 @@
             if (window["WebSocket"]) {
                 conn = new WebSocket("ws://{{$}}/ws");
                 conn.onclose = function (evt) {
-                    appendLog($("<div><b>Connection closed.</b></div>"))
+                document.body.appendChild(document.createElement('h1')).innerHTML = "Connection closed";
                 }
                 conn.onmessage = function (evt) {
                     var obj = JSON.parse(evt.data);
@@ -206,14 +199,15 @@
                     }
                 }
             } else {
-                appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"))
+                document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
+
 </script>
 <style type="text/css">
 
     body {
-        box-sizing: border-box;
+    box-sizing: border-box;
     }
 
     pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
@@ -230,13 +224,13 @@
     }
 
     div {
-        overflow: auto;
+    overflow: auto;
     }
 
     div > pre {
-        float: left;
-        width: 48%;
-        overflow-x: scroll;
+    float: left;
+    width: 48%;
+    overflow-x: scroll;
     }
 </style>
 </head>
