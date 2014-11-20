@@ -38,7 +38,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'post',
-                    res: '/profile',
+                    res: '/Profile',
                     body: {
                         name: 'Emrullah',
                         surname: 'Lüleci',
@@ -57,7 +57,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/profile/' + msg.val()
+                    res: '/Profile/' + msg.val()
                 }
 
                 conn.send(JSON.stringify(message));
@@ -71,7 +71,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/profile'
+                    res: '/Profile'
                 }
 
                 conn.send(JSON.stringify(message));
@@ -86,7 +86,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'post',
-                    res: '/profile/' + msg.val() + '/address/',
+                    res: '/Profile/' + msg.val() + '/address/',
                     body: {
                         street: 'Yamac Sok',
                         no: '23'
@@ -104,7 +104,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/profile/' + msg.val() + '/address'
+                    res: '/Profile/' + msg.val() + '/address'
                 }
 
                 conn.send(JSON.stringify(message));

@@ -29,14 +29,15 @@ func (h *Hub) run() {
 				// if the resource of that message is this hub's resource
 				fmt.Println(h.res + ": responsible of message.")
 
-				if h.model.model["id"] != nil {
+				if h.model.model["res"] != nil {
 					// model exists, so forward message to model handler
 					fmt.Println(h.res + ": Forwarding message to model handler")
 					h.model.handle <- requestWrapper
 
-				} else if (requestWrapper.message.Command == "post" && requestWrapper.message.Body["id"] != nil) {
+				} else if (requestWrapper.message.Command == "post" &&
+					requestWrapper.message.Body["id"] != nil) {
 					// this is object initialisation message
-					h.model = createModelHolder(h.broadcast)
+					h.model = createModelHolder(h.res, h.broadcast)
 					go h.model.run()
 					h.model.handle <- requestWrapper
 
@@ -52,11 +53,13 @@ func (h *Hub) run() {
 					fmt.Println(h.res+": Created a new object for res: ", hub.res)
 
 					requestWrapper.message.Body["id"] = generatedId
+					requestWrapper.message.Body["res"] = generatedRes
 
 					// broadcasting the object creation. we need to create a new request wrapper because we are changing
 					// the res of the request wrapper when sending it to newly created hub. but subscribers of this
 					// domain will expect a broadcast message with the resource path of this domain
 					requestWrapperForBroadcast := requestWrapper
+					requestWrapperForBroadcast.message.Rid = 0
 					go func() {
 						h.broadcast <- requestWrapperForBroadcast
 					}()
@@ -92,6 +95,7 @@ func (h *Hub) run() {
 					}
 					var answer Message
 					answer.Rid = requestWrapper.message.Rid
+					answer.Res = h.res
 					answer.Status = 200
 					answer.Body = make(map[string]interface{})
 					answer.Body["list"] = list
@@ -173,7 +177,8 @@ func createHub(res string) (h Hub) {
 	return
 }
 
-func createModelHolder(broadcastChannel chan RequestWrapper) (mh ModelHolder) {
+func createModelHolder(res string, broadcastChannel chan RequestWrapper) (mh ModelHolder) {
+	mh.res = res
 	mh.handle = make(chan RequestWrapper)
 	mh.broadcastChannel = broadcastChannel
 	return

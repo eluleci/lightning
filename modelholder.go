@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 type ModelHolder struct {
+	res              string
 	model            map[string]interface{}
 	handle           chan RequestWrapper
 	broadcastChannel chan RequestWrapper
@@ -23,9 +24,11 @@ func (mh *ModelHolder) run() {
 				fmt.Println("MH(" + mh.model["id"].(string) + "): Initialising the model.")
 				answer := Message{}
 				answer.Rid = requestWrapper.message.Rid
+				answer.Res = mh.res
 				answer.Status = 200
 				answer.Body = make(map[string]interface{})
 				answer.Body["id"] = mh.model["id"]
+				answer.Body["res"] = mh.model["res"]
 				requestWrapper.listener <- answer
 
 			} else {
@@ -39,11 +42,14 @@ func (mh *ModelHolder) run() {
 						mh.model[k] = v
 					}
 					// broadcasting the updates
+					requestWrapper.message.Res = mh.res
+					requestWrapper.message.Body = nil
 					mh.broadcastChannel <- requestWrapper
 
 				} else if message.Command == "get" {
 					answer := Message{}
 					answer.Rid = requestWrapper.message.Rid
+					answer.Res = mh.res
 					answer.Status = 200
 					answer.Body = mh.model
 					requestWrapper.listener <- answer

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"strings"
+	"regexp"
 )
 
 const (
@@ -102,38 +103,47 @@ func (c *Connection) readPump() {
 
 		err = json.Unmarshal([]byte(string(m[:])), &message)
 		if err != nil {
-			fmt.Println("error while parsing message: ", err)
+			fmt.Println("Error while parsing message: ", err)
 			answer := createErrorMessage(message.Rid, 400, "Error while parsing message")
 			c.send <- answer    // sending the answer back to the connection
 		} else {
 			// making sure that the resource has a correct path (ex: "/type/id/type/id")
 			message.Res = "/"+strings.Trim(message.Res, "/")
 
-			rw := RequestWrapper{
-				message.Res,
-				message,
-				c.send,
-				c.subscribed,
-			}
-
-			subscription, exists := c.subscriptions[message.Res]
-			if exists {
-				fmt.Println("Connection has subscription for " + message.Res)
-				subscription.inboxChannel <- rw
+			// checking that the resource path is valid path
+			matched, err := regexp.MatchString("^(\\/{1}[0-9a-zA-Z]+)+$", message.Res)
+			if !matched || err != nil {
+				fmt.Println("Error while validating resource path")
+				answer := createErrorMessage(message.Rid, 400, "Given resource path is not a valid path.")
+				c.send <- answer    // sending the answer back to the connection
 			} else {
-				var inbox chan RequestWrapper
-				for k, v := range c.subscriptions {
-					if strings.Index(message.Res, k) > -1 {
-						fmt.Println("Connection has subscription for a parent of " + message.Res)
-						inbox = v.inboxChannel
-						break
+
+				rw := RequestWrapper{
+					message.Res,
+					message,
+					c.send,
+					c.subscribed,
+				}
+
+				subscription, exists := c.subscriptions[message.Res]
+				if exists {
+					fmt.Println("Connection has subscription for " + message.Res)
+					subscription.inboxChannel <- rw
+				} else {
+					var inbox chan RequestWrapper
+					for k, v := range c.subscriptions {
+						if strings.Index(message.Res, k) > -1 {
+							fmt.Println("Connection has subscription for a parent of " + message.Res)
+							inbox = v.inboxChannel
+							break
+						}
 					}
+					if inbox == nil {
+						fmt.Println("Connection has no subscription for " + message.Res)
+						inbox = rootHub.inbox
+					}
+					inbox <- rw
 				}
-				if inbox == nil {
-					fmt.Println("Connection has no subscription for " + message.Res)
-					inbox = rootHub.inbox
-				}
-				inbox <- rw
 			}
 		}
 	}
