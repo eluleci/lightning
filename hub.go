@@ -115,6 +115,11 @@ func (h *Hub) run() {
 }
 
 func (h *Hub) addSubscription(requestWrapper RequestWrapper) {
+	defer func() {
+		if r := recover(); r != nil {
+			// the subscribe channel may be closed. catching the panic
+		}
+	}()
 	// add to subscribers if it doesn't already subscribed
 	if _, exists := h.subscribers[requestWrapper.listener]; !exists {
 		subscription := Subscription {
