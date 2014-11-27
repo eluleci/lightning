@@ -44,7 +44,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	rootHub = createHub("/")
+	rootHub = createHub("/", nil)
 	go rootHub.run()
 
 	flag.Parse()

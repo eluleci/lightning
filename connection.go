@@ -14,7 +14,7 @@ const (
 	writeWait = 10 * time.Second
 
 	// Time allowed to read the next pong message from the peer.
-	pongWait = 30 * time.Second
+	pongWait = 5 * time.Second
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
@@ -45,13 +45,16 @@ type Connection struct {
 
 func (c *Connection) run() {
 	// tearDownCount is used for waiting both writePump and readPump jobs to be down for closing all channels
-	tearDownCount := 2
 
 	defer func() {
 		fmt.Println("Connection is teared down.")
+		fmt.Println("Unsubscribing from channels #", len(c.subscriptions))
 		// un-registering from all hubs
-		for _, h := range c.subscriptions {
-			h.unsubscriptionChannel <- c.send
+		for _, subscription := range c.subscriptions {
+			fmt.Println("Unsubscribing from ", subscription.res)
+			rw := new(RequestWrapper)
+			rw.listener = c.send
+			subscription.unsubscriptionChannel <- *rw
 		}
 		c.ws.Close()
 		close(c.send)
@@ -69,23 +72,36 @@ func (c *Connection) run() {
 			c.subscriptions[subscription.res] = subscription
 		case down := <-c.tearDown:
 			if down {
-				tearDownCount--
-				if tearDownCount == 0 {
-					return
-				}
+				return
 			}
 		}
 	}
 
 }
 
+/*
+func (c *Connection) tearDown() {
+	fmt.Println("Connection is teared down.")
+	// un-registering from all hubs
+	for _, h := range c.subscriptions {
+		h.unsubscriptionChannel <- c.send
+	}
+	c.ws.Close()
+	close(c.send)
+	close(c.subscribed)
+	close(c.tearDown)
+}*/
+
 // readPump pumps messages from the websocket connection to the hub.
 func (c *Connection) readPump() {
 	defer func() {
 		go func() {
-			if c.tearDown != nil {
-				c.tearDown <- true
-			}
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Println("Recovered in connection. Teardown already closed", r)
+				}
+			}()
+			c.tearDown <- true
 		}()
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
@@ -107,6 +123,11 @@ func (c *Connection) readPump() {
 			answer := createErrorMessage(message.Rid, 400, "Error while parsing message")
 			c.send <- answer    // sending the answer back to the connection
 		} else {
+
+			if message.Command == "disconnect" {
+				return
+			}
+
 			// making sure that the resource has a correct path (ex: "/type/id/type/id")
 			message.Res = "/"+strings.Trim(message.Res, "/")
 
@@ -160,9 +181,12 @@ func (c *Connection) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		go func() {
-			if c.tearDown != nil {
-				c.tearDown <- true
-			}
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Println("Recovered in connection. Teardown already closed", r)
+				}
+			}()
+			c.tearDown <- true
 		}()
 		ticker.Stop()
 	}()

@@ -10,7 +10,7 @@ type RequestWrapper struct {
 	subscribe chan Subscription
 }
 
-// this strut is used for notifying that a connection is subscribed to a hub. this can happen in two ways:
+// this struct is used for notifying that a connection is subscribed to a hub. this can happen in two ways:
 // 1: if connection sends a request wrapper to rootHub, rootHub finds the requested hub and gives the request. then the
 // message is executed by the related hub and also the connection is subscribed to that hub
 // 2: if a connection is subscribed to a list of resource, the connection is automatically subscribed to that list if a
@@ -18,6 +18,6 @@ type RequestWrapper struct {
 type Subscription struct {
 	res                   string
 	inboxChannel          chan RequestWrapper // inbox channel of hub to send message
-	broadcastChannel      chan RequestWrapper // broadcast channel of hub to receive updates
-	unsubscriptionChannel chan chan Message   // unsubscription channel of hub for unsubscription
+//	broadcastChannel      chan RequestWrapper // broadcast channel of hub to receive updates
+	unsubscriptionChannel chan RequestWrapper // unsubscription channel of hub for unsubscription
 }
