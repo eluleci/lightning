@@ -21,7 +21,7 @@ func (mh *ModelHolder) run() {
 			if mh.model == nil {
 				// this is an object creation. so setting all body to the model
 				mh.model = requestWrapper.message.Body
-				fmt.Println("MH(" + mh.model["id"].(string) + "): Initialising the model.")
+				//				fmt.Println("MH(" + mh.model["id"].(string) + "): Initialising the model.")
 				answer := Message{}
 				answer.Rid = requestWrapper.message.Rid
 				answer.Res = mh.res
@@ -33,7 +33,7 @@ func (mh *ModelHolder) run() {
 
 			} else {
 				// this is a regular message for the object
-				fmt.Println("MH(" + mh.model["id"].(string) + "): Handling regular message.")
+				//				fmt.Println("MH(" + mh.model["id"].(string) + "): Handling regular message.")
 				message := requestWrapper.message
 
 				if message.Command == "post" {

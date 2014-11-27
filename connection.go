@@ -14,7 +14,7 @@ const (
 	writeWait = 10 * time.Second
 
 	// Time allowed to read the next pong message from the peer.
-	pongWait = 5 * time.Second
+	pongWait = 30 * time.Second
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
@@ -44,14 +44,11 @@ type Connection struct {
 }
 
 func (c *Connection) run() {
-	// tearDownCount is used for waiting both writePump and readPump jobs to be down for closing all channels
-
 	defer func() {
-		fmt.Println("Connection is teared down.")
-		fmt.Println("Unsubscribing from channels #", len(c.subscriptions))
+		fmt.Println("Connection is teared down. Unsubscribing from channels #", len(c.subscriptions))
 		// un-registering from all hubs
 		for _, subscription := range c.subscriptions {
-			fmt.Println("Unsubscribing from ", subscription.res)
+			//			fmt.Println("Unsubscribing from ", subscription.res)
 			rw := new(RequestWrapper)
 			rw.listener = c.send
 			subscription.unsubscriptionChannel <- *rw
@@ -62,15 +59,16 @@ func (c *Connection) run() {
 		close(c.tearDown)
 	}()
 
-	go c.writePump()
-	go c.readPump()
+	go c.writePump()    // running message wait and send function
+	go c.readPump()     // running message receive function
 
 	for {
 		select {
 		case subscription := <-c.subscribed:
-			fmt.Println("Connection subscribed to res: " + subscription.res)
+			//			fmt.Println("Connection subscribed to res: " + subscription.res)
 			c.subscriptions[subscription.res] = subscription
 		case down := <-c.tearDown:
+			// finishes the run() of connection
 			if down {
 				return
 			}
@@ -79,30 +77,15 @@ func (c *Connection) run() {
 
 }
 
-/*
-func (c *Connection) tearDown() {
-	fmt.Println("Connection is teared down.")
-	// un-registering from all hubs
-	for _, h := range c.subscriptions {
-		h.unsubscriptionChannel <- c.send
-	}
-	c.ws.Close()
-	close(c.send)
-	close(c.subscribed)
-	close(c.tearDown)
-}*/
-
-// readPump pumps messages from the websocket connection to the hub.
 func (c *Connection) readPump() {
 	defer func() {
-		go func() {
-			defer func() {
-				if r := recover(); r != nil {
-					fmt.Println("Recovered in connection. Teardown already closed", r)
-				}
-			}()
-			c.tearDown <- true
+		defer func() {
+			if r := recover(); r != nil {
+				//				fmt.Println("Recovered in connection. Teardown already closed", r)
+			}
 		}()
+		fmt.Println("Closing readPump() of connection.")
+		c.tearDown <- true
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
@@ -112,8 +95,7 @@ func (c *Connection) readPump() {
 		if err != nil {
 			break
 		}
-		fmt.Println("Connection received message")
-		fmt.Println(string(m))
+		fmt.Println("Connection received message ", string(m))
 
 		var message Message
 
@@ -148,19 +130,19 @@ func (c *Connection) readPump() {
 
 				subscription, exists := c.subscriptions[message.Res]
 				if exists {
-					fmt.Println("Connection has subscription for " + message.Res)
+					// fmt.Println("Connection has subscription for " + message.Res)
 					subscription.inboxChannel <- rw
 				} else {
 					var inbox chan RequestWrapper
 					for k, v := range c.subscriptions {
 						if strings.Index(message.Res, k) > -1 {
-							fmt.Println("Connection has subscription for a parent of " + message.Res)
+							// fmt.Println("Connection has subscription for a parent of " + message.Res)
 							inbox = v.inboxChannel
 							break
 						}
 					}
 					if inbox == nil {
-						fmt.Println("Connection has no subscription for " + message.Res)
+						// fmt.Println("Connection has no subscription for " + message.Res)
 						inbox = rootHub.inbox
 					}
 					inbox <- rw
@@ -183,9 +165,10 @@ func (c *Connection) writePump() {
 		go func() {
 			defer func() {
 				if r := recover(); r != nil {
-					fmt.Println("Recovered in connection. Teardown already closed", r)
+					//					fmt.Println("Recovered in connection. Teardown already closed", r)
 				}
 			}()
+			fmt.Println("Closing writePump() of connection.")
 			c.tearDown <- true
 		}()
 		ticker.Stop()
