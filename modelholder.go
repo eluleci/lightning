@@ -47,7 +47,7 @@ func (mh *ModelHolder) run() {
 					answer.Rid = requestWrapper.message.Rid
 					answer.Res = mh.res
 					answer.Status = 200
-					requestWrapper.listener <- answer
+					checkAndSend(requestWrapper.listener, answer)
 
 					// broadcasting the updates
 					requestWrapper.message.Rid = 0

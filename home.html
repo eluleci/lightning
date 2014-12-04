@@ -149,31 +149,49 @@
             });
 
 
-            $("#addAddress").on('click', function () {
+            $("#setOnline").on('click', function () {
                 if (!conn) {
                     return false;
                 }
                 var message = {
                     rid: 123123123,
                     cmd: 'post',
-                    res: '/Profile/'  + document.getElementById("msg").value + '/address/',
+                    res: '/Profile/' + document.getElementById("msg").value,
                     body: {
-                        street: 'Yamac Sok',
-                        no: '23'
+                        status: 'online'
                     }
                 }
                 sendMessage(message)
                 return false
             });
 
-            $("#getAddresses").on('click', function () {
+            $("#setInactive").on('click', function () {
                 if (!conn) {
                     return false;
                 }
                 var message = {
                     rid: 123123123,
-                    cmd: 'get',
-                    res: '/Profile/'  + document.getElementById("msg").value + '/address'
+                    cmd: 'post',
+                    res: '/Profile/' + document.getElementById("msg").value,
+                    body: {
+                        status: 'inactive'
+                    }
+                }
+                sendMessage(message)
+                return false
+            });
+
+            $("#setOffline").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'post',
+                    res: '/Profile/' + document.getElementById("msg").value,
+                    body: {
+                        status: 'offline'
+                    }
                 }
                 sendMessage(message)
                 return false
@@ -203,6 +221,10 @@
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
+
+
+
+
 
 
 </script>
@@ -246,8 +268,9 @@
     <button id="getProfile">Get profile</button>
     <button id="updateProfile">Update profile</button>
     <button id="getProfiles">Get profiles</button>
-    <button id="addAddress">Add address</button>
-    <button id="getAddresses">Get addresses</button>
+    <button id="setOnline">Set online</button>
+    <button id="setInactive">Set inactive</button>
+    <button id="setOffline">Set offline</button>
 </form>
 </body>
 </html>

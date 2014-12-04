@@ -87,7 +87,7 @@ func (h *Hub) run() {
 			// because we send 'response message' to the request owner
 		for listenerChannel, _ := range h.subscribers {
 			if listenerChannel != requestWrapper.listener {
-				go h.checkAndSend(listenerChannel, requestWrapper.message)
+				go checkAndSend(listenerChannel, requestWrapper.message)
 			}
 		}
 
@@ -135,7 +135,7 @@ func (h *Hub) addSubscription(requestWrapper RequestWrapper) {
 	}
 }
 
-func (h *Hub) checkAndSend(c chan Message, m Message) {
+func checkAndSend(c chan Message, m Message) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("TODO: remove the channel from subscribers", r)
