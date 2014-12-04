@@ -128,25 +128,27 @@ func (c *Connection) readPump() {
 					c.subscribed,
 				}
 
+				var inbox chan RequestWrapper
 				subscription, exists := c.subscriptions[message.Res]
 				if exists {
-					// fmt.Println("Connection has subscription for " + message.Res)
-					subscription.inboxChannel <- rw
+					fmt.Println("Connection has subscription for " + message.Res)
+					inbox = subscription.inboxChannel
 				} else {
-					var inbox chan RequestWrapper
 					for k, v := range c.subscriptions {
 						if strings.Index(message.Res, k) > -1 {
-							// fmt.Println("Connection has subscription for a parent of " + message.Res)
+							fmt.Println("Connection has subscription for a parent of " + message.Res)
 							inbox = v.inboxChannel
 							break
 						}
 					}
 					if inbox == nil {
-						// fmt.Println("Connection has no subscription for " + message.Res)
+						fmt.Println("Connection has no subscription for " + message.Res)
 						inbox = rootHub.inbox
 					}
-					inbox <- rw
 				}
+				go func() {
+					inbox <- rw
+				}()
 			}
 		}
 	}

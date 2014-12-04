@@ -35,7 +35,9 @@ func (h *Hub) run() {
 
 				if h.model.model["res"] != nil {
 					// if model exists, forward message to model handler
-					h.model.handle <- requestWrapper
+					go func() {
+						h.model.handle <- requestWrapper
+					}()
 
 				} else if (requestWrapper.message.Command == "post" && requestWrapper.message.Body["id"] != nil) {
 					// if model doesn't exists, and if there is id in body, it means this is model initialisation message
