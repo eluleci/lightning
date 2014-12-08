@@ -21,7 +21,12 @@ func (mh *ModelHolder) run() {
 				fmt.Println("MH("+mh.model["id"].(string)+"): received message: ", requestWrapper.Message)
 			}
 
-			if mh.model == nil {
+			if mh.model == nil && requestWrapper.Message.Command == "initialise" {
+				mh.model = requestWrapper.Message.Body
+				fmt.Println("MH(" + mh.model["::res"].(string) + "): Initialised the model.")
+			}
+
+			/*if mh.model == nil {
 				// this is an object creation. so setting all body to the model
 				mh.model = requestWrapper.Message.Body
 				//				fmt.Println("MH(" + mh.model["id"].(string) + "): Initialising the model.")
@@ -64,7 +69,7 @@ func (mh *ModelHolder) run() {
 					answer.Body = mh.model
 					requestWrapper.Listener <- answer
 				}
-			}
+			}*/
 		}
 	}
 }

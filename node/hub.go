@@ -4,19 +4,25 @@ import (
 	"fmt"
 	"strings"
 	"github.com/eluleci/lightning/message"
+	"github.com/eluleci/lightning/adapter"
 	"github.com/eluleci/lightning/util"
 )
 
 type Hub struct {
-	res          string
-	model        ModelHolder
-	children     map[string]Hub
-	subscribers  map[chan message.Message]chan message.Subscription
-	Inbox        chan message.RequestWrapper
-	broadcast    chan message.RequestWrapper
-	subscribe    chan message.RequestWrapper
-	unsubscribe  chan message.RequestWrapper
+	res             string
+	model           ModelHolder
+	children        map[string]Hub
+	subscribers     map[chan message.Message]chan message.Subscription
+	Inbox           chan message.RequestWrapper
+	broadcast       chan message.RequestWrapper
+	subscribe       chan message.RequestWrapper
+	unsubscribe     chan message.RequestWrapper
+	adapter         adapter.RestAdapter
 }
+
+const (
+	config_ObjectIdentifier = "_id"
+)
 
 func (h *Hub) Run() {
 
@@ -30,12 +36,79 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case requestWrapper := <-h.Inbox:
-			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
+			//			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
 
 			if requestWrapper.Res == h.res {
 				// if the resource of the message is this hub's resource
 
-				if h.model.model["res"] != nil {
+				if requestWrapper.Message.Command == "get" {
+
+					/* else if len(h.children) > 0 {
+						// if command is 'get', if model doesn't exists, and if there are children hubs, it means that
+						// this is  domain hub and this message is a get message for the list
+						fmt.Println(h.res + ": Returning list of models.")
+						h.returnChildListToRequest(requestWrapper)
+
+					}*/
+
+					if h.model.model["res"] != nil {
+						// if command is 'get', if model exists, forward message to model handler
+						h.model.handle <- requestWrapper
+
+					} else {
+						// if command is 'get', if there is no model or children hub, and if there is adapter, get the
+						// data from the adapter first.
+
+						var answer message.Message
+						answer.Rid = requestWrapper.Message.Rid
+						answer.Res = h.res
+
+						object, objectArray, adapterErr := h.adapter.ExecuteRequest(requestWrapper)
+						if adapterErr != nil {
+							fmt.Printf("Error occured when getting data from adapter. ", adapterErr)
+							// TODO get more specific error from the adapter
+							answer.Status = 404
+
+						} else if object != nil {
+							// if object is not null, it means that this is the object that this hub is responseible of
+
+							object["::res"] = h.res
+
+							answer.Status = 200
+							answer.Body = object
+
+							initialiseRequest := createInitialiseRequest(object, h.res)
+							h.initialiseModel(initialiseRequest)
+
+						} else if objectArray != nil {
+							// if object array is not null, it means that this hub is responsible of the collections of
+							// of these objects. so we create a new hub for each object in the list and return the
+							// result to listener
+
+							// creating a new child hub and  adding it to children hub list
+							for _, v := range (objectArray) {
+								// TODO check childrenHub already exists or not
+								childHub := h.generateChild(v)
+								_ = childHub
+								h.children[childHub.res] = childHub
+							}
+
+							answer.Status = 200
+							answer.Body = make(map[string]interface{})
+							answer.Body["::list"] = objectArray
+						} else {
+							answer.Status = 404
+						}
+
+						requestWrapper.Listener <- answer
+					}
+				} else if requestWrapper.Message.Command == "initialise" {
+					// this is an object initialisation message. this hub is responsible of an existing object that is
+					// provided in the request wrapper
+					h.initialiseModel(requestWrapper)
+				}
+
+				/*if h.model.model["res"] != nil {
 					// if model exists, forward message to model handler
 					go func() {
 						h.model.handle <- requestWrapper
@@ -62,14 +135,15 @@ func (h *Hub) Run() {
 					// if model doesn't exists, and if there is no children hub, it means that the resource doesn't exists
 					requestWrapper.Listener <- util.CreateErrorMessage(requestWrapper.Message.Rid, 404, "Not found.")
 					continue    // calling continue not to subscribe the request at the end of the if statement
-				}
+				}*/
 
 				// if there is a subscription channel inside the request, subscribed the request sender
 				if requestWrapper.Subscribe != nil {
 					go h.addSubscription(requestWrapper)
 				}
 
-			} else {
+			} else
+			{
 				// if the resource belongs to a children hub
 				_, childRes := getChildRes(requestWrapper.Res, h.res)
 
@@ -116,6 +190,14 @@ func (h *Hub) Run() {
 			}
 		}
 	}
+
+}
+
+func (h *Hub) initialiseModel(requestWrapper message.RequestWrapper) {
+
+	h.model = createModelHolder(h.res, h.broadcast)
+	go h.model.run()
+	h.model.handle <- requestWrapper
 }
 
 func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
@@ -147,6 +229,40 @@ func checkAndSend(c chan message.Message, m message.Message) {
 		}
 	}()
 	c <- m
+}
+
+func (h *Hub) generateChild(objectData map[string]interface{}) Hub {
+
+	objectRes := h.res + "/" + objectData[config_ObjectIdentifier].(string)
+	objectData["::res"] = objectRes
+
+	// copying subscribers of parent to pass to the newly created child hub
+	subscribersCopy := make(map[chan message.Message]chan message.Subscription)
+	for listenChannel, subscriptionChannel := range (h.subscribers) {
+		subscribersCopy[listenChannel] = subscriptionChannel
+	}
+
+	// creating a child hub with initial subscribers
+	hub := CreateHub(objectRes, subscribersCopy)
+	go hub.Run()
+	fmt.Println(h.res+": Created a new object for res: ", hub.res)
+
+	initialiseRequest := createInitialiseRequest(objectData, objectRes)
+	hub.Inbox <- initialiseRequest
+
+	return hub
+}
+
+func createInitialiseRequest(objectData map[string]interface{}, objectRes string) message.RequestWrapper {
+
+	var initialiseMessage message.Message
+	initialiseMessage.Command = "initialise"
+	initialiseMessage.Body = objectData
+
+	var initialiseRequest message.RequestWrapper
+	initialiseRequest.Res = objectRes
+	initialiseRequest.Message = initialiseMessage
+	return initialiseRequest
 }
 
 func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
@@ -231,6 +347,7 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 	h.broadcast = make(chan message.RequestWrapper)
 	h.subscribe = make(chan message.RequestWrapper)
 	h.unsubscribe = make(chan message.RequestWrapper)
+	h.adapter = adapter.RestAdapter{}
 
 	if initialSubscribers != nil {
 		h.subscribers = initialSubscribers

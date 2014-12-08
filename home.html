@@ -197,14 +197,29 @@
                 return false
             });
 
-            $("#getObjects").on('click', function () {
+            $("#getDiscussions").on('click', function () {
                 if (!conn) {
                     return false;
                 }
+                // discussion/all?p=1&s=10&community=53d21f8f1d41c8127a000001&expand=*&filter=*
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/Object'
+                    res: '/Discussion'
+                }
+                sendMessage(message)
+                return false
+            });
+
+            $("#getDiscussion").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                // discussion/id/53d4b29962c77435d2000003
+                var message = {
+                    rid: 123123123,
+                    cmd: 'get',
+                    res: '/Discussion/53d4b29962c77435d2000003'
                 }
                 sendMessage(message)
                 return false
@@ -235,6 +250,8 @@
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
+
+
 
 
 
@@ -286,7 +303,8 @@
     <button id="setOnline">Set online</button>
     <button id="setInactive">Set inactive</button>
     <button id="setOffline">Set offline</button>
-    <button id="getObjects">Get objects</button>
+    <button id="getDiscussions">Get discussions</button>
+    <button id="getDiscussion">Get discussion</button>
 </form>
 </body>
 </html>
