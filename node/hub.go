@@ -6,6 +6,7 @@ import (
 	"github.com/eluleci/lightning/message"
 	"github.com/eluleci/lightning/adapter"
 	"github.com/eluleci/lightning/util"
+	"github.com/eluleci/lightning/config"
 )
 
 type Hub struct {
@@ -20,10 +21,6 @@ type Hub struct {
 	adapter         adapter.RestAdapter
 }
 
-const (
-	config_ObjectIdentifier = "_id"
-)
-
 func (h *Hub) Run() {
 
 	fmt.Println(h.res + ":  Started running.")
@@ -36,72 +33,66 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case requestWrapper := <-h.Inbox:
-			//			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
+			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
 
 			if requestWrapper.Res == h.res {
 				// if the resource of the message is this hub's resource
 
+				// if there is a subscription channel inside the request, subscribed the request sender
+				// we need to subscribe the channel before we continue because there may be children hub creation
+				// afterwords and we need to give all subscriptions of this hub to it's children
+				if requestWrapper.Subscribe != nil {
+					h.addSubscription(requestWrapper)
+				}
+
 				if requestWrapper.Message.Command == "get" {
 
-					/* else if len(h.children) > 0 {
-						// if command is 'get', if model doesn't exists, and if there are children hubs, it means that
-						// this is  domain hub and this message is a get message for the list
-						fmt.Println(h.res + ": Returning list of models.")
-						h.returnChildListToRequest(requestWrapper)
-
-					}*/
-
-					if h.model.model["res"] != nil {
-						// if command is 'get', if model exists, forward message to model handler
+					if config.DefaultConfig.PersistInMemory && h.model.model["::res"] != nil {
+						// if persisting in memory and if the model exists, it means we already fetched data before.
+						// so forward request to model holder
 						h.model.handle <- requestWrapper
 
 					} else {
-						// if command is 'get', if there is no model or children hub, and if there is adapter, get the
+						// if there is no model, and if there is adapter, get the
 						// data from the adapter first.
-
-						var answer message.Message
-						answer.Rid = requestWrapper.Message.Rid
-						answer.Res = h.res
-
-						object, objectArray, adapterErr := h.adapter.ExecuteRequest(requestWrapper)
-						if adapterErr != nil {
-							fmt.Printf("Error occured when getting data from adapter. ", adapterErr)
-							// TODO get more specific error from the adapter
-							answer.Status = 404
-
-						} else if object != nil {
-							// if object is not null, it means that this is the object that this hub is responseible of
-
-							object["::res"] = h.res
-
-							answer.Status = 200
-							answer.Body = object
-
-							initialiseRequest := createInitialiseRequest(object, h.res)
-							h.initialiseModel(initialiseRequest)
-
-						} else if objectArray != nil {
-							// if object array is not null, it means that this hub is responsible of the collections of
-							// of these objects. so we create a new hub for each object in the list and return the
-							// result to listener
-
-							// creating a new child hub and  adding it to children hub list
-							for _, v := range (objectArray) {
-								// TODO check childrenHub already exists or not
-								childHub := h.generateChild(v)
-								_ = childHub
-								h.children[childHub.res] = childHub
-							}
-
-							answer.Status = 200
-							answer.Body = make(map[string]interface{})
-							answer.Body["::list"] = objectArray
-						} else {
-							answer.Status = 404
-						}
-
-						requestWrapper.Listener <- answer
+						h.executeGetOnAdapter(requestWrapper)
 					}
+					/* else if len(h.children) > 0 {
+	// if command is 'get', if model doesn't exists, and if there are children hubs, it means that
+	// this is  domain hub and this message is a get message for the list
+	fmt.Println(h.res + ": Returning list of models.")
+	h.returnChildListToRequest(requestWrapper)
+
+}*/
+
+				} else if requestWrapper.Message.Command == "put" {
+					// it is an update request.
+					if config.DefaultConfig.PersistInMemory && h.model.model["::res"] != nil {
+						// if persisting in memory and if the model exists, it means we already fetched data before.
+						// so forward request to model holder
+						h.model.handle <- requestWrapper
+					} else {
+						// if there is no model, and if there is adapter, execute the request from adapter directly
+						h.executePutOnAdapter(requestWrapper)
+					}
+					// TODO: execute request with adapter
+					// TODO: return the result to listener
+					// TODO: broadcast the object creation
+
+				}  else if requestWrapper.Message.Command == "post" {
+					// it is an object creation message under this domain
+					// TODO: execute request with adapter
+					// TODO: initialise object hub if result is successful
+					// TODO: return the result to listener
+					// TODO: broadcast the object creation
+
+				}  else if requestWrapper.Message.Command == "delete" {
+					// it is an object creation message under this domain
+					// TODO: execute request with adapter
+					// TODO: remove the hub from its' parent if result is successful
+					// TODO: return the result to listener
+					// TODO: broadcast the object deletion (must be done by parent)
+
 				} else if requestWrapper.Message.Command == "initialise" {
 					// this is an object initialisation message. this hub is responsible of an existing object that is
 					// provided in the request wrapper
@@ -137,13 +128,9 @@ func (h *Hub) Run() {
 					continue    // calling continue not to subscribe the request at the end of the if statement
 				}*/
 
-				// if there is a subscription channel inside the request, subscribed the request sender
-				if requestWrapper.Subscribe != nil {
-					go h.addSubscription(requestWrapper)
-				}
 
-			} else
-			{
+
+			} else {
 				// if the resource belongs to a children hub
 				_, childRes := getChildRes(requestWrapper.Res, h.res)
 
@@ -193,6 +180,97 @@ func (h *Hub) Run() {
 
 }
 
+func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
+
+	var answer message.Message
+	answer.Rid = requestWrapper.Message.Rid
+	answer.Res = h.res
+
+	object, objectArray, adapterErr := h.adapter.ExecuteGetRequest(requestWrapper)
+	if adapterErr != nil {
+		fmt.Printf("Error occured when getting data from adapter. ", adapterErr)
+		// TODO get more specific error from the adapter
+		answer.Status = 404
+
+	} else if object != nil {
+		// if object is not null, it means that this is the object that this hub is responsible of
+
+		// adding a new field to object body for subscription purposes
+		object["::res"] = h.res
+
+		answer.Status = 200
+		answer.Body = object
+
+		// creating model holder if PersistInMemory enabled
+		if config.DefaultConfig.PersistInMemory {
+			initialiseRequest := createInitialiseRequest(object, h.res)
+			h.initialiseModel(initialiseRequest)
+		}
+
+	} else if objectArray != nil {
+		// if object array is not null, it means that this hub is responsible of the collections of
+		// of these objects. so we create a new hub for each object in the list and return the
+		// result to listener
+
+		// creating a new child hub and  adding it to children hub list
+		for _, objectData := range (objectArray) {
+
+			// generating res of the object: parentRes/objectId
+			childRes := h.res + "/" + objectData[config.DefaultConfig.ObjectIdentifier].(string)
+			objectData["::res"] = childRes
+
+			if _, exists := h.children[childRes]; !exists {
+				childHub := h.generateChild(childRes, objectData)
+				_ = childHub
+				h.children[childHub.res] = childHub
+			} else {
+				// TODO decide to give the fresh data to child hub or not
+				fmt.Println("Child already exists")
+			}
+		}
+
+		answer.Status = 200
+		answer.Body = make(map[string]interface{})
+		answer.Body["::list"] = objectArray
+	} else {
+		answer.Status = 404
+	}
+
+	// sending result of GET message
+	requestWrapper.Listener <- answer
+}
+
+func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
+
+	var answer message.Message
+	answer.Rid = requestWrapper.Message.Rid
+	answer.Res = h.res
+
+	response, adapterErr := h.adapter.ExecutePutRequest(requestWrapper)
+	if adapterErr != nil {
+		fmt.Printf("Error occured when putting data with adapter. ", adapterErr)
+		// TODO get more specific error from the adapter
+		answer.Status = 404
+
+	} else if response != nil {
+
+		// TODO: update updatedAt field
+		answer.Status = 200
+		answer.Body = response
+
+		requestWrapper.Message.Rid = 0
+		go func() {
+			h.broadcast <- requestWrapper
+		}()
+
+	} else {
+		answer.Status = 404
+	}
+
+	// sending result of GET message
+	requestWrapper.Listener <- answer
+}
+
 func (h *Hub) initialiseModel(requestWrapper message.RequestWrapper) {
 
 	h.model = createModelHolder(h.res, h.broadcast)
@@ -206,18 +284,17 @@ func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 			// the subscribe channel may be closed. catching the panic
 		}
 	}()
-	// add to subscribers if it doesn't already subscribed
+
+	// add the connection if it is not already in subscribers list
 	if _, exists := h.subscribers[requestWrapper.Listener]; !exists {
 		subscription := message.Subscription {
 			h.res,
 			h.Inbox,
 			h.unsubscribe,
 		}
-		//		go func() {
-		requestWrapper.Res = h.res
-		h.subscribe <- requestWrapper
-		//		}()
 		requestWrapper.Subscribe <- subscription
+		h.subscribers[requestWrapper.Listener] = requestWrapper.Subscribe
+		fmt.Println(h.res+": Added new listener to subscribers. New size: #", len(h.subscribers))
 	}
 }
 
@@ -231,10 +308,7 @@ func checkAndSend(c chan message.Message, m message.Message) {
 	c <- m
 }
 
-func (h *Hub) generateChild(objectData map[string]interface{}) Hub {
-
-	objectRes := h.res + "/" + objectData[config_ObjectIdentifier].(string)
-	objectData["::res"] = objectRes
+func (h *Hub) generateChild(objectRes string, objectData map[string]interface{}) Hub {
 
 	// copying subscribers of parent to pass to the newly created child hub
 	subscribersCopy := make(map[chan message.Message]chan message.Subscription)
@@ -265,6 +339,9 @@ func createInitialiseRequest(objectData map[string]interface{}, objectRes string
 	return initialiseRequest
 }
 
+/**
+ * Creates a new object with the given data. Works independent fron adapter
+ */
 func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
 
 	generatedId := util.RandSeq(32)
@@ -280,12 +357,6 @@ func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
 	hub := CreateHub(generatedRes, subscribersCopy)
 	go hub.Run()
 	fmt.Println(h.res+": Created a new object for res: ", hub.res)
-
-	// notifying connections that they are subscribed to a new hub
-	for _, subscriptionChannel := range (subscribersCopy) {
-		subscription := message.Subscription {hub.res, hub.Inbox, hub.unsubscribe, }
-		subscriptionChannel <- subscription
-	}
 
 	// adding new child to children hub
 	h.children[hub.res] = hub
@@ -351,6 +422,12 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 
 	if initialSubscribers != nil {
 		h.subscribers = initialSubscribers
+
+		// notifying connections that they are subscribed to a new hub
+		for _, subscriptionChannel := range (initialSubscribers) {
+			subscription := message.Subscription {h.res, h.Inbox, h.unsubscribe, }
+			subscriptionChannel <- subscription
+		}
 	} else {
 		h.subscribers = make(map[chan message.Message]chan message.Subscription, 0)
 	}

@@ -7,7 +7,7 @@ type Message struct {
 	Res                      string `json:"res,omitempty"`
 	Command                  string `json:"cmd,omitempty"`
 	Parameters               string `json:"params,omitempty"`
-	Body                map[string]interface{} `json:"body,omitempty"`
+	Body                     map[string]interface{} `json:"body,omitempty"`
 }
 
 // this struct is used for connections to send a message to a hub that they are not subscribed before

@@ -18,12 +18,22 @@ func (mh *ModelHolder) run() {
 		select {
 		case requestWrapper := <-mh.handle:
 			if mh.model != nil {
-				fmt.Println("MH("+mh.model["id"].(string)+"): received message: ", requestWrapper.Message)
+				fmt.Println("MH("+mh.model["::res"].(string)+"): received message: ", requestWrapper.Message)
 			}
 
 			if mh.model == nil && requestWrapper.Message.Command == "initialise" {
 				mh.model = requestWrapper.Message.Body
 				fmt.Println("MH(" + mh.model["::res"].(string) + "): Initialised the model.")
+
+			} else if requestWrapper.Message.Command == "get" {
+
+				answer := message.Message{}
+				answer.Rid = requestWrapper.Message.Rid
+				answer.Res = mh.res
+				answer.Status = 200
+				answer.Body = mh.model
+				requestWrapper.Listener <- answer
+				
 			}
 
 			/*if mh.model == nil {
@@ -72,4 +82,5 @@ func (mh *ModelHolder) run() {
 			}*/
 		}
 	}
+
 }

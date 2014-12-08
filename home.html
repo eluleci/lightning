@@ -197,7 +197,7 @@
                 return false
             });
 
-            $("#getDiscussions").on('click', function () {
+            $("#getComments").on('click', function () {
                 if (!conn) {
                     return false;
                 }
@@ -205,13 +205,13 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/Discussion'
+                    res: '/Comment'
                 }
                 sendMessage(message)
                 return false
             });
 
-            $("#getDiscussion").on('click', function () {
+            $("#getComment").on('click', function () {
                 if (!conn) {
                     return false;
                 }
@@ -219,7 +219,23 @@
                 var message = {
                     rid: 123123123,
                     cmd: 'get',
-                    res: '/Discussion/53d4b29962c77435d2000003'
+                    res: '/Comment/' + document.getElementById("msg").value,
+                }
+                sendMessage(message)
+                return false
+            });
+
+            $("#updateComment").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'put',
+                    res: '/Comment/' + document.getElementById("msg").value,
+                    body: {
+                        likes: 23
+                    }
                 }
                 sendMessage(message)
                 return false
@@ -250,14 +266,6 @@
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
-
-
-
-
-
-
-
-
 
 </script>
 <style type="text/css">
@@ -296,15 +304,9 @@
 <form id="form">
     <input type="submit" value="Send"/>
     <input type="text" id="msg" size="64"/>
-    <button id="createProfile">Create profile</button>
-    <button id="getProfile">Get profile</button>
-    <button id="updateProfile">Update profile</button>
-    <button id="getProfiles">Get profiles</button>
-    <button id="setOnline">Set online</button>
-    <button id="setInactive">Set inactive</button>
-    <button id="setOffline">Set offline</button>
-    <button id="getDiscussions">Get discussions</button>
-    <button id="getDiscussion">Get discussion</button>
+    <button id="getComment">getComment()</button>
+    <button id="updateComment">updateComment()</button>
+    <button id="getComments">getComments()</button>
 </form>
 </body>
 </html>
