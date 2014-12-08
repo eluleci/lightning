@@ -75,16 +75,10 @@ func (h *Hub) Run() {
 						// if there is no model, and if there is adapter, execute the request from adapter directly
 						h.executePutOnAdapter(requestWrapper)
 					}
-					// TODO: execute request with adapter
-					// TODO: return the result to listener
-					// TODO: broadcast the object creation
 
 				}  else if requestWrapper.Message.Command == "post" {
 					// it is an object creation message under this domain
-					// TODO: execute request with adapter
-					// TODO: initialise object hub if result is successful
-					// TODO: return the result to listener
-					// TODO: broadcast the object creation
+					h.executePostOnAdapter(requestWrapper)
 
 				}  else if requestWrapper.Message.Command == "delete" {
 					// it is an object creation message under this domain
@@ -221,7 +215,6 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 
 			if _, exists := h.children[childRes]; !exists {
 				childHub := h.generateChild(childRes, objectData)
-				_ = childHub
 				h.children[childHub.res] = childHub
 			} else {
 				// TODO decide to give the fresh data to child hub or not
@@ -254,11 +247,58 @@ func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
 
 	} else if response != nil {
 
-		// TODO: update updatedAt field
 		answer.Status = 200
 		answer.Body = response
+		answer.Body["updatedAt"] = response["updatedAt"]
+
+		// TODO: update the model holder if exists
 
 		requestWrapper.Message.Rid = 0
+		requestWrapper.Message.Body["updatedAt"] = response["updatedAt"]
+		go func() {
+			h.broadcast <- requestWrapper
+		}()
+
+	} else {
+		answer.Status = 404
+	}
+
+	// sending result of GET message
+	requestWrapper.Listener <- answer
+}
+
+func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
+
+	var answer message.Message
+	answer.Rid = requestWrapper.Message.Rid
+	answer.Res = h.res
+
+	response, adapterErr := h.adapter.ExecutePostRequest(requestWrapper)
+	if adapterErr != nil {
+		fmt.Printf("Error occured when posting data with adapter. ", adapterErr)
+		// TODO get more specific error from the adapter
+		answer.Status = 404
+
+	} else if response != nil {
+
+		objectData := requestWrapper.Message.Body
+
+		// adding a new field 'res' to object body for subscription purposes
+		objectRes := h.res + "/" + response[config.DefaultConfig.ObjectIdentifier].(string)
+		objectData["::res"] = objectRes
+		objectData["createdAt"] = response["createdAt"]
+		response["::res"] = objectRes
+
+		answer.Status = 200
+		answer.Res = objectRes
+		answer.Body = response
+
+		// generating new child hub for newly created object
+		childHub := h.generateChild(objectRes, objectData)
+		h.children[childHub.res] = childHub
+
+		requestWrapper.Message.Rid = 0
+		requestWrapper.Message.Body = objectData
 		go func() {
 			h.broadcast <- requestWrapper
 		}()

@@ -241,6 +241,23 @@
                 return false
             });
 
+            $("#createComment").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'post',
+                    res: '/Comment',
+                    body: {
+                        content: 'new comment',
+                        likes: 0
+                    }
+                }
+                sendMessage(message)
+                return false
+            });
+
             if (window["WebSocket"]) {
                 conn = new WebSocket("ws://{{$}}/ws");
                 conn.onclose = function (evt) {
@@ -266,6 +283,8 @@
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
+
+
 
 </script>
 <style type="text/css">
@@ -304,9 +323,10 @@
 <form id="form">
     <input type="submit" value="Send"/>
     <input type="text" id="msg" size="64"/>
+    <button id="getComments">getComments()</button>
     <button id="getComment">getComment()</button>
     <button id="updateComment">updateComment()</button>
-    <button id="getComments">getComments()</button>
+    <button id="createComment">createComment()</button>
 </form>
 </body>
 </html>
