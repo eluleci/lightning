@@ -258,6 +258,19 @@
                 return false
             });
 
+            $("#deleteComment").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'delete',
+                    res: '/Comment/' + document.getElementById("msg").value
+                }
+                sendMessage(message)
+                return false
+            });
+
             if (window["WebSocket"]) {
                 conn = new WebSocket("ws://{{$}}/ws");
                 conn.onclose = function (evt) {
@@ -283,8 +296,6 @@
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
-
-
 
 </script>
 <style type="text/css">
@@ -327,6 +338,7 @@
     <button id="getComment">getComment()</button>
     <button id="updateComment">updateComment()</button>
     <button id="createComment">createComment()</button>
+    <button id="deleteComment">deleteComment()</button>
 </form>
 </body>
 </html>

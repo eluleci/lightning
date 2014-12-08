@@ -34,14 +34,14 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := wsconnection.CreateConnection(w, r)
-//	c := &wsconnection.Connection{ ws: ws, send: make(chan message.Message, 256), subscribed: make(chan message.Subscription, 256), subscriptions: make(map[string]message.Subscription), tearDown: make(chan bool)}
+	//	c := &wsconnection.Connection{ ws: ws, send: make(chan message.Message, 256), subscribed: make(chan message.Subscription, 256), subscriptions: make(map[string]message.Subscription), tearDown: make(chan bool)}
 	fmt.Println("Got new connection.")
 	c.Run()
 }
 
 func main() {
 
-	roothub.RootHub = node.CreateHub("/", nil)
+	roothub.RootHub = node.CreateHub("/", nil, nil)
 	go roothub.RootHub.Run()
 
 	flag.Parse()

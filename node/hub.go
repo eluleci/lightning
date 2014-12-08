@@ -10,15 +10,15 @@ import (
 )
 
 type Hub struct {
-	res             string
-	model           ModelHolder
-	children        map[string]Hub
-	subscribers     map[chan message.Message]chan message.Subscription
-	Inbox           chan message.RequestWrapper
-	broadcast       chan message.RequestWrapper
-	subscribe       chan message.RequestWrapper
-	unsubscribe     chan message.RequestWrapper
-	adapter         adapter.RestAdapter
+	res               string
+	model             ModelHolder
+	children          map[string]Hub
+	subscribers       map[chan message.Message]chan message.Subscription
+	Inbox             chan message.RequestWrapper
+	broadcast         chan message.RequestWrapper
+	parentInbox       chan message.RequestWrapper
+	unsubscribe       chan message.RequestWrapper
+	adapter           adapter.RestAdapter
 }
 
 func (h *Hub) Run() {
@@ -34,6 +34,7 @@ func (h *Hub) Run() {
 		select {
 		case requestWrapper := <-h.Inbox:
 			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
+			fmt.Println(h.res+" ?? ", requestWrapper.Res)
 
 			if requestWrapper.Res == h.res {
 				// if the resource of the message is this hub's resource
@@ -82,15 +83,29 @@ func (h *Hub) Run() {
 
 				}  else if requestWrapper.Message.Command == "delete" {
 					// it is an object creation message under this domain
-					// TODO: execute request with adapter
-					// TODO: remove the hub from its' parent if result is successful
-					// TODO: return the result to listener
-					// TODO: broadcast the object deletion (must be done by parent)
+					h.executeDeleteOnAdapter(requestWrapper)
 
-				} else if requestWrapper.Message.Command == "initialise" {
+				} else if requestWrapper.Message.Command == "::initialise" {
 					// this is an object initialisation message. this hub is responsible of an existing object that is
 					// provided in the request wrapper
 					h.initialiseModel(requestWrapper)
+				} else if requestWrapper.Message.Command == "::deleteChild" {
+					// this is a message from child hub for its' deletion. when a parent hub receives this message, it
+					// means that the child hub is deleted explicitly.
+
+					childRes := requestWrapper.Message.Body["::res"].(string)
+					if _, exists := h.children[childRes]; exists {
+
+						// send broadcast message of the object deletion
+						requestWrapper.Message.Command = "delete"
+						requestWrapper.Message.Res = h.res
+						go func() {
+							h.broadcast <- requestWrapper
+						}()
+
+						// delete the child hub
+						delete(h.children, childRes)
+					}
 				}
 
 				/*if h.model.model["res"] != nil {
@@ -131,7 +146,7 @@ func (h *Hub) Run() {
 				hub, exists := h.children[childRes]
 				if !exists {
 					//   if children doesn't exists, create children hub for the res
-					hub = CreateHub(childRes, nil)
+					hub = CreateHub(childRes, nil, h.Inbox)
 					go hub.Run()
 					h.children[childRes] = hub
 				}
@@ -149,15 +164,6 @@ func (h *Hub) Run() {
 				go checkAndSend(listenerChannel, requestWrapper.Message)
 			}
 		}
-
-		case requestWrapper := <-h.subscribe:
-
-			// add the connection if it is not already in subscribers list
-			if _, exists := h.subscribers[requestWrapper.Listener]; !exists {
-				//				h.subscribers = append(h.subscribers, listener)
-				h.subscribers[requestWrapper.Listener] = requestWrapper.Subscribe
-				fmt.Println(h.res+": Added new listener to subscribers. New size: #", len(h.subscribers))
-			}
 
 		case requestWrapper := <-h.unsubscribe:
 
@@ -311,6 +317,42 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 	requestWrapper.Listener <- answer
 }
 
+func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
+
+	var answer message.Message
+	answer.Rid = requestWrapper.Message.Rid
+	answer.Res = h.res
+
+	_, adapterErr := h.adapter.ExecuteDeleteRequest(requestWrapper)
+	if adapterErr != nil {
+		fmt.Printf("Error occured when posting data with adapter. ", adapterErr)
+		// TODO get more specific error from the adapter
+		answer.Status = 404
+	} else {
+		// if there is no error, it means that the object is deleted successfully
+		answer.Status = 200
+
+		// send broadcast message of the object deletion
+		requestWrapper.Message.Rid = 0
+		go func() {
+			h.broadcast <- requestWrapper
+		}()
+
+		var deleteRequest message.RequestWrapper
+		deleteRequest.Message.Command = "::deleteChild"
+		deleteRequest.Res = getParentRes(h.res)
+		deleteRequest.Message.Body = make(map[string]interface{})
+		deleteRequest.Message.Body["::res"] = h.res
+		deleteRequest.Listener = requestWrapper.Listener       // for not sending push message from parent to connection
+		h.parentInbox <- deleteRequest
+
+		fmt.Println("pr: ", deleteRequest.Message.Res)
+	}
+
+	// sending result of DELETE message
+	requestWrapper.Listener <- answer
+}
+
 func (h *Hub) initialiseModel(requestWrapper message.RequestWrapper) {
 
 	h.model = createModelHolder(h.res, h.broadcast)
@@ -357,7 +399,7 @@ func (h *Hub) generateChild(objectRes string, objectData map[string]interface{})
 	}
 
 	// creating a child hub with initial subscribers
-	hub := CreateHub(objectRes, subscribersCopy)
+	hub := CreateHub(objectRes, subscribersCopy, h.Inbox)
 	go hub.Run()
 	fmt.Println(h.res+": Created a new object for res: ", hub.res)
 
@@ -394,7 +436,7 @@ func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
 	}
 
 	// creating a child hub with initial subscribers
-	hub := CreateHub(generatedRes, subscribersCopy)
+	hub := CreateHub(generatedRes, subscribersCopy, h.Inbox)
 	go hub.Run()
 	fmt.Println(h.res+": Created a new object for res: ", hub.res)
 
@@ -451,12 +493,12 @@ func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
 	requestWrapper.Listener <- answer
 }
 
-func CreateHub(res string, initialSubscribers map[chan message.Message]chan message.Subscription) (h Hub) {
+func CreateHub(res string, initialSubscribers map[chan message.Message]chan message.Subscription, parentInbox chan message.RequestWrapper) (h Hub) {
 	h.res = res
 	h.children = make(map[string]Hub)
 	h.Inbox = make(chan message.RequestWrapper)
 	h.broadcast = make(chan message.RequestWrapper)
-	h.subscribe = make(chan message.RequestWrapper)
+	h.parentInbox = parentInbox
 	h.unsubscribe = make(chan message.RequestWrapper)
 	h.adapter = adapter.RestAdapter{}
 
@@ -494,6 +536,13 @@ func getChildRes(res, parentRes string) (relativePath, fullPath string) {
 	} else {
 		fullPath = "/"+relativePath
 	}
+	return
+}
+
+func getParentRes(res string) (path string) {
+	res = strings.Trim(res, "/")
+	li := strings.LastIndex(res, "/")
+	path = "/"+res[:li]
 	return
 }
 
