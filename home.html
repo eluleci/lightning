@@ -197,6 +197,19 @@
                 return false
             });
 
+            $("#getObjects").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: 'get',
+                    res: '/Object'
+                }
+                sendMessage(message)
+                return false
+            });
+
             if (window["WebSocket"]) {
                 conn = new WebSocket("ws://{{$}}/ws");
                 conn.onclose = function (evt) {
@@ -216,11 +229,13 @@
                         var str = JSON.stringify(obj, undefined, 4);
                         output(syntaxHighlight(str));
                     }
+                    window.scrollTo(0,document.body.scrollHeight);
                 }
             } else {
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
+
 
 
 
@@ -271,6 +286,7 @@
     <button id="setOnline">Set online</button>
     <button id="setInactive">Set inactive</button>
     <button id="setOffline">Set offline</button>
+    <button id="getObjects">Get objects</button>
 </form>
 </body>
 </html>

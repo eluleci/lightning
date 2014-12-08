@@ -1,22 +1,24 @@
-package main
+package node
 
 import (
 	"fmt"
 	"strings"
+	"github.com/eluleci/lightning/message"
+	"github.com/eluleci/lightning/util"
 )
 
 type Hub struct {
 	res          string
 	model        ModelHolder
 	children     map[string]Hub
-	subscribers  map[chan Message]chan Subscription
-	inbox        chan RequestWrapper
-	broadcast    chan RequestWrapper
-	subscribe    chan RequestWrapper
-	unsubscribe  chan RequestWrapper
+	subscribers  map[chan message.Message]chan message.Subscription
+	Inbox        chan message.RequestWrapper
+	broadcast    chan message.RequestWrapper
+	subscribe    chan message.RequestWrapper
+	unsubscribe  chan message.RequestWrapper
 }
 
-func (h *Hub) run() {
+func (h *Hub) Run() {
 
 	fmt.Println(h.res + ":  Started running.")
 
@@ -27,10 +29,10 @@ func (h *Hub) run() {
 
 	for {
 		select {
-		case requestWrapper := <-h.inbox:
-			fmt.Println(h.res+": Received message: ", requestWrapper.message)
+		case requestWrapper := <-h.Inbox:
+			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
 
-			if requestWrapper.res == h.res {
+			if requestWrapper.Res == h.res {
 				// if the resource of the message is this hub's resource
 
 				if h.model.model["res"] != nil {
@@ -39,47 +41,47 @@ func (h *Hub) run() {
 						h.model.handle <- requestWrapper
 					}()
 
-				} else if (requestWrapper.message.Command == "post" && requestWrapper.message.Body["id"] != nil) {
+				} else if (requestWrapper.Message.Command == "post" && requestWrapper.Message.Body["id"] != nil) {
 					// if model doesn't exists, and if there is id in body, it means this is model initialisation message
 					h.model = createModelHolder(h.res, h.broadcast)
 					go h.model.run()
 					h.model.handle <- requestWrapper
 
-				} else if requestWrapper.message.Command == "post" && requestWrapper.message.Body["id"] == nil {
+				} else if requestWrapper.Message.Command == "post" && requestWrapper.Message.Body["id"] == nil {
 					// if model doesn't exists, if command is post, and if there is no id inside the message, it means
 					// that this is a message for object creation under this domain
 					h.createNewChild(requestWrapper)
 					continue    // calling continue not to subscribe the request at the end of the if statement
 
-				} else if requestWrapper.message.Command == "get" && len(h.children) > 0 {
+				} else if requestWrapper.Message.Command == "get" && len(h.children) > 0 {
 					// if model doesn't exists, if command is get, and if there are children hubs, it means that this is
 					// a domain hub and this message is a get message of the list
 					fmt.Println(h.res + ": Returning list of models.")
 					h.returnChildListToRequest(requestWrapper)
 				} else {
 					// if model doesn't exists, and if there is no children hub, it means that the resource doesn't exists
-					requestWrapper.listener <- createErrorMessage(requestWrapper.message.Rid, 404, "Not found.")
+					requestWrapper.Listener <- util.CreateErrorMessage(requestWrapper.Message.Rid, 404, "Not found.")
 					continue    // calling continue not to subscribe the request at the end of the if statement
 				}
 
 				// if there is a subscription channel inside the request, subscribed the request sender
-				if requestWrapper.subscribe != nil {
+				if requestWrapper.Subscribe != nil {
 					go h.addSubscription(requestWrapper)
 				}
 
 			} else {
 				// if the resource belongs to a children hub
-				_, childRes := getChildRes(requestWrapper.res, h.res)
+				_, childRes := getChildRes(requestWrapper.Res, h.res)
 
 				hub, exists := h.children[childRes]
 				if !exists {
 					//   if children doesn't exists, create children hub for the res
-					hub = createHub(childRes, nil)
-					go hub.run()
+					hub = CreateHub(childRes, nil)
+					go hub.Run()
 					h.children[childRes] = hub
 				}
 				//   forward message to the children hub
-				hub.inbox <- requestWrapper
+				hub.Inbox <- requestWrapper
 			}
 
 		case requestWrapper := <-h.broadcast:
@@ -88,25 +90,25 @@ func (h *Hub) run() {
 			// broadcasting a message to all connections. only the owner of the request doesn't receive this broadcast
 			// because we send 'response message' to the request owner
 		for listenerChannel, _ := range h.subscribers {
-			if listenerChannel != requestWrapper.listener {
-				go checkAndSend(listenerChannel, requestWrapper.message)
+			if listenerChannel != requestWrapper.Listener {
+				go checkAndSend(listenerChannel, requestWrapper.Message)
 			}
 		}
 
 		case requestWrapper := <-h.subscribe:
 
 			// add the connection if it is not already in subscribers list
-			if _, exists := h.subscribers[requestWrapper.listener]; !exists {
+			if _, exists := h.subscribers[requestWrapper.Listener]; !exists {
 				//				h.subscribers = append(h.subscribers, listener)
-				h.subscribers[requestWrapper.listener] = requestWrapper.subscribe
+				h.subscribers[requestWrapper.Listener] = requestWrapper.Subscribe
 				fmt.Println(h.res+": Added new listener to subscribers. New size: #", len(h.subscribers))
 			}
 
 		case requestWrapper := <-h.unsubscribe:
 
 			// remove listener from subscribers if it is in subscribers list
-			if _, exists := h.subscribers[requestWrapper.listener]; exists {
-				delete(h.subscribers, requestWrapper.listener)
+			if _, exists := h.subscribers[requestWrapper.Listener]; exists {
+				delete(h.subscribers, requestWrapper.Listener)
 				fmt.Println(h.res+": Removed a listener from subscribers. Subscriptions remained: #", len(h.subscribers))
 			} else {
 				fmt.Println(h.res + ": Listener doesn't exists in subscriber list:")
@@ -116,28 +118,28 @@ func (h *Hub) run() {
 	}
 }
 
-func (h *Hub) addSubscription(requestWrapper RequestWrapper) {
+func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 	defer func() {
 		if r := recover(); r != nil {
 			// the subscribe channel may be closed. catching the panic
 		}
 	}()
 	// add to subscribers if it doesn't already subscribed
-	if _, exists := h.subscribers[requestWrapper.listener]; !exists {
-		subscription := Subscription {
+	if _, exists := h.subscribers[requestWrapper.Listener]; !exists {
+		subscription := message.Subscription {
 			h.res,
-			h.inbox,
+			h.Inbox,
 			h.unsubscribe,
 		}
 		//		go func() {
-		requestWrapper.res = h.res
+		requestWrapper.Res = h.res
 		h.subscribe <- requestWrapper
 		//		}()
-		requestWrapper.subscribe <- subscription
+		requestWrapper.Subscribe <- subscription
 	}
 }
 
-func checkAndSend(c chan Message, m Message) {
+func checkAndSend(c chan message.Message, m message.Message) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("TODO: remove the channel from subscribers", r)
@@ -147,25 +149,25 @@ func checkAndSend(c chan Message, m Message) {
 	c <- m
 }
 
-func (h *Hub) createNewChild(requestWrapper RequestWrapper) {
+func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
 
-	generatedId := randSeq(32)
-	generatedRes := requestWrapper.res + "/" + generatedId
+	generatedId := util.RandSeq(32)
+	generatedRes := requestWrapper.Res + "/" + generatedId
 
 	// copying subscribers of parent to pass to the newly created child hub
-	subscribersCopy := make(map[chan Message]chan Subscription)
+	subscribersCopy := make(map[chan message.Message]chan message.Subscription)
 	for listenChannel, subscriptionChannel := range (h.subscribers) {
 		subscribersCopy[listenChannel] = subscriptionChannel
 	}
 
 	// creating a child hub with initial subscribers
-	hub := createHub(generatedRes, subscribersCopy)
-	go hub.run()
+	hub := CreateHub(generatedRes, subscribersCopy)
+	go hub.Run()
 	fmt.Println(h.res+": Created a new object for res: ", hub.res)
 
 	// notifying connections that they are subscribed to a new hub
 	for _, subscriptionChannel := range (subscribersCopy) {
-		subscription := Subscription {hub.res, hub.inbox, hub.unsubscribe, }
+		subscription := message.Subscription {hub.res, hub.Inbox, hub.unsubscribe, }
 		subscriptionChannel <- subscription
 	}
 
@@ -173,38 +175,38 @@ func (h *Hub) createNewChild(requestWrapper RequestWrapper) {
 	h.children[hub.res] = hub
 
 	// adding generated id and res to the request wrapper
-	requestWrapper.message.Body["id"] = generatedId
-	requestWrapper.message.Body["res"] = generatedRes
+	requestWrapper.Message.Body["id"] = generatedId
+	requestWrapper.Message.Body["res"] = generatedRes
 
 	// broadcasting the object creation. we need to create a new request wrapper because we are changing
 	// the res of the request wrapper when sending it to newly created hub. but subscribers of this
 	// domain will expect a broadcast message with the resource path of parent domain
 	requestWrapperForBroadcast := requestWrapper
-	requestWrapperForBroadcast.message.Rid = 0
+	requestWrapperForBroadcast.Message.Rid = 0
 	go func() {
 		h.broadcast <- requestWrapperForBroadcast
 	}()
 
 	// sending request to the new hub with new res
-	requestWrapper.message.Res = generatedRes
-	requestWrapper.res = generatedRes
-	hub.inbox <- requestWrapper
+	requestWrapper.Message.Res = generatedRes
+	requestWrapper.Res = generatedRes
+	hub.Inbox <- requestWrapper
 }
 
-func (h *Hub) returnChildListToRequest(requestWrapper RequestWrapper) {
+func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
 	list := make([]map[string]interface{}, len(h.children))
-	callback := make(chan Message)
+	callback := make(chan message.Message)
 
 	// sending get messages and adding listener channel to all children as subscriber
-	var getMessage Message
+	var getMessage message.Message
 	getMessage.Command = "get"
-	var rw RequestWrapper
-	rw.message = getMessage
-	rw.listener = callback
+	var rw message.RequestWrapper
+	rw.Message = getMessage
+	rw.Listener = callback
 	for k, chlidrenHub := range h.children {
-		rw.res = k
+		rw.Res = k
 		chlidrenHub.addSubscription(requestWrapper)
-		chlidrenHub.inbox <- rw
+		chlidrenHub.Inbox <- rw
 	}
 	// receiving responses (receiving response is done after sending all messages for preventing being
 	// blocked by a get message)
@@ -213,34 +215,34 @@ func (h *Hub) returnChildListToRequest(requestWrapper RequestWrapper) {
 		//						fmt.Println(response.Body)
 		list[i] = response.Body
 	}
-	var answer Message
-	answer.Rid = requestWrapper.message.Rid
+	var answer message.Message
+	answer.Rid = requestWrapper.Message.Rid
 	answer.Res = h.res
 	answer.Status = 200
 	answer.Body = make(map[string]interface{})
 	answer.Body["list"] = list
-	requestWrapper.listener <- answer
+	requestWrapper.Listener <- answer
 }
 
-func createHub(res string, initialSubscribers map[chan Message]chan Subscription) (h Hub) {
+func CreateHub(res string, initialSubscribers map[chan message.Message]chan message.Subscription) (h Hub) {
 	h.res = res
 	h.children = make(map[string]Hub)
-	h.inbox = make(chan RequestWrapper)
-	h.broadcast = make(chan RequestWrapper)
-	h.subscribe = make(chan RequestWrapper)
-	h.unsubscribe = make(chan RequestWrapper)
+	h.Inbox = make(chan message.RequestWrapper)
+	h.broadcast = make(chan message.RequestWrapper)
+	h.subscribe = make(chan message.RequestWrapper)
+	h.unsubscribe = make(chan message.RequestWrapper)
 
 	if initialSubscribers != nil {
 		h.subscribers = initialSubscribers
 	} else {
-		h.subscribers = make(map[chan Message]chan Subscription, 0)
+		h.subscribers = make(map[chan message.Message]chan message.Subscription, 0)
 	}
 	return
 }
 
-func createModelHolder(res string, broadcastChannel chan RequestWrapper) (mh ModelHolder) {
+func createModelHolder(res string, broadcastChannel chan message.RequestWrapper) (mh ModelHolder) {
 	mh.res = res
-	mh.handle = make(chan RequestWrapper)
+	mh.handle = make(chan message.RequestWrapper)
 	mh.broadcastChannel = broadcastChannel
 	return
 }
