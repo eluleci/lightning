@@ -171,22 +171,6 @@ func (c *Connection) readPump() {
 	}
 }
 
-func isCommandValid(cmd string) bool {
-	return cmd == "::subscribe" || cmd == "::unsubscribe" || cmd == "::setHeaders" || cmd == "::disconnect" || cmd == "get" || cmd == "put" || cmd == "post" || cmd == "delete"
-}
-
-func isResValid(res *string) bool {
-	if len(*res) == 0 {
-		return false
-	}
-	// making sure that the resource has a correct path (ex: "/type/id/type/id")
-	*res = "/"+strings.Trim(*res, "/")
-
-	// checking that the resource path is valid path
-	matched, err := regexp.MatchString("^(\\/{1}[0-9a-zA-Z]+)+$", *res)
-	return matched && err == nil
-}
-
 func (c *Connection) setHeaders(headers map[string]interface{}) bool {
 	if headers != nil && len(headers) > 0 {
 		for k, v := range headers {
@@ -287,6 +271,22 @@ func (c *Connection) writePump() {
 			}
 		}
 	}
+}
+
+func isCommandValid(cmd string) bool {
+	return cmd == "::subscribe" || cmd == "::unsubscribe" || cmd == "::setHeaders" || cmd == "::disconnect" || cmd == "get" || cmd == "put" || cmd == "post" || cmd == "delete"
+}
+
+func isResValid(res *string) bool {
+	if len(*res) == 0 {
+		return false
+	}
+	// making sure that the resource has a correct path (ex: "/type/id/type/id")
+	*res = "/"+strings.Trim(*res, "/")
+
+	// checking that the resource path is valid path
+	matched, err := regexp.MatchString("^(\\/{1}[0-9a-zA-Z]+)+$", *res)
+	return matched && err == nil
 }
 
 func createSuccessMessage(rid int) (m message.Message) {

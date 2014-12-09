@@ -51,6 +51,8 @@ func startProcess() {
 
 	ws, _ = websocket.Dial(url, "", origin)
 
+	sendSetHeadersMessage(ws)
+
 	go readMessages(ws)
 	startSendingCreateMessage(ws)
 }
@@ -86,14 +88,29 @@ func readMessages(ws *websocket.Conn) {
 	}
 }
 
+func sendSetHeadersMessage(ws *websocket.Conn) {
+	setHeadersMessage := Message{}
+	setHeadersMessage.Rid = 1
+	setHeadersMessage.Command = "::setHeaders"
+	body := make(map[string]interface{})
+	body["X-Parse-Application-Id"] = "oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8"
+	body["X-Parse-REST-API-Key"] = "qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"
+	setHeadersMessage.Body = body
+	setHeadersMessageByte, jErr := json.Marshal(setHeadersMessage)
+	if jErr == nil {
+		ws.Write(setHeadersMessageByte)
+	}
+}
+
 func startSendingCreateMessage(ws *websocket.Conn) {
 
 	createMessage := Message{}
 	createMessage.Rid = 1
-	createMessage.Res = "/Object"
+	createMessage.Res = "/Comment"
 	createMessage.Command = "post"
 	body := make(map[string]interface{})
-	body["key1"] = "value1"
+	body["content"] = "comment"
+	body["likes"] = 0
 	createMessage.Body = body
 
 	sendMessagePeriodically(ws, createMessage, 2000)
@@ -109,16 +126,15 @@ func startSendingUpdateMessage(ws *websocket.Conn, res string) {
 	updateMessage := Message{}
 	updateMessage.Rid = 1
 	updateMessage.Res = res
-	updateMessage.Command = "post"
+	updateMessage.Command = "put"
 	body := make(map[string]interface{})
-	body["updatedAt"] = getTimestamp()
+	body["likes"] = getTimestamp()
 	updateMessage.Body = body
 
-	sendMessagePeriodically(ws, updateMessage, 200)
+	sendMessagePeriodically(ws, updateMessage, 1000)
 }
 
 func sendMessagePeriodically(ws *websocket.Conn, message Message, period int64) {
-
 
 	for {
 		//		fmt.Printf("Waiting 100 millisecs")

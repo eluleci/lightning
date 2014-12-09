@@ -86,117 +86,6 @@
                 return msgDom
             }
 
-            $("#createProfile").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                var message = {
-                    rid: 123123123,
-                    cmd: 'post',
-                    res: '/Profile',
-                    body: {
-                        className: 'Profile',
-                        name: 'Emrullah',
-                        surname: 'Lüleci',
-                        avatar: 'https://graph.facebook.com/eluleci/picture?type=large'
-                    }
-                }
-                sendMessage(message)
-                return false
-            });
-
-            $("#updateProfile").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                var message = {
-                    rid: 123123123,
-                    cmd: 'post',
-                    res: '/Profile/' + document.getElementById("msg").value,
-                    body: {
-                        name: 'Haydar'
-                    }
-                }
-                sendMessage(message)
-                return false
-            });
-
-            $("#getProfile").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                debugger;
-                var message = {
-                    rid: 123123123,
-                    cmd: 'get',
-                    res: '/Profile/' + document.getElementById("msg").value
-                }
-                sendMessage(message)
-                return false
-            });
-
-            $("#getProfiles").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                var message = {
-                    rid: 123123123,
-                    cmd: 'get',
-                    res: '/Profile'
-                }
-                sendMessage(message)
-                return false
-            });
-
-
-            $("#setOnline").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                var message = {
-                    rid: 123123123,
-                    cmd: 'post',
-                    res: '/Profile/' + document.getElementById("msg").value,
-                    body: {
-                        status: 'online'
-                    }
-                }
-                sendMessage(message)
-                return false
-            });
-
-            $("#setInactive").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                var message = {
-                    rid: 123123123,
-                    cmd: 'post',
-                    res: '/Profile/' + document.getElementById("msg").value,
-                    body: {
-                        status: 'inactive'
-                    }
-                }
-                sendMessage(message)
-                return false
-            });
-
-            $("#setOffline").on('click', function () {
-                if (!conn) {
-                    return false;
-                }
-                var message = {
-                    rid: 123123123,
-                    cmd: 'post',
-                    res: '/Profile/' + document.getElementById("msg").value,
-                    body: {
-                        status: 'offline'
-                    }
-                }
-                sendMessage(message)
-                return false
-            });
-
             $("#getComments").on('click', function () {
                 if (!conn) {
                     return false;
@@ -307,34 +196,36 @@
                 return false
             });
 
-            if (window["WebSocket"]) {
-                conn = new WebSocket("ws://{{$}}/ws");
-                conn.onclose = function (evt) {
-                document.body.appendChild(document.createElement('h1')).innerHTML = "Connection closed";
-                }
-                conn.onmessage = function (evt) {
-                    var obj = JSON.parse(evt.data);
-                    console.log(obj)
-                    if(obj.rid){
-                        // response message
-                        var messageContainer = document.getElementById(obj.rid);
-                        var messageDom = createMessageDom(obj)
-                        if(messageDom) messageContainer.appendChild(messageDom)
-
-                    } else {
-                        // push message
-                        var str = JSON.stringify(obj, undefined, 4);
-                        output(syntaxHighlight(str));
+            function connect() {
+                if (window["WebSocket"]) {
+                    conn = new WebSocket("ws://{{$}}/ws");
+                    conn.onclose = function (evt) {
+                        document.body.appendChild(document.createElement('h1')).innerHTML = "Connection closed";
+                        window.scrollTo(0,document.body.scrollHeight);
+                        document.getElementById("form").style.background = '#e74c3c';
                     }
-                    window.scrollTo(0,document.body.scrollHeight);
+                    conn.onmessage = function (evt) {
+                        var obj = JSON.parse(evt.data);
+                        console.log(obj)
+                        if(obj.rid){
+                            // response message
+                            var messageContainer = document.getElementById(obj.rid);
+                            var messageDom = createMessageDom(obj)
+                            if(messageDom) messageContainer.appendChild(messageDom)
+
+                        } else {
+                            // push message
+                            var str = JSON.stringify(obj, undefined, 4);
+                            output(syntaxHighlight(str));
+                        }
+                        window.scrollTo(0,document.body.scrollHeight);
+                    }
+                } else {
+                    document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
                 }
-            } else {
-                document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
+            connect();
         });
-
-
-
 
 
 </script>
@@ -342,6 +233,13 @@
 
     body {
     box-sizing: border-box;
+    padding-bottom: 40px;
+    }
+
+    h1 {
+    text-align: center;
+    font-family: Tahoma;
+    font-weight: 300;
     }
 
     pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
@@ -355,6 +253,9 @@
     padding: 10px;
     position: fixed;
     bottom: 0;
+    width: 100%;
+    background: #2980b9;
+    left: 0;
     }
 
     div {
@@ -381,6 +282,7 @@
     <button id="deleteComment">deleteComment()</button>
     <button id="setHeaders">setHeaders()</button>
     <button id="deleteHeaders">deleteHeaders()</button>
+    <button id="reconnect" onclick="reconnect()" style="float: right; margin-right: 20px;">reconnect()</button>
 </form>
 </body>
 </html>

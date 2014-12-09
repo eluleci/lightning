@@ -1,958 +1,522 @@
-11:52:11.033061 /:  Started running.
-11:52:11.955906 Main: Got new connection.
-11:52:13.210966 WSConnection: Received message {"rid":18171895,"cmd":"get","res":"/Comment"}
-11:52:13.211047 WSConnection: Has no subscription for /Comment
-11:52:13.211649 /Comment:  Started running.
-11:52:13.211661 /Comment: Received message: {"rid":18171895,"res":"/Comment","cmd":"get"}
-11:52:13.211665 /Comment: Added new listener to subscribers. New size: #1
-11:52:13.211670 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-11:53:07.188631 /:  Started running.
-11:53:08.602250 Main: Got new connection.
-11:53:09.436415 WSConnection: Received message {"rid":8333362,"cmd":"get","res":"/Comment"}
-11:53:09.436521 WSConnection: Has no subscription for /Comment
-11:53:09.437064 /: Received message: {"rid":8333362,"res":"/Comment","cmd":"get"}
-11:53:09.437075 /Comment:  Started running.
-11:53:09.437080 /Comment: Received message: {"rid":8333362,"res":"/Comment","cmd":"get"}
-11:53:09.437084 /Comment: Added new listener to subscribers. New size: #1
-11:53:24.345893 /:  Started running.
-11:53:25.114857 Main: Got new connection.
-11:53:25.964913 WSConnection: Received message {"rid":63405475,"cmd":"get","res":"/Comment"}
-11:53:25.965078 WSConnection: Has no subscription for /Comment
-11:53:25.965592 /: Received message: {"rid":63405475,"res":"/Comment","cmd":"get"}
-11:53:25.965605 /Comment:  Started running.
-11:53:25.965610 /Comment: Received message: {"rid":63405475,"res":"/Comment","cmd":"get"}
-11:53:25.965614 /Comment: Added new listener to subscribers. New size: #1
-11:54:09.282897 /:  Started running.
-11:54:10.289781 Main: Got new connection.
-11:54:10.975858 WSConnection: Received message {"rid":15360268,"cmd":"get","res":"/Comment"}
-11:54:10.976000 WSConnection: Has no subscription for /Comment
-11:54:10.976669 /: Received message: {"rid":15360268,"res":"/Comment","cmd":"get"}
-11:54:10.976685 /Comment:  Started running.
-11:54:10.976690 /Comment: Received message: {"rid":15360268,"res":"/Comment","cmd":"get"}
-11:54:10.976695 /Comment: Added new listener to subscribers. New size: #1
-11:55:52.437903 /:  Started running.
-11:55:55.385430 Main: Got new connection.
-11:55:56.557521 WSConnection: Received message {"rid":66203630,"cmd":"get","res":"/Comment"}
-11:55:56.557685 WSConnection: Has no subscription for /Comment
-11:55:56.558226 /Comment:  Started running.
-11:55:56.558241 /Comment: Received message: {"rid":66203630,"res":"/Comment","cmd":"get"}
-11:55:56.558247 /Comment: Added new listener to subscribers. New size: #1
-11:55:56.558252 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-11:56:50.063831 /:  Started running.
-11:56:51.287612 Main: Got new connection.
-11:56:52.049676 WSConnection: Received message {"rid":2374906,"cmd":"get","res":"/Comment"}
-11:56:52.049767 WSConnection: Has no subscription for /Comment
-11:56:52.050698 /: Received message: {"rid":2374906,"res":"/Comment","cmd":"get"}
-11:56:52.050718 /Comment:  Started running.
-11:56:52.050725 /Comment: Received message: {"rid":2374906,"res":"/Comment","cmd":"get"}
-11:56:52.050729 /Comment: Added new listener to subscribers. New size: #1
-11:56:55.053229 RestAdapter: Response from source is error. 401
-11:56:55.053330 /CommentError occured when getting data from adapter. 
-12:07:28.435957 /:  Started running.
-12:11:08.164517 /:  Started running.
-12:11:10.682974 Main: Got new connection.
-12:11:11.573499 WSConnection: Received message {"rid":32696552,"cmd":"get","res":"/Comment"}
-12:11:11.573686 WSConnection: Has no subscription for /Comment
-12:11:11.574241 /: Received message: {"rid":32696552,"res":"/Comment","cmd":"get"}
-12:11:11.574256 /Comment:  Started running.
-12:11:11.574262 /Comment: Received message: {"rid":32696552,"res":"/Comment","cmd":"get"}
-12:11:11.574268 /Comment: Added new listener to subscribers. New size: #1
-12:11:13.118617 RestAdapter: Request to source failed. 401
-12:11:13.118720 /CommentError occured when getting data from adapter. 
-12:13:24.186707 WSConnection: Received message {"rid":77929427,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:13:24.186813 WSConnection: Has subscription for /Comment
-12:13:24.187667 /Comment: Received message: {"rid":77929427,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:13:25.005432 RestAdapter: Successfully parsed put response body.
-12:13:25.005596 /Comment: Broadcasting message. Number of subscribers: #1
-12:13:56.278480 /:  Started running.
-12:13:57.109802 Main: Got new connection.
-12:13:57.650233 WSConnection: Received message {"rid":71578702,"cmd":"get","res":"/Comment"}
-12:13:57.650425 WSConnection: Has no subscription for /Comment
-12:13:57.650905 /Comment:  Started running.
-12:13:57.650919 /Comment: Received message: {"rid":71578702,"res":"/Comment","cmd":"get"}
-12:13:57.650924 /Comment: Added new listener to subscribers. New size: #1
-12:13:57.650929 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:13:58.870253 RestAdapter: Request to source failed. 401
-12:13:58.870331 /CommentError occured when getting data from adapter. 
-12:14:00.146979 WSConnection: Received message {"rid":58427074,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:14:00.147079 WSConnection: Has subscription for /Comment
-12:14:00.149322 /Comment: Received message: {"rid":58427074,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:14:00.298284 RestAdapter: Successfully parsed put response body.
-12:14:00.298456 /Comment: Broadcasting message. Number of subscribers: #1
-12:19:58.009707 /:  Started running.
-12:19:59.515771 Main: Got new connection.
-12:20:00.587462 WSConnection: Received message {"rid":3853352,"cmd":"get","res":"/Comment"}
-12:20:00.587669 WSConnection: Has no subscription for /Comment
-12:20:00.588088 /Comment: Received message: {"rid":3853352,"res":"/Comment","cmd":"get"}
-12:20:00.588101 /Comment: Added new listener to subscribers. New size: #1
-12:20:00.588114 /: Received message: {"rid":3853352,"res":"/Comment","cmd":"get"}
-12:20:00.588122 /Comment:  Started running.
-12:20:01.764671 RestAdapter: Request to source failed. 401
-12:20:01.764777 /CommentError occured when getting data from adapter. 
-12:20:24.963593 /:  Started running.
-12:20:25.739262 Main: Got new connection.
-12:20:27.194320 WSConnection: Received message {"rid":32531832,"cmd":"get","res":"/Comment"}
-12:20:27.194437 WSConnection: Has no subscription for /Comment
-12:20:27.195224 /: Received message: {"rid":32531832,"res":"/Comment","cmd":"get"}
-12:20:27.195240 /Comment:  Started running.
-12:20:27.195246 /Comment: Received message: {"rid":32531832,"res":"/Comment","cmd":"get"}
-12:20:27.195252 /Comment: Added new listener to subscribers. New size: #1
-12:20:27.975236 RestAdapter: Request to source failed. 401
-12:20:27.975328 /CommentError occured when getting data from adapter. 
-12:20:45.645324 WSConnection: Received message {"rid":71493554,"cmd":"get","res":"/Comment/"}
-12:20:45.645432 WSConnection: Has subscription for /Comment
-12:20:45.646024 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:20:45.793613 RestAdapter: Request to source failed. 401
-12:20:45.793664 /CommentError occured when getting data from adapter. 
-12:20:50.603576 WSConnection: Received message {"rid":10349736,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:20:50.603633 WSConnection: Has subscription for /Comment
-12:20:50.603730 /Comment: Received message: {"rid":10349736,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:20:50.752056 RestAdapter: Successfully parsed put response body.
-12:20:50.752177 /Comment: Broadcasting message. Number of subscribers: #1
-12:20:52.719145 WSConnection: Received message {"rid":18272225,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
-12:20:52.719197 WSConnection: Has subscription for /Comment
-12:20:52.719275 /Comment: Received message: {"rid":18272225,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
-12:21:20.881860 /:  Started running.
-12:25:06.800865 /:  Started running.
-12:25:09.194947 Main: Got new connection.
-12:25:09.906079 WSConnection: Received message {"rid":86918005,"cmd":"get","res":"/Comment"}
-12:25:09.906290 /: Received message: {"rid":86918005,"res":"/Comment","cmd":"get"}
-12:25:09.907220 /Comment: Received message: {"rid":86918005,"res":"/Comment","cmd":"get"}
-12:25:09.907242 /Comment: Added new listener to subscribers. New size: #1
-12:25:09.907247 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:25:09.907252 WSConnection: Has no subscription for /Comment
-12:25:09.907256 /Comment:  Started running.
-12:26:06.564829 /:  Started running.
-12:26:07.742447 Main: Got new connection.
-12:26:08.972819 WSConnection: Received message {"rid":37147307,"cmd":"get","res":"/Comment"}
-12:26:08.972918 WSConnection: Has no subscription for /Comment
-12:26:08.973500 /Comment:  Started running.
-12:26:08.973512 /Comment: Received message: {"rid":37147307,"res":"/Comment","cmd":"get"}
-12:26:08.973517 /Comment: Added new listener to subscribers. New size: #1
-12:26:08.973522 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:26:09.745304 RestAdapter: Request to source failed. 401
-12:26:09.745418 /CommentError occured when getting data from adapter. 
-12:29:36.281751 /:  Started running.
-12:29:38.365210 Main: Got new connection.
-12:29:39.712596 WSConnection: Received message {"rid":5652837,"cmd":"get","res":"/Comment"}
-12:29:39.712694 WSConnection: Has no subscription for /Comment
-12:29:39.712877 /: Received message: {"rid":5652837,"res":"/Comment","cmd":"get"}
-12:29:39.713144 /Comment:  Started running.
-12:29:39.713254 /Comment: Received message: {"rid":5652837,"res":"/Comment","cmd":"get"}
-12:29:39.713351 /Comment: Added new listener to subscribers. New size: #1
-12:29:39.713450 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:29:40.943109 RestAdapter: Request to source failed. 401
-12:29:40.943215 /CommentError occured when getting data from adapter. 
-12:29:43.607836 WSConnection: Received message {"rid":98854710,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:29:43.607948 WSConnection: Has subscription for /Comment
-12:29:43.608552 /Comment: Received message: {"rid":98854710,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:29:43.763880 RestAdapter: Request to source failed. 401
-12:29:43.763985 Error occured when putting data with adapter. 
-12:30:52.104125 /:  Started running.
-12:30:53.314901 Main: Got new connection.
-12:30:54.229430 WSConnection: Received message {"rid":59718897,"cmd":"get","res":"/Comment"}
-12:30:54.229527 WSConnection: Has no subscription for /Comment
-12:30:54.230157 /Comment:  Started running.
-12:30:54.230169 /Comment: Received message: {"rid":59718897,"res":"/Comment","cmd":"get"}
-12:30:54.230174 /Comment: Added new listener to subscribers. New size: #1
-12:30:54.230179 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:30:55.746509 RestAdapter: Request to source failed. 401
-12:30:55.746631 /CommentError occured when getting data from adapter. 
-12:30:56.210713 WSConnection: Received message {"rid":58323611,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:30:56.210808 WSConnection: Has subscription for /Comment
-12:30:56.211910 /Comment: Received message: {"rid":58323611,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:30:56.360148 RestAdapter: Request to source failed. 401
-12:30:56.360297 /CommentError occured when getting data from adapter. 
-12:31:18.984919 /:  Started running.
-12:31:22.111406 Main: Got new connection.
-12:31:22.337462 WSConnection: Received message {"rid":64568085,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:31:22.337636 WSConnection: Has no subscription for /Comment
-12:31:22.338207 /: Received message: {"rid":64568085,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:31:22.338221 /Comment:  Started running.
-12:31:22.338227 /Comment: Received message: {"rid":64568085,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:31:23.127468 RestAdapter: Request to source failed. 401
-12:31:23.127597 /CommentError occured when getting data from adapter. 
-12:31:24.720969 WSConnection: Received message {"rid":50311713,"cmd":"get","res":"/Comment"}
-12:31:24.721074 WSConnection: Has subscription for /Comment
-12:31:24.721638 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:31:24.877140 RestAdapter: Request to source failed. 401
-12:31:24.877174 /CommentError occured when getting data from adapter. 
-12:31:27.859422 WSConnection: Received message {"rid":56009310,"cmd":"get","res":"/Comment/"}
-12:31:27.859466 WSConnection: Has subscription for /Comment
-12:31:27.859607 /Comment: Received message: {"rid":56009310,"res":"/Comment","cmd":"get"}
-12:31:27.859647 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:31:28.022955 RestAdapter: Request to source failed. 401
-12:31:28.022999 /CommentError occured when getting data from adapter. 
-12:35:15.604840 /:  Started running.
-12:35:17.939333 Main: Got new connection.
-12:35:19.373244 WSConnection: Received message {"rid":95029400,"cmd":"get","res":"/Comment"}
-12:35:19.373331 WSConnection: Has no subscription for /Comment
-12:35:19.373898 /: Received message: {"rid":95029400,"res":"/Comment","cmd":"get"}
-12:35:19.373909 /Comment:  Started running.
-12:35:19.373913 /Comment: Received message: {"rid":95029400,"res":"/Comment","cmd":"get"}
-12:35:19.373918 /Comment: Added new listener to subscribers. New size: #1
-12:35:20.582221 RestAdapter: Request to source failed. 401
-12:35:20.582323 /CommentError occured when getting data from adapter. 
-12:35:21.332842 WSConnection: Received message {"rid":70619929,"cmd":"get","res":"/Comment/"}
-12:35:21.332935 WSConnection: Has subscription for /Comment
-12:35:21.333572 /Comment: Received message: {"rid":70619929,"res":"/Comment","cmd":"get"}
-12:35:21.472258 RestAdapter: Request to source failed. 401
-12:35:21.472306 /CommentError occured when getting data from adapter. 
-12:35:22.620821 WSConnection: Received message {"rid":51168346,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:35:22.620867 WSConnection: Has subscription for /Comment
-12:35:22.620959 /Comment: Received message: {"rid":51168346,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:35:22.759271 RestAdapter: Request to source failed. 401
-12:35:22.759308 /CommentError occured when updating data via adapter. 
-12:35:24.298442 WSConnection: Received message {"rid":99716061,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
-12:35:24.298488 WSConnection: Has subscription for /Comment
-12:35:24.298561 /Comment: Received message: {"rid":99716061,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
-12:35:24.436095 RestAdapter: Request to source failed. 401
-12:35:24.436131 /CommentError occured when posting data to adapter. 
-12:35:28.022454 WSConnection: Received message {"rid":260816,"cmd":"delete","res":"/Comment/"}
-12:35:28.022500 WSConnection: Has subscription for /Comment
-12:35:28.022551 /Comment: Received message: {"rid":260816,"res":"/Comment","cmd":"delete"}
-12:37:29.503251 /:  Started running.
-12:37:30.788061 Main: Got new connection.
-12:37:32.009877 WSConnection: Received message {"rid":60493954,"cmd":"delete","res":"/Comment/"}
-12:37:32.010031 WSConnection: Has no subscription for /Comment
-12:37:32.010534 /Comment: Received message: {"rid":60493954,"res":"/Comment","cmd":"delete"}
-12:37:32.010547 /Comment: Added new listener to subscribers. New size: #1
-12:37:32.010553 /: Received message: {"rid":60493954,"res":"/Comment","cmd":"delete"}
-12:37:35.367109 RestAdapter: Request to source failed. 401
-12:37:35.367260 /CommentError occured when deleting data via adapter. 
-12:37:37.200738 WSConnection: Received message {"rid":7725089,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
-12:37:37.201874 /Comment: Received message: {"rid":7725089,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
-12:37:37.201903 WSConnection: Has subscription for /Comment
-12:37:37.354111 RestAdapter: Request to source failed. 401
-12:37:37.354200 /CommentError occured when posting data to adapter. 
-12:37:37.894623 WSConnection: Received message {"rid":57502483,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-12:37:37.894727 WSConnection: Has subscription for /Comment
-12:37:37.895296 /Comment: Received message: {"rid":57502483,"res":"/Comment","cmd":"put","body":{"likes":23}}
-12:37:38.052397 RestAdapter: Request to source failed. 401
-12:37:38.052473 /CommentError occured when updating data via adapter. 
-12:37:38.402575 WSConnection: Received message {"rid":21959975,"cmd":"get","res":"/Comment/"}
-12:37:38.402678 WSConnection: Has subscription for /Comment
-12:37:38.402924 /Comment: Received message: {"rid":21959975,"res":"/Comment","cmd":"get"}
-12:37:38.402937 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:37:38.556174 RestAdapter: Request to source failed. 401
-12:37:38.556213 /CommentError occured when getting data from adapter. 
-12:37:39.198744 WSConnection: Received message {"rid":71438775,"cmd":"get","res":"/Comment"}
-12:37:39.198792 WSConnection: Has subscription for /Comment
-12:37:39.198854 /Comment: Received message: {"rid":71438775,"res":"/Comment","cmd":"get"}
-12:37:39.198872 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-12:37:39.368550 RestAdapter: Request to source failed. 401
-12:37:39.368587 /CommentError occured when getting data from adapter. 
-13:00:12.674580 /:  Started running.
-13:00:14.258239 Main: Got new connection.
-13:00:15.540386 WSConnection: Received message {"rid":23800004,"cmd":"get","res":"/Comment","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:00:15.540554 WSConnection: Has no subscription for /Comment
-13:00:15.541114 /: Received message: {"rid":23800004,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:00:15.541130 /Comment:  Started running.
-13:00:15.541137 /Comment: Received message: {"rid":23800004,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:00:15.541143 /Comment: Added new listener to subscribers. New size: #1
-13:00:16.976205 RestAdapter: Request to source failed. 401
-13:00:16.976303 /CommentError occured when getting data from adapter. 
-13:01:35.743983 /:  Started running.
-13:01:37.275051 Main: Got new connection.
-13:01:38.773684 WSConnection: Received message {"rid":97855619,"cmd":"get","res":"/Comment","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:01:38.773768 WSConnection: Has no subscription for /Comment
-13:01:38.774411 /: Received message: {"rid":97855619,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:01:38.774425 /Comment:  Started running.
-13:01:38.774430 /Comment: Received message: {"rid":97855619,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:01:38.774435 /Comment: Added new listener to subscribers. New size: #1
-13:01:39.946103 RestAdapter: Fetched list of objects from source. Length: 5
-13:01:39.946210 /Comment: Received list of objects from adapter. Length: 5
-13:01:39.946976 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:01:39.946990 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:01:39.946996 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:01:39.947001 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:01:39.947005 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:01:39.947010 /Comment/Tu2knBN093:  Started running.
-13:01:39.947014 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:01:39.947019 /Comment/AKOtqPUzwQ:  Started running.
-13:01:39.947023 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:01:39.947027 /Comment/q8I42iRDZZ:  Started running.
-13:01:39.947031 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:01:39.947053 /Comment/H0gfmYmK9w:  Started running.
-13:01:39.947058 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:01:39.947062 /Comment/2WlDyteUC8:  Started running.
-13:01:44.424132 WSConnection: Received message {"rid":21385212,"cmd":"get","res":"/Comment/"}
-13:01:44.424178 WSConnection: Has subscription for /Comment
-13:01:44.424239 /Comment: Received message: {"rid":21385212,"res":"/Comment","cmd":"get"}
-13:01:44.424256 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-13:01:44.571506 RestAdapter: Request to source failed. 401
-13:01:44.571542 /CommentError occured when getting data from adapter. 
-13:01:46.291025 WSConnection: Received message {"rid":98913984,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-13:01:46.291064 WSConnection: Has subscription for /Comment
-13:01:46.291116 /Comment: Received message: {"rid":98913984,"res":"/Comment","cmd":"put","body":{"likes":23}}
-13:01:46.436866 RestAdapter: Request to source failed. 401
-13:01:46.436908 /CommentError occured when updating data via adapter. 
-13:01:47.556982 WSConnection: Received message {"rid":53704599,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
-13:01:47.557023 WSConnection: Has subscription for /Comment
-13:01:47.557085 /Comment: Received message: {"rid":53704599,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
-13:01:47.705456 RestAdapter: Request to source failed. 401
-13:01:47.705494 /CommentError occured when posting data to adapter. 
-13:01:48.547712 WSConnection: Received message {"rid":48127788,"cmd":"delete","res":"/Comment/"}
-13:01:48.547756 WSConnection: Has subscription for /Comment
-13:01:48.547808 /Comment: Received message: {"rid":48127788,"res":"/Comment","cmd":"delete"}
-13:01:48.693901 RestAdapter: Request to source failed. 401
-13:01:48.693936 /CommentError occured when deleting data via adapter. 
-13:03:35.249376 /:  Started running.
-13:03:36.548783 Main: Got new connection.
-13:03:37.606069 WSConnection: Received message {"rid":88411836,"cmd":"get","res":"/Comment/"}
-13:03:37.606165 WSConnection: Has no subscription for /Comment
-13:03:37.606750 /Comment:  Started running.
-13:03:37.606763 /Comment: Received message: {"rid":88411836,"res":"/Comment","cmd":"get"}
-13:03:37.606767 /Comment: Added new listener to subscribers. New size: #1
-13:03:37.606771 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-13:03:38.843707 RestAdapter: Request to source failed. 401
-13:03:38.843802 /CommentError occured when getting data from adapter. 
-13:03:39.807552 WSConnection: Received message {"rid":52012545,"cmd":"get","res":"/Comment","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:03:39.807647 WSConnection: Has subscription for /Comment
-13:03:39.808199 /Comment: Received message: {"rid":52012545,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:03:39.986995 RestAdapter: Fetched list of objects from source. Length: 5
-13:03:39.987033 /Comment: Received list of objects from adapter. Length: 5
-13:03:39.987052 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:03:39.987069 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:03:39.987118 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:03:39.987155 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:03:39.987171 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:03:39.987303 /Comment/Tu2knBN093:  Started running.
-13:03:39.987322 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:03:39.987333 /Comment/AKOtqPUzwQ:  Started running.
-13:03:39.987344 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:03:39.987354 /Comment/q8I42iRDZZ:  Started running.
-13:03:39.987366 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:03:39.987376 /Comment/H0gfmYmK9w:  Started running.
-13:03:39.987501 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:03:39.987517 /Comment/2WlDyteUC8:  Started running.
-13:03:39.987529 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-13:12:57.507217 /:  Started running.
-13:13:43.897553 /:  Started running.
-13:13:57.406316 /:  Started running.
-13:13:58.022913 Main: Got new connection.
-13:13:59.464761 WSConnection: Received message {"rid":74477437,"cmd":"get","res":"/Comment/"}
-13:13:59.464854 WSConnection: Has no subscription for /Comment
-13:13:59.465449 /: Received message: {"rid":74477437,"res":"/Comment","cmd":"get"}
-13:13:59.465462 /Comment:  Started running.
-13:13:59.465467 /Comment: Received message: {"rid":74477437,"res":"/Comment","cmd":"get"}
-13:13:59.465474 /Comment: Added new listener to subscribers. New size: #1
-13:14:00.701304 RestAdapter: Request to source failed. 401
-13:14:00.701404 /CommentError occured when getting data from adapter. 
-13:14:07.544476 WSConnection: Received message {"rid":14033344,"cmd":"get","res":"/Comment","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:14:07.544638 WSConnection: Has subscription for /Comment
-13:14:07.545267 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-13:14:07.727897 RestAdapter: Fetched list of objects from source. Length: 5
-13:14:07.727936 /Comment: Received list of objects from adapter. Length: 5
-13:14:07.727955 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:14:07.727973 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:14:07.727986 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:14:07.728001 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:14:07.728015 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:14:07.728141 /Comment/Tu2knBN093:  Started running.
-13:14:07.728160 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:14:07.728172 /Comment/AKOtqPUzwQ:  Started running.
-13:14:07.728180 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:14:07.728189 /Comment/q8I42iRDZZ:  Started running.
-13:14:07.728201 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:14:07.728212 /Comment/H0gfmYmK9w:  Started running.
-13:14:07.728224 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:14:07.728236 /Comment/2WlDyteUC8:  Started running.
-13:14:07.728261 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-13:15:42.815190 /:  Started running.
-13:15:44.708410 Main: Got new connection.
-13:15:45.824531 WSConnection: Received message {"rid":50868263,"cmd":"get","res":"/Comment","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:15:45.824731 WSConnection: Has no subscription for /Comment
-13:15:45.825197 /: Received message: {"rid":50868263,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:15:45.825209 /Comment:  Started running.
-13:15:45.825216 /Comment: Received message: {"rid":50868263,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:15:45.825220 /Comment: Added new listener to subscribers. New size: #1
-13:15:47.075258 RestAdapter: Fetched list of objects from source. Length: 5
-13:15:47.075366 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:15:47.075941 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:15:47.075955 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:15:47.075961 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:15:47.075967 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:15:47.075989 /Comment/Tu2knBN093:  Started running.
-13:15:47.075995 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:15:47.076000 /Comment/AKOtqPUzwQ:  Started running.
-13:15:47.076005 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:15:47.076009 /Comment/q8I42iRDZZ:  Started running.
-13:15:47.076014 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:15:47.076019 /Comment/H0gfmYmK9w:  Started running.
-13:15:47.076023 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:15:47.076028 /Comment/2WlDyteUC8:  Started running.
-13:15:47.076033 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-13:15:47.488716 WSConnection: Received message {"rid":25816461,"cmd":"get","res":"/Comment/"}
-13:15:47.488761 WSConnection: Has subscription for /Comment
-13:15:47.488817 /Comment: Received message: {"rid":25816461,"res":"/Comment","cmd":"get"}
-13:15:47.488833 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-13:15:47.627532 RestAdapter: Request to source failed. 401
-13:15:47.627571 /CommentError occured when getting data from adapter. 
-13:17:29.020007 /:  Started running.
-13:17:30.118461 Main: Got new connection.
-13:17:33.728679 WSConnection: Received message {"rid":64833418,"cmd":"get","res":"/Comment/"}
-13:17:33.728754 WSConnection: Has no subscription for /Comment
-13:17:33.729611 /: Received message: {"rid":64833418,"res":"/Comment","cmd":"get"}
-13:17:33.729631 /Comment:  Started running.
-13:17:33.729638 /Comment: Received message: {"rid":64833418,"res":"/Comment","cmd":"get"}
-13:17:33.729643 /Comment: Added new listener to subscribers. New size: #1
-13:17:35.072067 RestAdapter: Request to source failed. 401
-13:17:35.072164 /CommentError occured when getting data from adapter. 
-13:18:06.954095 /:  Started running.
-13:18:07.869805 Main: Got new connection.
-13:18:09.204595 WSConnection: Received message {"rid":24294160,"cmd":"get","res":"/Comment"}
-13:18:09.204804 WSConnection: Has no subscription for /Comment
-13:18:09.205370 /: Received message: {"rid":24294160,"res":"/Comment","cmd":"get"}
-13:18:09.205384 /Comment:  Started running.
-13:18:09.205390 /Comment: Received message: {"rid":24294160,"res":"/Comment","cmd":"get"}
-13:18:09.205396 /Comment: Added new listener to subscribers. New size: #1
-13:18:09.963089 RestAdapter: Request to source failed. 401
-13:18:09.963208 /CommentError occured when getting data from adapter. 
-13:18:11.097843 WSConnection: Received message {"rid":29456364,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:18:11.097937 WSConnection: Closing readPump().
-13:18:11.098511 WSConnection: Connection is teared down. Unsubscribing from channels #1
-13:18:11.098522 /Comment: Removed a listener from subscribers. Subscriptions remained: #0
-13:21:18.932413 /:  Started running.
-13:21:20.416001 Main: Got new connection.
-13:21:21.571418 WSConnection: Received message {"rid":13891707,"cmd":"get","res":"/Comment"}
-13:21:21.571610 WSConnection: Has no subscription for /Comment
-13:21:21.572135 /: Received message: {"rid":13891707,"res":"/Comment","cmd":"get"}
-13:21:21.572147 /Comment:  Started running.
-13:21:21.572154 /Comment: Received message: {"rid":13891707,"res":"/Comment","cmd":"get"}
-13:21:21.572160 /Comment: Added new listener to subscribers. New size: #1
-13:21:22.958054 RestAdapter: Request to source failed. 401
-13:21:22.958196 /CommentError occured when getting data from adapter. 
-13:21:23.418046 WSConnection: Received message {"rid":45993952,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:21:34.754321 WSConnection: Received message {"rid":34730018,"cmd":"get","res":"/Comment"}
-13:21:34.754408 WSConnection: Has subscription for /Comment
-13:21:34.755054 /Comment: Received message: {"rid":34730018,"res":"/Comment","cmd":"get"}
-13:21:34.892530 RestAdapter: Request to source failed. 401
-13:21:34.892567 /CommentError occured when getting data from adapter. 
-13:23:08.889509 /:  Started running.
-13:23:10.111038 Main: Got new connection.
-13:23:13.232534 WSConnection: Received message {"rid":8017206,"cmd":"get","res":"/Comment"}
-13:23:13.232698 WSConnection: Has no subscription for /Comment
-13:23:13.233930 /: Received message: {"rid":8017206,"res":"/Comment","cmd":"get"}
-13:23:13.233955 /Comment:  Started running.
-13:23:13.233960 /Comment: Received message: {"rid":8017206,"res":"/Comment","cmd":"get"}
-13:23:13.233965 /Comment: Added new listener to subscribers. New size: #1
-13:23:14.448570 RestAdapter: Request to source failed. 401
-13:23:14.448702 /CommentError occured when getting data from adapter. 
-13:23:14.957615 WSConnection: Received message {"rid":9213083,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:23:27.719881 /:  Started running.
-13:23:29.557307 Main: Got new connection.
-13:23:31.070688 WSConnection: Received message {"rid":17815088,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:23:32.686002 WSConnection: Received message {"rid":29999166,"cmd":"get","res":"/Comment"}
-13:23:32.686086 WSConnection: Has no subscription for /Comment
-13:23:32.686709 /: Received message: {"rid":29999166,"res":"/Comment","cmd":"get"}
-13:23:32.686856 /Comment:  Started running.
-13:23:32.687083 /Comment: Received message: {"rid":29999166,"res":"/Comment","cmd":"get"}
-13:23:32.687102 /Comment: Added new listener to subscribers. New size: #1
-13:23:33.460963 RestAdapter: Request to source failed. 401
-13:23:33.461119 /CommentError occured when getting data from adapter. 
-13:23:33.933669 WSConnection: Received message {"rid":72661777,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:29:36.019780 /:  Started running.
-13:29:37.666637 Main: Got new connection.
-13:29:38.712298 WSConnection: Received message {"rid":69646395,"cmd":"get","res":"/Comment"}
-13:29:38.713178 WSConnection: Has no subscription for /Comment
-13:29:38.713689 /: Received message: {"rid":69646395,"res":"/Comment","cmd":"get"}
-13:29:38.713707 /Comment:  Started running.
-13:29:38.713714 /Comment: Received message: {"rid":69646395,"res":"/Comment","cmd":"get"}
-13:29:38.713719 /Comment: Added new listener to subscribers. New size: #1
-13:29:41.806771 RestAdapter: Request to source failed. 401
-13:29:41.806907 /CommentError occured when getting data from adapter. 
-13:29:49.279655 WSConnection: Received message {"rid":42669500,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:36:31.814320 /:  Started running.
-13:42:07.828593 /:  Started running.
-13:45:30.725406 /:  Started running.
-13:45:32.663866 Main: Got new connection.
-13:45:33.721442 WSConnection: Received message {"rid":46658375,"cmd":"get","res":"/Comment"}
-13:45:33.721526 WSConnection: Has no subscription for /Comment
-13:45:33.722125 /: Received message: {"rid":46658375,"res":"/Comment","cmd":"get"}
-13:45:33.722139 /Comment:  Started running.
-13:45:33.722146 /Comment: Received message: {"rid":46658375,"res":"/Comment","cmd":"get"}
-13:45:33.722152 /Comment: Added new listener to subscribers. New size: #1
-13:45:36.768401 RestAdapter: Request to source failed. 401
-13:45:36.768560 /CommentError occured when getting data from adapter. 
-13:45:38.397379 WSConnection: Received message {"rid":92479336,"cmd":"get","res":"/Comment/","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:45:38.397587 WSConnection: Has subscription for /Comment
-13:45:38.398118 /Comment: Received message: {"rid":92479336,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:45:38.941149 RestAdapter: Fetched list of objects from source. Length: 5
-13:45:38.941186 /Comment: Received list of objects from adapter. Length: 5
-13:45:38.941206 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:45:38.941219 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:45:38.941233 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:45:38.941245 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:45:38.941258 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:45:38.941386 /Comment/Tu2knBN093:  Started running.
-13:45:38.941402 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:45:38.941413 /Comment/AKOtqPUzwQ:  Started running.
-13:45:38.941424 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:45:38.941436 /Comment/q8I42iRDZZ:  Started running.
-13:45:38.941447 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:45:38.941458 /Comment/H0gfmYmK9w:  Started running.
-13:45:38.941469 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:45:38.941480 /Comment/2WlDyteUC8:  Started running.
-13:45:38.941491 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-13:45:47.262531 WSConnection: Received message {"rid":80731454,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-13:45:47.262580 WSConnection: Has subscription for /Comment
-13:45:47.262650 /Comment: Received message: {"rid":80731454,"res":"/Comment","cmd":"put","body":{"likes":23}}
-13:45:47.411452 RestAdapter: Request to source failed. 401
-13:45:47.411490 /CommentError occured when updating data via adapter. 
-13:45:50.682562 WSConnection: Received message {"rid":27023883,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
-13:45:50.682608 WSConnection: Has subscription for /Comment
-13:45:50.682684 /Comment: Received message: {"rid":27023883,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
-13:45:50.830485 RestAdapter: Request to source failed. 401
-13:45:50.830521 /CommentError occured when posting data to adapter. 
-13:45:52.586712 WSConnection: Received message {"rid":19553327,"cmd":"delete","res":"/Comment/"}
-13:45:52.586765 WSConnection: Has subscription for /Comment
-13:45:52.586833 /Comment: Received message: {"rid":19553327,"res":"/Comment","cmd":"delete"}
-13:45:52.738973 RestAdapter: Request to source failed. 401
-13:45:52.739025 /CommentError occured when deleting data via adapter. 
-13:45:54.450514 WSConnection: Received message {"rid":92420830,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:47:23.755399 /:  Started running.
-13:47:25.001623 Main: Got new connection.
-13:47:26.415053 WSConnection: Received message {"rid":46650540,"cmd":"get","res":"/Comment"}
-13:47:26.415152 WSConnection: Has no subscription for /Comment
-13:47:26.415705 /: Received message: {"rid":46650540,"res":"/Comment","cmd":"get"}
-13:47:26.415717 /Comment:  Started running.
-13:47:26.415722 /Comment: Received message: {"rid":46650540,"res":"/Comment","cmd":"get"}
-13:47:26.415727 /Comment: Added new listener to subscribers. New size: #1
-13:47:27.678870 RestAdapter: Request to source failed. 401
-13:47:27.680053 /CommentError occured when getting data from adapter. 
-13:47:29.084087 WSConnection: Received message {"rid":25547550,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-13:47:29.084189 WSConnection: Has subscription for /Comment
-13:47:29.084739 /Comment: Received message: {"rid":25547550,"res":"/Comment","cmd":"put","body":{"likes":23}}
-13:47:29.229038 RestAdapter: Request to source failed. 401
-13:47:29.229124 /CommentError occured when updating data via adapter. 
-13:47:30.230011 WSConnection: Received message {"rid":19900861,"cmd":"get","res":"/Comment/","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:47:30.230138 WSConnection: Has subscription for /Comment
-13:47:30.230763 /Comment: Received message: {"rid":19900861,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:47:30.415976 RestAdapter: Fetched list of objects from source. Length: 5
-13:47:30.416022 /Comment: Received list of objects from adapter. Length: 5
-13:47:30.416041 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:47:30.416056 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:47:30.416069 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:47:30.416080 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:47:30.416094 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:47:30.416184 /Comment/Tu2knBN093:  Started running.
-13:47:30.416196 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:47:30.416206 /Comment/AKOtqPUzwQ:  Started running.
-13:47:30.416217 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:47:30.416227 /Comment/q8I42iRDZZ:  Started running.
-13:47:30.416237 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:47:30.416247 /Comment/H0gfmYmK9w:  Started running.
-13:47:30.416258 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:47:30.416268 /Comment/2WlDyteUC8:  Started running.
-13:47:30.416279 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-13:58:27.388270 /:  Started running.
-13:58:31.927518 Main: Got new connection.
-13:58:34.433297 WSConnection: Received message {"rid":64661215,"cmd":"get","res":"/Comment"}
-13:58:34.433482 WSConnection: Has no subscription for /Comment
-13:58:34.434063 /Comment:  Started running.
-13:58:34.434080 /Comment: Received message: {"rid":64661215,"res":"/Comment","cmd":"get"}
-13:58:34.434086 /Comment: Added new listener to subscribers. New size: #1
-13:58:34.434091 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-13:58:35.586025 RestAdapter: Request to source failed. 401
-13:58:35.586102 /CommentError occured when getting data from adapter. 
-13:58:36.468271 WSConnection: Received message {"rid":50145908,"cmd":"get","res":"/Comment/","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:58:36.468363 WSConnection: Has subscription for /Comment
-13:58:36.468929 /Comment: Received message: {"rid":50145908,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-13:58:36.663009 RestAdapter: Fetched list of objects from source. Length: 5
-13:58:36.663047 /Comment: Received list of objects from adapter. Length: 5
-13:58:36.663064 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-13:58:36.663079 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-13:58:36.663107 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-13:58:36.663119 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-13:58:36.663132 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-13:58:36.663227 /Comment/Tu2knBN093:  Started running.
-13:58:36.663242 /Comment/Tu2knBN093: Hub has initial subscribers #1
-13:58:36.663254 /Comment/AKOtqPUzwQ:  Started running.
-13:58:36.663265 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-13:58:36.663276 /Comment/q8I42iRDZZ:  Started running.
-13:58:36.663287 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-13:58:36.663297 /Comment/H0gfmYmK9w:  Started running.
-13:58:36.663308 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-13:58:36.663319 /Comment/2WlDyteUC8:  Started running.
-13:58:36.663329 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-13:58:37.654313 WSConnection: Received message {"rid":16855625,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-13:58:37.654357 WSConnection: Has subscription for /Comment
-13:58:37.654445 /Comment: Received message: {"rid":16855625,"res":"/Comment","cmd":"put","body":{"likes":23}}
-13:58:37.803193 RestAdapter: Request to source failed. 401
-13:58:37.803234 /CommentError occured when updating data via adapter. 
-13:58:38.646221 WSConnection: Received message {"rid":2810128,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
-13:58:38.646269 WSConnection: Has subscription for /Comment
-13:58:38.646348 /Comment: Received message: {"rid":2810128,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
-13:58:38.794191 RestAdapter: Request to source failed. 401
-13:58:38.794230 /CommentError occured when posting data to adapter. 
-13:58:39.636592 WSConnection: Received message {"rid":36172071,"cmd":"delete","res":"/Comment/"}
-13:58:39.636639 WSConnection: Has subscription for /Comment
-13:58:39.636700 /Comment: Received message: {"rid":36172071,"res":"/Comment","cmd":"delete"}
-13:58:39.784525 RestAdapter: Request to source failed. 401
-13:58:39.784562 /CommentError occured when deleting data via adapter. 
-13:58:40.300037 WSConnection: Received message {"rid":52725590,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:00:13.896734 /:  Started running.
-14:01:28.348135 /:  Started running.
-14:06:55.260296 /:  Started running.
-14:06:57.680072 Main: Got new connection.
-14:06:58.928881 WSConnection: Received message {"rid":45881060,"cmd":"get","res":"/Comment"}
-14:06:58.929031 WSConnection: Has no subscription for /Comment
-14:06:58.929576 /: Received message: {"rid":45881060,"res":"/Comment","cmd":"get"}
-14:06:58.929587 /Comment:  Started running.
-14:06:58.929592 /Comment: Received message: {"rid":45881060,"res":"/Comment","cmd":"get"}
-14:06:58.929597 /Comment: Added new listener to subscribers. New size: #1
-14:07:00.133076 RestAdapter: Request to source failed. 401
-14:07:00.133235 /CommentError occured when getting data from adapter. 
-14:07:01.066158 WSConnection: Received message {"rid":76179297,"cmd":"put","res":"/Comment/","body":{"likes":23}}
-14:07:01.066254 WSConnection: Has subscription for /Comment
-14:07:01.066825 /Comment: Received message: {"rid":76179297,"res":"/Comment","cmd":"put","body":{"likes":23}}
-14:07:01.220478 RestAdapter: Request to source failed. 401
-14:07:01.220648 /CommentError occured when updating data via adapter. 
-14:07:02.814136 WSConnection: Received message {"rid":12993899,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:07:04.094150 WSConnection: Received message {"rid":39752171,"cmd":"get","res":"/Comment"}
-14:07:04.094257 WSConnection: Has subscription for /Comment
-14:07:04.094819 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:07:04.244130 RestAdapter: Request to source failed. 401
-14:07:04.244170 /CommentError occured when getting data from adapter. 
-14:07:48.751762 /:  Started running.
-14:07:49.873041 Main: Got new connection.
-14:07:51.943928 WSConnection: Received message {"rid":30506177,"cmd":"get","res":"/Comment"}
-14:07:51.944039 WSConnection: Has no subscription for /Comment
-14:07:51.945390 /: Received message: {"rid":30506177,"res":"/Comment","cmd":"get"}
-14:07:51.945417 /Comment:  Started running.
-14:07:51.945422 /Comment: Received message: {"rid":30506177,"res":"/Comment","cmd":"get"}
-14:07:51.945427 /Comment: Added new listener to subscribers. New size: #1
-14:07:52.747006 RestAdapter: Request to source failed. 401
-14:07:52.747104 /CommentError occured when getting data from adapter. 
-14:07:57.509594 WSConnection: Received message {"rid":26338652,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:08:10.029353 WSConnection: Received message {"rid":86357286,"cmd":"get","res":"/Comment"}
-14:08:10.029568 WSConnection: Has subscription for /Comment
-14:08:10.032074 /Comment: Received message: {"rid":86357286,"res":"/Comment","cmd":"get"}
-14:08:10.186593 RestAdapter: Request to source failed. 401
-14:08:10.186645 /CommentError occured when getting data from adapter. 
-14:08:54.552276 /:  Started running.
-14:08:55.444349 Main: Got new connection.
-14:08:56.513504 WSConnection: Received message {"rid":23230636,"cmd":"get","res":"/Comment"}
-14:08:56.513711 WSConnection: Has no subscription for /Comment
-14:08:56.514501 /: Received message: {"rid":23230636,"res":"/Comment","cmd":"get"}
-14:08:56.514519 /Comment:  Started running.
-14:08:56.514525 /Comment: Received message: {"rid":23230636,"res":"/Comment","cmd":"get"}
-14:08:56.514531 /Comment: Added new listener to subscribers. New size: #1
-14:08:57.760917 RestAdapter: Request to source failed. 401
-14:08:57.762209 /CommentError occured when getting data from adapter. 
-14:08:58.293806 WSConnection: Received message {"rid":93803543,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:09:00.371762 WSConnection: Received message {"rid":76110737,"cmd":"get","res":"/Comment"}
-14:09:00.371870 WSConnection: Has subscription for /Comment
-14:09:00.373444 /Comment: Received message: {"rid":76110737,"res":"/Comment","cmd":"get"}
-14:09:00.513273 RestAdapter: Request to source failed. 401
-14:09:00.513332 /CommentError occured when getting data from adapter. 
-14:09:24.658139 /:  Started running.
-14:09:25.482884 Main: Got new connection.
-14:09:26.379814 WSConnection: Received message {"rid":84472212,"cmd":"get","res":"/Comment"}
-14:09:26.379897 WSConnection: Has no subscription for /Comment
-14:09:26.380518 /Comment:  Started running.
-14:09:26.380531 /Comment: Received message: {"rid":84472212,"res":"/Comment","cmd":"get"}
-14:09:26.380537 /Comment: Added new listener to subscribers. New size: #1
-14:09:26.380541 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:09:27.161000 RestAdapter: Request to source failed. 401
-14:09:27.161164 /CommentError occured when getting data from adapter. 
-14:09:27.658457 WSConnection: Received message {"rid":52123088,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:09:29.218648 WSConnection: Received message {"rid":57949993,"cmd":"get","res":"/Comment"}
-14:09:29.218768 WSConnection: Has subscription for /Comment
-14:09:29.220972 /Comment: Received message: {"rid":57949993,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:09:29.442222 RestAdapter: Fetched list of objects from source. Length: 5
-14:09:29.442260 /Comment: Received list of objects from adapter. Length: 5
-14:09:29.442279 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-14:09:29.442296 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-14:09:29.442308 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-14:09:29.442323 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-14:09:29.442335 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-14:09:29.442456 /Comment/Tu2knBN093:  Started running.
-14:09:29.442483 /Comment/Tu2knBN093: Hub has initial subscribers #1
-14:09:29.442498 /Comment/AKOtqPUzwQ:  Started running.
-14:09:29.442510 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-14:09:29.442520 /Comment/q8I42iRDZZ:  Started running.
-14:09:29.442532 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-14:09:29.442543 /Comment/H0gfmYmK9w:  Started running.
-14:09:29.442554 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-14:09:29.442564 /Comment/2WlDyteUC8:  Started running.
-14:09:29.442575 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-14:31:13.275696 /:  Started running.
-14:31:18.217685 Main: Got new connection.
-14:31:18.974122 WSConnection: Received message {"rid":94288320,"cmd":"get","res":"/Comment"}
-14:31:18.974279 WSConnection: Has no subscription for /Comment
-14:31:18.974850 /: Received message: {"rid":94288320,"res":"/Comment","cmd":"get"}
-14:31:18.974862 /Comment:  Started running.
-14:31:18.974867 /Comment: Received message: {"rid":94288320,"res":"/Comment","cmd":"get"}
-14:31:18.974871 /Comment: Added new listener to subscribers. New size: #1
-14:31:20.375596 RestAdapter: Request to source failed. 401
-14:31:20.375684 /CommentError occured when getting data from adapter. 
-14:31:38.775279 /:  Started running.
-14:31:39.337883 Main: Got new connection.
-14:31:42.199653 WSConnection: Received message {"rid":73514281,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:31:45.040477 WSConnection: Received message {"rid":25232503,"cmd":"get","res":"/Comment"}
-14:31:45.040636 /: Received message: {"rid":25232503,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:31:45.041142 /Comment: Received message: {"rid":25232503,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:31:45.041155 /Comment: Added new listener to subscribers. New size: #1
-14:31:45.041172 WSConnection: Has no subscription for /Comment
-14:31:45.041182 /Comment:  Started running.
-14:31:45.816098 RestAdapter: Fetched list of objects from source. Length: 5
-14:31:45.816218 /Comment: Received list of objects from adapter. Length: 5
-14:31:45.816822 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-14:31:45.816838 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-14:31:45.816844 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-14:31:45.816848 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-14:31:45.816853 /Comment/Tu2knBN093:  Started running.
-14:31:45.816857 /Comment/Tu2knBN093: Hub has initial subscribers #1
-14:31:45.816861 /Comment/AKOtqPUzwQ:  Started running.
-14:31:45.816866 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-14:31:45.816871 /Comment/q8I42iRDZZ:  Started running.
-14:31:45.816876 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-14:31:45.816924 /Comment/H0gfmYmK9w:  Started running.
-14:31:45.816963 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-14:31:45.816978 /Comment/2WlDyteUC8:  Started running.
-14:31:45.816996 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-14:31:47.249328 WSConnection: Received message {"rid":83620576,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:31:48.922890 WSConnection: Received message {"rid":89629682,"cmd":"get","res":"/Comment"}
-14:31:48.922943 WSConnection: Has subscription for /Comment
-14:31:48.923015 /Comment: Received message: {"rid":89629682,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:31:48.923032 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:31:49.066802 RestAdapter: Request to source failed. 401
-14:31:49.066842 /CommentError occured when getting data from adapter. 
-14:32:32.769626 /:  Started running.
-14:32:33.743764 Main: Got new connection.
-14:32:35.053142 WSConnection: Received message {"rid":31498801,"cmd":"get","res":"/Comment"}
-14:32:35.053239 WSConnection: Has no subscription for /Comment
-14:32:35.053831 /Comment: Received message: {"rid":31498801,"res":"/Comment","cmd":"get"}
-14:32:35.053844 /Comment: Added new listener to subscribers. New size: #1
-14:32:35.053849 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:32:35.053854 /: Received message: {"rid":31498801,"res":"/Comment","cmd":"get"}
-14:32:36.494121 RestAdapter: Request to source failed. 401
-14:32:36.494327 /CommentError occured when getting data from adapter. 
-14:32:36.974128 WSConnection: Received message {"rid":77698574,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:32:38.622280 WSConnection: Received message {"rid":79838783,"cmd":"get","res":"/Comment"}
-14:32:38.622359 WSConnection: Has subscription for /Comment
-14:32:38.622944 /Comment: Received message: {"rid":79838783,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:32:38.799973 RestAdapter: Fetched list of objects from source. Length: 5
-14:32:38.800008 /Comment: Received list of objects from adapter. Length: 5
-14:32:38.800024 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-14:32:38.800038 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-14:32:38.800049 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-14:32:38.800060 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-14:32:38.800071 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-14:32:38.800164 /Comment/Tu2knBN093:  Started running.
-14:32:38.800212 /Comment/Tu2knBN093: Hub has initial subscribers #1
-14:32:38.800230 /Comment/AKOtqPUzwQ:  Started running.
-14:32:38.800240 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-14:32:38.800251 /Comment/q8I42iRDZZ:  Started running.
-14:32:38.800263 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-14:32:38.800274 /Comment/H0gfmYmK9w:  Started running.
-14:32:38.800286 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-14:32:38.800298 /Comment/2WlDyteUC8:  Started running.
-14:32:38.800309 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-14:32:41.020126 WSConnection: Received message {"rid":11707587,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:32:43.886311 WSConnection: Received message {"rid":35921674,"cmd":"get","res":"/Comment"}
-14:32:43.886367 WSConnection: Has subscription for /Comment
-14:32:43.886447 /Comment: Received message: {"rid":35921674,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:32:43.886467 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:32:44.036205 RestAdapter: Request to source failed. 401
-14:32:44.036259 /CommentError occured when getting data from adapter. 
-14:32:48.570268 WSConnection: Received message {"rid":82496268,"cmd":"get","res":"/Comment"}
-14:32:48.570317 WSConnection: Has subscription for /Comment
-14:32:48.570410 /Comment: Received message: {"rid":82496268,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:32:48.570426 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:32:48.719809 RestAdapter: Request to source failed. 401
-14:32:48.719847 /CommentError occured when getting data from adapter. 
-14:34:26.795867 /:  Started running.
-14:34:28.374456 Main: Got new connection.
-14:34:29.479177 WSConnection: Received message {"rid":83958384,"cmd":"get","res":"/Comment"}
-14:34:29.479323 WSConnection: Has no subscription for /Comment
-14:34:29.479929 /Comment: Received message: {"rid":83958384,"res":"/Comment","cmd":"get"}
-14:34:29.479945 /Comment: Added new listener to subscribers. New size: #1
-14:34:29.479950 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:29.479955 /: Received message: {"rid":83958384,"res":"/Comment","cmd":"get"}
-14:34:30.590136 RestAdapter: Request to source failed. 401
-14:34:30.590220 /CommentError occured when getting data from adapter. 
-14:34:32.171987 WSConnection: Received message {"rid":69210102,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:34:33.110132 WSConnection: Received message {"rid":84757789,"cmd":"get","res":"/Comment"}
-14:34:33.110283 WSConnection: Has subscription for /Comment
-14:34:33.112117 /Comment: Received message: {"rid":84757789,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:34:33.281751 RestAdapter: Fetched list of objects from source. Length: 5
-14:34:33.281787 /Comment: Received list of objects from adapter. Length: 5
-14:34:33.281808 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-14:34:33.281823 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-14:34:33.281838 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-14:34:33.281851 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-14:34:33.281864 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-14:34:33.282008 /Comment/Tu2knBN093:  Started running.
-14:34:33.282025 /Comment/Tu2knBN093: Hub has initial subscribers #1
-14:34:33.282036 /Comment/AKOtqPUzwQ:  Started running.
-14:34:33.282050 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-14:34:33.282061 /Comment/q8I42iRDZZ:  Started running.
-14:34:33.282072 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-14:34:33.282085 /Comment/H0gfmYmK9w:  Started running.
-14:34:33.282094 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-14:34:33.282127 /Comment/2WlDyteUC8:  Started running.
-14:34:33.282141 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-14:34:35.685849 WSConnection: Received message {"rid":74268941,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:34:36.881993 WSConnection: Received message {"rid":15087348,"cmd":"get","res":"/Comment"}
-14:34:36.882037 WSConnection: Has subscription for /Comment
-14:34:36.882091 /Comment: Received message: {"rid":15087348,"res":"/Comment","cmd":"get"}
-14:34:36.882104 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:37.029093 RestAdapter: Request to source failed. 401
-14:34:37.029146 /CommentError occured when getting data from adapter. 
-14:34:39.576134 WSConnection: Received message {"rid":93850708,"cmd":"get","res":"/Comment"}
-14:34:39.576186 WSConnection: Has subscription for /Comment
-14:34:39.576251 /Comment: Received message: {"rid":93850708,"res":"/Comment","cmd":"get"}
-14:34:39.576270 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:39.728531 RestAdapter: Request to source failed. 401
-14:34:39.728570 /CommentError occured when getting data from adapter. 
-14:34:40.310042 WSConnection: Received message {"rid":38193186,"cmd":"get","res":"/Comment"}
-14:34:40.310088 WSConnection: Has subscription for /Comment
-14:34:40.310145 /Comment: Received message: {"rid":38193186,"res":"/Comment","cmd":"get"}
-14:34:40.310160 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:40.456952 RestAdapter: Request to source failed. 401
-14:34:40.456992 /CommentError occured when getting data from adapter. 
-14:34:42.557903 WSConnection: Received message {"rid":22271600,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:34:43.856417 WSConnection: Received message {"rid":54062217,"cmd":"get","res":"/Comment"}
-14:34:43.856471 WSConnection: Has subscription for /Comment
-14:34:43.856554 /Comment: Received message: {"rid":54062217,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:34:43.856572 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:44.023866 RestAdapter: Fetched list of objects from source. Length: 5
-14:34:44.023907 /Comment: Received list of objects from adapter. Length: 5
-14:34:44.023918 /Comment: Child already exists for res /Comment/Tu2knBN093
-14:34:44.023928 /Comment: Child already exists for res /Comment/AKOtqPUzwQ
-14:34:44.023939 /Comment: Child already exists for res /Comment/q8I42iRDZZ
-14:34:44.023971 /Comment: Child already exists for res /Comment/H0gfmYmK9w
-14:34:44.023981 /Comment: Child already exists for res /Comment/2WlDyteUC8
-14:34:45.238150 WSConnection: Received message {"rid":79118892,"cmd":"get","res":"/Comment"}
-14:34:45.238202 WSConnection: Has subscription for /Comment
-14:34:45.238280 /Comment: Received message: {"rid":79118892,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:34:45.238298 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:45.405453 RestAdapter: Fetched list of objects from source. Length: 5
-14:34:45.405503 /Comment: Received list of objects from adapter. Length: 5
-14:34:45.405522 /Comment: Child already exists for res /Comment/Tu2knBN093
-14:34:45.405539 /Comment: Child already exists for res /Comment/AKOtqPUzwQ
-14:34:45.405555 /Comment: Child already exists for res /Comment/q8I42iRDZZ
-14:34:45.405571 /Comment: Child already exists for res /Comment/H0gfmYmK9w
-14:34:45.405586 /Comment: Child already exists for res /Comment/2WlDyteUC8
-14:34:46.775938 WSConnection: Received message {"rid":44631698,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:34:47.986303 WSConnection: Received message {"rid":53946197,"cmd":"get","res":"/Comment"}
-14:34:47.986348 WSConnection: Has subscription for /Comment
-14:34:47.986403 /Comment: Received message: {"rid":53946197,"res":"/Comment","cmd":"get"}
-14:34:47.986418 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:34:48.133886 RestAdapter: Request to source failed. 401
-14:34:48.133924 /CommentError occured when getting data from adapter. 
-14:35:06.929710 /:  Started running.
-14:35:08.037579 Main: Got new connection.
-14:35:09.714929 WSConnection: Received message {"rid":57834837,"cmd":"get","res":"/Comment"}
-14:35:09.715027 WSConnection: Has no subscription for /Comment
-14:35:09.715649 /: Received message: {"rid":57834837,"res":"/Comment","cmd":"get"}
-14:35:09.715666 /Comment:  Started running.
-14:35:09.715673 /Comment: Received message: {"rid":57834837,"res":"/Comment","cmd":"get"}
-14:35:09.715678 /Comment: Added new listener to subscribers. New size: #1
-14:35:10.502434 RestAdapter: Request to source failed. 401
-14:35:10.502595 /CommentError occured when getting data from adapter. 
-14:35:10.672564 WSConnection: Received message {"rid":14079594,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:12.555133 WSConnection: Received message {"rid":86894768,"cmd":"get","res":"/Comment"}
-14:35:12.555265 WSConnection: Has subscription for /Comment
-14:35:12.555873 /Comment: Received message: {"rid":86894768,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:12.735911 RestAdapter: Fetched list of objects from source. Length: 5
-14:35:12.735995 /Comment: Received list of objects from adapter. Length: 5
-14:35:12.736033 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-14:35:12.736075 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-14:35:12.736112 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-14:35:12.736136 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-14:35:12.736169 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-14:35:12.736548 /Comment/Tu2knBN093:  Started running.
-14:35:12.736679 /Comment/Tu2knBN093: Hub has initial subscribers #1
-14:35:12.736793 /Comment/AKOtqPUzwQ:  Started running.
-14:35:12.736820 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-14:35:12.736846 /Comment/q8I42iRDZZ:  Started running.
-14:35:12.736859 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-14:35:12.736867 /Comment/H0gfmYmK9w:  Started running.
-14:35:12.736924 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-14:35:12.736936 /Comment/2WlDyteUC8:  Started running.
-14:35:12.736945 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-14:35:14.445101 WSConnection: Received message {"rid":22118831,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":""}}
-14:35:15.499180 WSConnection: Received message {"rid":79402474,"cmd":"get","res":"/Comment"}
-14:35:15.499229 WSConnection: Has subscription for /Comment
-14:35:15.499298 /Comment: Received message: {"rid":79402474,"res":"/Comment","cmd":"get","headers":{"X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:15.499314 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:35:15.654481 RestAdapter: Request to source failed. 401
-14:35:15.654513 /CommentError occured when getting data from adapter. 
-14:35:21.215242 WSConnection: Received message {"rid":21848643,"cmd":"get","res":"/Comment"}
-14:35:21.215294 WSConnection: Has subscription for /Comment
-14:35:21.215375 /Comment: Received message: {"rid":21848643,"res":"/Comment","cmd":"get","headers":{"X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:21.215393 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:35:21.375774 RestAdapter: Request to source failed. 401
-14:35:21.375820 /CommentError occured when getting data from adapter. 
-14:35:21.739327 WSConnection: Received message {"rid":42131308,"cmd":"get","res":"/Comment"}
-14:35:21.739408 WSConnection: Has subscription for /Comment
-14:35:21.739515 /Comment: Received message: {"rid":42131308,"res":"/Comment","cmd":"get","headers":{"X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:21.739542 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:35:21.901208 RestAdapter: Request to source failed. 401
-14:35:21.901257 /CommentError occured when getting data from adapter. 
-14:35:24.721128 WSConnection: Received message {"rid":66630586,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:26.713547 WSConnection: Received message {"rid":51864303,"cmd":"get","res":"/Comment"}
-14:35:26.713610 WSConnection: Has subscription for /Comment
-14:35:26.713716 /Comment: Received message: {"rid":51864303,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:26.713744 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:35:26.911630 RestAdapter: Fetched list of objects from source. Length: 5
-14:35:26.911683 /Comment: Received list of objects from adapter. Length: 5
-14:35:26.911700 /Comment: Child already exists for res /Comment/Tu2knBN093
-14:35:26.911718 /Comment: Child already exists for res /Comment/AKOtqPUzwQ
-14:35:26.911732 /Comment: Child already exists for res /Comment/q8I42iRDZZ
-14:35:26.911748 /Comment: Child already exists for res /Comment/H0gfmYmK9w
-14:35:26.911762 /Comment: Child already exists for res /Comment/2WlDyteUC8
-14:35:28.719458 WSConnection: Received message {"rid":12970974,"cmd":"get","res":"/Comment"}
-14:35:28.719527 WSConnection: Has subscription for /Comment
-14:35:28.719642 /Comment: Received message: {"rid":12970974,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:28.719673 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:35:28.912849 RestAdapter: Fetched list of objects from source. Length: 5
-14:35:28.912892 /Comment: Received list of objects from adapter. Length: 5
-14:35:28.912907 /Comment: Child already exists for res /Comment/Tu2knBN093
-14:35:28.912919 /Comment: Child already exists for res /Comment/AKOtqPUzwQ
-14:35:28.912930 /Comment: Child already exists for res /Comment/q8I42iRDZZ
-14:35:28.912942 /Comment: Child already exists for res /Comment/H0gfmYmK9w
-14:35:28.912953 /Comment: Child already exists for res /Comment/2WlDyteUC8
-14:35:35.068404 /:  Started running.
-14:35:45.016188 /:  Started running.
-14:35:45.483507 Main: Got new connection.
-14:35:46.613310 WSConnection: Received message {"rid":8051153,"cmd":"get","res":"/Comment"}
-14:35:46.613476 WSConnection: Has no subscription for /Comment
-14:35:46.614624 /: Received message: {"rid":8051153,"res":"/Comment","cmd":"get"}
-14:35:46.614645 /Comment:  Started running.
-14:35:46.614652 /Comment: Received message: {"rid":8051153,"res":"/Comment","cmd":"get"}
-14:35:46.614657 /Comment: Added new listener to subscribers. New size: #1
-14:35:47.880978 RestAdapter: Request to source failed. 401
-14:35:47.881082 /CommentError occured when getting data from adapter. 
-14:35:48.297265 WSConnection: Received message {"rid":32363325,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:49.431184 WSConnection: Received message {"rid":59754640,"cmd":"get","res":"/Comment"}
-14:35:49.431286 WSConnection: Has subscription for /Comment
-14:35:49.431836 /Comment: Received message: {"rid":59754640,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
-14:35:49.622477 RestAdapter: Fetched list of objects from source. Length: 5
-14:35:49.622536 /Comment: Received list of objects from adapter. Length: 5
-14:35:49.622560 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
-14:35:49.622576 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
-14:35:49.622591 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
-14:35:49.622604 /Comment: Created a new child for res: /Comment/H0gfmYmK9w, with subscribers #1
-14:35:49.622615 /Comment: Created a new child for res: /Comment/2WlDyteUC8, with subscribers #1
-14:35:49.622722 /Comment/Tu2knBN093:  Started running.
-14:35:49.622734 /Comment/Tu2knBN093: Hub has initial subscribers #1
-14:35:49.622744 /Comment/AKOtqPUzwQ:  Started running.
-14:35:49.622755 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
-14:35:49.622766 /Comment/q8I42iRDZZ:  Started running.
-14:35:49.622776 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
-14:35:49.622786 /Comment/H0gfmYmK9w:  Started running.
-14:35:49.622796 /Comment/H0gfmYmK9w: Hub has initial subscribers #1
-14:35:49.622806 /Comment/2WlDyteUC8:  Started running.
-14:35:49.622817 /Comment/2WlDyteUC8: Hub has initial subscribers #1
-14:35:50.929040 WSConnection: Received message {"rid":83230201,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
-14:35:51.868100 WSConnection: Received message {"rid":61363724,"cmd":"get","res":"/Comment"}
-14:35:51.868223 WSConnection: Has subscription for /Comment
-14:35:51.868289 /Comment: Received message: {"rid":61363724,"res":"/Comment","cmd":"get"}
-14:35:51.868307 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
-14:35:52.015331 RestAdapter: Request to source failed. 401
-14:35:52.015372 /CommentError occured when getting data from adapter. 
+15:12:45.685031 /:  Started running.
+15:12:47.782940 Main: Got new connection.
+15:13:33.308332 WSConnection: Received message {"rid":9204292,"cmd":"get","res":"/Comment"}
+15:13:33.308422 WSConnection: Has no subscription for /Comment
+15:13:33.308997 /: Received message: {"rid":9204292,"res":"/Comment","cmd":"get"}
+15:13:33.309010 /Comment:  Started running.
+15:13:33.309016 /Comment: Received message: {"rid":9204292,"res":"/Comment","cmd":"get"}
+15:13:33.309019 /Comment: Added new listener to subscribers. New size: #1
+15:13:34.864499 RestAdapter: Request to source failed. 401
+15:13:34.864610 /CommentError occured when getting data from adapter. 
+15:13:39.760497 WSConnection: Received message {"rid":2893049,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:13:41.244136 WSConnection: Received message {"rid":39687787,"cmd":"get","res":"/Comment"}
+15:13:41.244237 WSConnection: Has subscription for /Comment
+15:13:41.244792 /Comment: Received message: {"rid":39687787,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:13:41.440747 RestAdapter: Fetched list of objects from source. Length: 15
+15:13:41.440787 /Comment: Received list of objects from adapter. Length: 15
+15:13:41.440824 /Comment: Created a new child for res: /Comment/vjifw7q1b4, with subscribers #1
+15:13:41.440844 /Comment: Created a new child for res: /Comment/5z9gkgZmSw, with subscribers #1
+15:13:41.440859 /Comment: Created a new child for res: /Comment/KdtCQhE5QW, with subscribers #1
+15:13:41.440875 /Comment: Created a new child for res: /Comment/eUvG5Kr7Jx, with subscribers #1
+15:13:41.440889 /Comment: Created a new child for res: /Comment/Q3EWglFb51, with subscribers #1
+15:13:41.440906 /Comment: Created a new child for res: /Comment/i6OL0aMrIW, with subscribers #1
+15:13:41.440928 /Comment: Created a new child for res: /Comment/buiu1z0f9H, with subscribers #1
+15:13:41.440950 /Comment: Created a new child for res: /Comment/TDHGug26AA, with subscribers #1
+15:13:41.440966 /Comment: Created a new child for res: /Comment/qW8q6Eu27y, with subscribers #1
+15:13:41.440979 /Comment: Created a new child for res: /Comment/ahh7IVdE4V, with subscribers #1
+15:13:41.440995 /Comment: Created a new child for res: /Comment/M5TrMLAez1, with subscribers #1
+15:13:41.441007 /Comment: Created a new child for res: /Comment/9GJDIa6Oqs, with subscribers #1
+15:13:41.441023 /Comment: Created a new child for res: /Comment/9CSUHEVlq6, with subscribers #1
+15:13:41.441043 /Comment: Created a new child for res: /Comment/2GthqxbcUP, with subscribers #1
+15:13:41.441058 /Comment: Created a new child for res: /Comment/RuDuWdu9si, with subscribers #1
+15:13:41.441256 /Comment/vjifw7q1b4:  Started running.
+15:13:41.441274 /Comment/vjifw7q1b4: Hub has initial subscribers #1
+15:13:41.441286 /Comment/5z9gkgZmSw:  Started running.
+15:13:41.441294 /Comment/5z9gkgZmSw: Hub has initial subscribers #1
+15:13:41.441303 /Comment/KdtCQhE5QW:  Started running.
+15:13:41.441315 /Comment/KdtCQhE5QW: Hub has initial subscribers #1
+15:13:41.441328 /Comment/eUvG5Kr7Jx:  Started running.
+15:13:41.441340 /Comment/eUvG5Kr7Jx: Hub has initial subscribers #1
+15:13:41.441352 /Comment/Q3EWglFb51:  Started running.
+15:13:41.441365 /Comment/Q3EWglFb51: Hub has initial subscribers #1
+15:13:41.441378 /Comment/i6OL0aMrIW:  Started running.
+15:13:41.441390 /Comment/i6OL0aMrIW: Hub has initial subscribers #1
+15:13:41.441398 /Comment/buiu1z0f9H:  Started running.
+15:13:41.441406 /Comment/buiu1z0f9H: Hub has initial subscribers #1
+15:13:41.441417 /Comment/TDHGug26AA:  Started running.
+15:13:41.441425 /Comment/TDHGug26AA: Hub has initial subscribers #1
+15:13:41.441433 /Comment/qW8q6Eu27y:  Started running.
+15:13:41.441442 /Comment/qW8q6Eu27y: Hub has initial subscribers #1
+15:13:41.441452 /Comment/ahh7IVdE4V:  Started running.
+15:13:41.441459 /Comment/ahh7IVdE4V: Hub has initial subscribers #1
+15:13:41.441467 /Comment/M5TrMLAez1:  Started running.
+15:13:41.441500 /Comment/M5TrMLAez1: Hub has initial subscribers #1
+15:13:41.441508 /Comment/9GJDIa6Oqs:  Started running.
+15:13:41.441516 /Comment/9GJDIa6Oqs: Hub has initial subscribers #1
+15:13:41.441524 /Comment/9CSUHEVlq6:  Started running.
+15:13:41.441537 /Comment/9CSUHEVlq6: Hub has initial subscribers #1
+15:13:41.441545 /Comment/2GthqxbcUP:  Started running.
+15:13:41.441552 /Comment/2GthqxbcUP: Hub has initial subscribers #1
+15:13:41.441559 /Comment/RuDuWdu9si:  Started running.
+15:13:41.441567 /Comment/RuDuWdu9si: Hub has initial subscribers #1
+15:14:22.624591 /:  Started running.
+15:14:23.273294 Main: Got new connection.
+15:14:24.317412 WSConnection: Received message {"rid":40949721,"cmd":"get","res":"/Comment"}
+15:14:24.317559 WSConnection: Has no subscription for /Comment
+15:14:24.318365 /: Received message: {"rid":40949721,"res":"/Comment","cmd":"get"}
+15:14:24.318381 /Comment:  Started running.
+15:14:24.318388 /Comment: Received message: {"rid":40949721,"res":"/Comment","cmd":"get"}
+15:14:24.318393 /Comment: Added new listener to subscribers. New size: #1
+15:14:25.091666 RestAdapter: Request to source failed. 401
+15:14:25.091830 /CommentError occured when getting data from adapter. 
+15:14:25.469815 WSConnection: Received message {"rid":75327541,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:14:26.749422 WSConnection: Received message {"rid":53247232,"cmd":"get","res":"/Comment"}
+15:14:26.749520 WSConnection: Has subscription for /Comment
+15:14:26.750219 /Comment: Received message: {"rid":53247232,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:14:26.948210 RestAdapter: Fetched list of objects from source. Length: 15
+15:14:26.948258 /Comment: Received list of objects from adapter. Length: 15
+15:14:26.948298 /Comment: Created a new child for res: /Comment/vjifw7q1b4, with subscribers #1
+15:14:26.948325 /Comment: Created a new child for res: /Comment/5z9gkgZmSw, with subscribers #1
+15:14:26.948351 /Comment: Created a new child for res: /Comment/KdtCQhE5QW, with subscribers #1
+15:14:26.948372 /Comment: Created a new child for res: /Comment/eUvG5Kr7Jx, with subscribers #1
+15:14:26.948395 /Comment: Created a new child for res: /Comment/Q3EWglFb51, with subscribers #1
+15:14:26.948419 /Comment: Created a new child for res: /Comment/i6OL0aMrIW, with subscribers #1
+15:14:26.948455 /Comment: Created a new child for res: /Comment/buiu1z0f9H, with subscribers #1
+15:14:26.948479 /Comment: Created a new child for res: /Comment/TDHGug26AA, with subscribers #1
+15:14:26.948500 /Comment: Created a new child for res: /Comment/qW8q6Eu27y, with subscribers #1
+15:14:26.948523 /Comment: Created a new child for res: /Comment/ahh7IVdE4V, with subscribers #1
+15:14:26.948546 /Comment: Created a new child for res: /Comment/M5TrMLAez1, with subscribers #1
+15:14:26.948566 /Comment: Created a new child for res: /Comment/9GJDIa6Oqs, with subscribers #1
+15:14:26.948589 /Comment: Created a new child for res: /Comment/9CSUHEVlq6, with subscribers #1
+15:14:26.948611 /Comment: Created a new child for res: /Comment/2GthqxbcUP, with subscribers #1
+15:14:26.948645 /Comment: Created a new child for res: /Comment/RuDuWdu9si, with subscribers #1
+15:14:26.948934 /Comment/vjifw7q1b4:  Started running.
+15:14:26.948964 /Comment/vjifw7q1b4: Hub has initial subscribers #1
+15:14:26.948982 /Comment/5z9gkgZmSw:  Started running.
+15:14:26.948994 /Comment/5z9gkgZmSw: Hub has initial subscribers #1
+15:14:26.949008 /Comment/KdtCQhE5QW:  Started running.
+15:14:26.949026 /Comment/KdtCQhE5QW: Hub has initial subscribers #1
+15:14:26.949093 /Comment/eUvG5Kr7Jx:  Started running.
+15:14:26.949126 /Comment/eUvG5Kr7Jx: Hub has initial subscribers #1
+15:14:26.949144 /Comment/Q3EWglFb51:  Started running.
+15:14:26.949156 /Comment/Q3EWglFb51: Hub has initial subscribers #1
+15:14:26.949170 /Comment/i6OL0aMrIW:  Started running.
+15:14:26.949211 /Comment/i6OL0aMrIW: Hub has initial subscribers #1
+15:14:26.949223 /Comment/buiu1z0f9H:  Started running.
+15:14:26.949234 /Comment/buiu1z0f9H: Hub has initial subscribers #1
+15:14:26.949246 /Comment/TDHGug26AA:  Started running.
+15:14:26.949257 /Comment/TDHGug26AA: Hub has initial subscribers #1
+15:14:26.949268 /Comment/qW8q6Eu27y:  Started running.
+15:14:26.949279 /Comment/qW8q6Eu27y: Hub has initial subscribers #1
+15:14:26.949290 /Comment/ahh7IVdE4V:  Started running.
+15:14:26.949301 /Comment/ahh7IVdE4V: Hub has initial subscribers #1
+15:14:26.949312 /Comment/M5TrMLAez1:  Started running.
+15:14:26.949324 /Comment/M5TrMLAez1: Hub has initial subscribers #1
+15:14:26.949335 /Comment/9GJDIa6Oqs:  Started running.
+15:14:26.949347 /Comment/9GJDIa6Oqs: Hub has initial subscribers #1
+15:14:26.949358 /Comment/9CSUHEVlq6:  Started running.
+15:14:26.949369 /Comment/9CSUHEVlq6: Hub has initial subscribers #1
+15:14:26.949380 /Comment/2GthqxbcUP:  Started running.
+15:14:26.949391 /Comment/2GthqxbcUP: Hub has initial subscribers #1
+15:14:26.949402 /Comment/RuDuWdu9si:  Started running.
+15:14:26.949413 /Comment/RuDuWdu9si: Hub has initial subscribers #1
+15:14:36.600447 WSConnection: Closing readPump().
+15:14:36.600677 WSConnection: Connection is teared down. Unsubscribing from channels #16
+15:14:36.600806 /Comment/KdtCQhE5QW: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600838 /Comment/ahh7IVdE4V: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600854 /Comment/eUvG5Kr7Jx: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600868 /Comment/Q3EWglFb51: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600881 /Comment/i6OL0aMrIW: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600893 /Comment/TDHGug26AA: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600905 /Comment/9GJDIa6Oqs: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600916 /Comment/9CSUHEVlq6: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600928 /Comment/RuDuWdu9si: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600940 /Comment: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600951 /Comment/vjifw7q1b4: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600962 /Comment/buiu1z0f9H: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600973 /Comment/2GthqxbcUP: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600985 /Comment/5z9gkgZmSw: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.600996 /Comment/qW8q6Eu27y: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.601008 /Comment/M5TrMLAez1: Removed a listener from subscribers. Subscriptions remained: #0
+15:14:36.601033 WSConnection: Closing writePump().
+15:14:39.205061 Main: Got new connection.
+15:14:41.876393 WSConnection: Received message {"rid":54750300,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:14:42.749033 WSConnection: Received message {"rid":57701409,"cmd":"get","res":"/Comment"}
+15:14:42.749096 WSConnection: Has no subscription for /Comment
+15:14:42.749166 /: Received message: {"rid":57701409,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:14:42.749254 /Comment: Received message: {"rid":57701409,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:14:42.749285 /Comment: Added new listener to subscribers. New size: #1
+15:14:42.749306 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+15:14:42.935087 RestAdapter: Fetched list of objects from source. Length: 15
+15:14:42.935153 /Comment: Received list of objects from adapter. Length: 15
+15:14:42.935185 /Comment/vjifw7q1b4: Added new listener to subscribers. New size: #1
+15:14:42.935198 /Comment: Child already exists for res /Comment/vjifw7q1b4
+15:14:42.935210 /Comment/5z9gkgZmSw: Added new listener to subscribers. New size: #1
+15:14:42.935221 /Comment: Child already exists for res /Comment/5z9gkgZmSw
+15:14:42.935233 /Comment/KdtCQhE5QW: Added new listener to subscribers. New size: #1
+15:14:42.935245 /Comment: Child already exists for res /Comment/KdtCQhE5QW
+15:14:42.935256 /Comment/eUvG5Kr7Jx: Added new listener to subscribers. New size: #1
+15:14:42.935268 /Comment: Child already exists for res /Comment/eUvG5Kr7Jx
+15:14:42.935279 /Comment/Q3EWglFb51: Added new listener to subscribers. New size: #1
+15:14:42.935291 /Comment: Child already exists for res /Comment/Q3EWglFb51
+15:14:42.935302 /Comment/i6OL0aMrIW: Added new listener to subscribers. New size: #1
+15:14:42.935314 /Comment: Child already exists for res /Comment/i6OL0aMrIW
+15:14:42.935326 /Comment/buiu1z0f9H: Added new listener to subscribers. New size: #1
+15:14:42.935337 /Comment: Child already exists for res /Comment/buiu1z0f9H
+15:14:42.935349 /Comment/TDHGug26AA: Added new listener to subscribers. New size: #1
+15:14:42.935360 /Comment: Child already exists for res /Comment/TDHGug26AA
+15:14:42.935372 /Comment/qW8q6Eu27y: Added new listener to subscribers. New size: #1
+15:14:42.935383 /Comment: Child already exists for res /Comment/qW8q6Eu27y
+15:14:42.935395 /Comment/ahh7IVdE4V: Added new listener to subscribers. New size: #1
+15:14:42.935406 /Comment: Child already exists for res /Comment/ahh7IVdE4V
+15:14:42.935417 /Comment/M5TrMLAez1: Added new listener to subscribers. New size: #1
+15:14:42.935429 /Comment: Child already exists for res /Comment/M5TrMLAez1
+15:14:42.935440 /Comment/9GJDIa6Oqs: Added new listener to subscribers. New size: #1
+15:14:42.935452 /Comment: Child already exists for res /Comment/9GJDIa6Oqs
+15:14:42.935463 /Comment/9CSUHEVlq6: Added new listener to subscribers. New size: #1
+15:14:42.935475 /Comment: Child already exists for res /Comment/9CSUHEVlq6
+15:14:42.935486 /Comment/2GthqxbcUP: Added new listener to subscribers. New size: #1
+15:14:42.935497 /Comment: Child already exists for res /Comment/2GthqxbcUP
+15:14:42.935509 /Comment/RuDuWdu9si: Added new listener to subscribers. New size: #1
+15:14:42.935527 /Comment: Child already exists for res /Comment/RuDuWdu9si
+15:15:27.892089 /:  Started running.
+15:15:28.659786 Main: Got new connection.
+15:15:30.250083 WSConnection: Received message {"rid":59233558,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:15:31.249277 WSConnection: Received message {"rid":92305012,"cmd":"get","res":"/Comment"}
+15:15:31.249425 /: Received message: {"rid":92305012,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:15:31.250788 /Comment:  Started running.
+15:15:31.250810 /Comment: Received message: {"rid":92305012,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:15:31.250820 /Comment: Added new listener to subscribers. New size: #1
+15:15:31.250828 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+15:15:32.708225 RestAdapter: Fetched list of objects from source. Length: 15
+15:15:32.708340 /Comment: Received list of objects from adapter. Length: 15
+15:15:32.708965 /Comment/vjifw7q1b4:  Started running.
+15:15:32.709012 /Comment/vjifw7q1b4: Hub has initial subscribers #1
+15:15:32.709031 /Comment/5z9gkgZmSw:  Started running.
+15:15:32.709043 /Comment/5z9gkgZmSw: Hub has initial subscribers #1
+15:15:32.709054 /Comment/KdtCQhE5QW:  Started running.
+15:15:32.709066 /Comment/KdtCQhE5QW: Hub has initial subscribers #1
+15:15:32.709095 /Comment/eUvG5Kr7Jx:  Started running.
+15:15:32.709107 /Comment/eUvG5Kr7Jx: Hub has initial subscribers #1
+15:15:32.709118 /Comment/Q3EWglFb51:  Started running.
+15:15:32.709129 /Comment/Q3EWglFb51: Hub has initial subscribers #1
+15:15:32.709141 /Comment/i6OL0aMrIW:  Started running.
+15:15:32.709152 /Comment/i6OL0aMrIW: Hub has initial subscribers #1
+15:15:32.709164 /Comment/buiu1z0f9H:  Started running.
+15:15:32.709175 /Comment/buiu1z0f9H: Hub has initial subscribers #1
+15:15:32.709187 /Comment/TDHGug26AA:  Started running.
+15:15:32.709198 /Comment/TDHGug26AA: Hub has initial subscribers #1
+15:15:32.709210 /Comment/qW8q6Eu27y:  Started running.
+15:15:32.709222 /Comment/qW8q6Eu27y: Hub has initial subscribers #1
+15:15:32.709233 /Comment/ahh7IVdE4V:  Started running.
+15:15:32.709245 /Comment/ahh7IVdE4V: Hub has initial subscribers #1
+15:15:32.709256 /Comment/M5TrMLAez1:  Started running.
+15:15:32.709267 /Comment/M5TrMLAez1: Hub has initial subscribers #1
+15:15:32.709279 /Comment/9GJDIa6Oqs:  Started running.
+15:15:32.709290 /Comment/9GJDIa6Oqs: Hub has initial subscribers #1
+15:15:32.709301 /Comment/9CSUHEVlq6:  Started running.
+15:15:32.709312 /Comment/9CSUHEVlq6: Hub has initial subscribers #1
+15:15:32.709324 /Comment/2GthqxbcUP:  Started running.
+15:15:32.709335 /Comment/2GthqxbcUP: Hub has initial subscribers #1
+15:15:32.709346 /Comment/RuDuWdu9si:  Started running.
+15:15:32.709357 /Comment/RuDuWdu9si: Hub has initial subscribers #1
+15:15:32.709365 /Comment: Created a new child for res: /Comment/5z9gkgZmSw, with subscribers #1
+15:15:32.709370 /Comment: Created a new child for res: /Comment/KdtCQhE5QW, with subscribers #1
+15:15:32.709375 /Comment: Created a new child for res: /Comment/eUvG5Kr7Jx, with subscribers #1
+15:15:32.709379 /Comment: Created a new child for res: /Comment/Q3EWglFb51, with subscribers #1
+15:15:32.709384 /Comment: Created a new child for res: /Comment/i6OL0aMrIW, with subscribers #1
+15:15:32.709388 /Comment: Created a new child for res: /Comment/buiu1z0f9H, with subscribers #1
+15:15:32.709392 /Comment: Created a new child for res: /Comment/TDHGug26AA, with subscribers #1
+15:15:32.709397 /Comment: Created a new child for res: /Comment/qW8q6Eu27y, with subscribers #1
+15:15:32.709402 /Comment: Created a new child for res: /Comment/vjifw7q1b4, with subscribers #1
+15:15:32.709409 /Comment: Created a new child for res: /Comment/ahh7IVdE4V, with subscribers #1
+15:15:32.709414 /Comment: Created a new child for res: /Comment/M5TrMLAez1, with subscribers #1
+15:15:32.709418 /Comment: Created a new child for res: /Comment/9GJDIa6Oqs, with subscribers #1
+15:15:32.709423 /Comment: Created a new child for res: /Comment/9CSUHEVlq6, with subscribers #1
+15:15:32.709427 /Comment: Created a new child for res: /Comment/2GthqxbcUP, with subscribers #1
+15:15:32.709431 /Comment: Created a new child for res: /Comment/RuDuWdu9si, with subscribers #1
+15:15:53.294252 /:  Started running.
+15:15:54.527097 Main: Got new connection.
+15:17:43.073285 /:  Started running.
+15:17:43.930836 Main: Got new connection.
+15:18:40.043809 /:  Started running.
+15:18:40.995722 Main: Got new connection.
+15:19:25.231469 /:  Started running.
+15:19:26.278278 Main: Got new connection.
+15:19:42.221062 /:  Started running.
+15:19:43.454045 Main: Got new connection.
+15:19:49.869872 /:  Started running.
+15:20:34.612842 Main: Got new connection.
+15:20:39.080278 /:  Started running.
+15:20:40.767811 Main: Got new connection.
+15:22:37.291309 /:  Started running.
+15:22:38.843400 Main: Got new connection.
+15:22:40.094604 WSConnection: Closing readPump().
+15:22:40.094729 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:22:40.095285 WSConnection: Closing writePump().
+15:22:40.188432 Main: Got new connection.
+15:22:42.030461 WSConnection: Closing readPump().
+15:22:42.030573 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:22:42.031096 WSConnection: Closing writePump().
+15:22:42.093026 Main: Got new connection.
+15:22:46.654948 WSConnection: Closing readPump().
+15:22:46.655246 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:22:46.655666 WSConnection: Closing writePump().
+15:22:46.942399 Main: Got new connection.
+15:22:47.355292 WSConnection: Closing readPump().
+15:22:47.355421 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:22:47.355941 WSConnection: Closing writePump().
+15:22:47.655477 Main: Got new connection.
+15:22:48.009046 WSConnection: Closing readPump().
+15:22:48.009170 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:22:48.009724 WSConnection: Closing writePump().
+15:22:48.222746 Main: Got new connection.
+15:23:17.765063 /:  Started running.
+15:23:19.156751 Main: Got new connection.
+15:23:20.320736 WSConnection: Closing readPump().
+15:23:20.320832 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:23:20.321412 WSConnection: Closing writePump().
+15:23:20.601822 Main: Got new connection.
+15:23:21.144948 WSConnection: Closing readPump().
+15:23:21.145084 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:23:21.145666 WSConnection: Closing writePump().
+15:23:21.338039 Main: Got new connection.
+15:23:21.840955 WSConnection: Closing readPump().
+15:23:21.841124 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:23:21.841599 WSConnection: Closing writePump().
+15:23:22.043878 Main: Got new connection.
+15:23:22.515802 WSConnection: Closing readPump().
+15:23:22.515960 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:23:22.516453 WSConnection: Closing writePump().
+15:23:22.715674 Main: Got new connection.
+15:23:23.776633 WSConnection: Closing readPump().
+15:23:23.776763 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:23:23.777323 WSConnection: Closing writePump().
+15:23:23.993792 Main: Got new connection.
+15:23:24.767434 WSConnection: Closing readPump().
+15:23:24.767551 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:23:24.768096 WSConnection: Closing writePump().
+15:23:24.980399 Main: Got new connection.
+15:23:26.262716 WSConnection: Received message {"rid":2848085,"cmd":"get","res":"/Comment/","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:23:26.262817 WSConnection: Has no subscription for /Comment
+15:23:26.263396 /: Received message: {"rid":2848085,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:23:26.263412 /Comment:  Started running.
+15:23:26.263418 /Comment: Received message: {"rid":2848085,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:23:26.263424 /Comment: Added new listener to subscribers. New size: #1
+15:23:27.688622 RestAdapter: Fetched list of objects from source. Length: 15
+15:23:27.688710 /Comment: Received list of objects from adapter. Length: 15
+15:23:27.689554 /Comment: Created a new child for res: /Comment/vjifw7q1b4, with subscribers #1
+15:23:27.689571 /Comment: Created a new child for res: /Comment/5z9gkgZmSw, with subscribers #1
+15:23:27.689576 /Comment: Created a new child for res: /Comment/KdtCQhE5QW, with subscribers #1
+15:23:27.689581 /Comment: Created a new child for res: /Comment/eUvG5Kr7Jx, with subscribers #1
+15:23:27.689586 /Comment: Created a new child for res: /Comment/Q3EWglFb51, with subscribers #1
+15:23:27.689591 /Comment: Created a new child for res: /Comment/i6OL0aMrIW, with subscribers #1
+15:23:27.689595 /Comment: Created a new child for res: /Comment/buiu1z0f9H, with subscribers #1
+15:23:27.689600 /Comment: Created a new child for res: /Comment/TDHGug26AA, with subscribers #1
+15:23:27.689621 /Comment: Created a new child for res: /Comment/qW8q6Eu27y, with subscribers #1
+15:23:27.689632 /Comment: Created a new child for res: /Comment/ahh7IVdE4V, with subscribers #1
+15:23:27.689637 /Comment: Created a new child for res: /Comment/M5TrMLAez1, with subscribers #1
+15:23:27.689663 /Comment: Created a new child for res: /Comment/9GJDIa6Oqs, with subscribers #1
+15:23:27.689669 /Comment: Created a new child for res: /Comment/9CSUHEVlq6, with subscribers #1
+15:23:27.689674 /Comment: Created a new child for res: /Comment/2GthqxbcUP, with subscribers #1
+15:23:27.689681 /Comment: Created a new child for res: /Comment/RuDuWdu9si, with subscribers #1
+15:23:27.689688 /Comment/vjifw7q1b4:  Started running.
+15:23:27.689692 /Comment/vjifw7q1b4: Hub has initial subscribers #1
+15:23:27.689697 /Comment/5z9gkgZmSw:  Started running.
+15:23:27.689701 /Comment/5z9gkgZmSw: Hub has initial subscribers #1
+15:23:27.689706 /Comment/KdtCQhE5QW:  Started running.
+15:23:27.689713 /Comment/KdtCQhE5QW: Hub has initial subscribers #1
+15:23:27.689719 /Comment/eUvG5Kr7Jx:  Started running.
+15:23:27.689724 /Comment/eUvG5Kr7Jx: Hub has initial subscribers #1
+15:23:27.689729 /Comment/Q3EWglFb51:  Started running.
+15:23:27.689733 /Comment/Q3EWglFb51: Hub has initial subscribers #1
+15:23:27.689737 /Comment/i6OL0aMrIW:  Started running.
+15:23:27.689744 /Comment/i6OL0aMrIW: Hub has initial subscribers #1
+15:23:27.689751 /Comment/buiu1z0f9H:  Started running.
+15:23:27.689755 /Comment/buiu1z0f9H: Hub has initial subscribers #1
+15:23:27.689760 /Comment/TDHGug26AA:  Started running.
+15:23:27.689764 /Comment/TDHGug26AA: Hub has initial subscribers #1
+15:23:27.689769 /Comment/qW8q6Eu27y:  Started running.
+15:23:27.689774 /Comment/qW8q6Eu27y: Hub has initial subscribers #1
+15:23:27.689781 /Comment/ahh7IVdE4V:  Started running.
+15:23:27.689787 /Comment/ahh7IVdE4V: Hub has initial subscribers #1
+15:23:27.689791 /Comment/M5TrMLAez1:  Started running.
+15:23:27.689796 /Comment/M5TrMLAez1: Hub has initial subscribers #1
+15:23:27.689801 /Comment/9GJDIa6Oqs:  Started running.
+15:23:27.689805 /Comment/9GJDIa6Oqs: Hub has initial subscribers #1
+15:23:27.689812 /Comment/9CSUHEVlq6:  Started running.
+15:23:27.689819 /Comment/9CSUHEVlq6: Hub has initial subscribers #1
+15:23:27.689823 /Comment/2GthqxbcUP:  Started running.
+15:23:27.689828 /Comment/2GthqxbcUP: Hub has initial subscribers #1
+15:23:27.689832 /Comment/RuDuWdu9si:  Started running.
+15:23:36.746672 WSConnection: Received message {"rid":39253258,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
+15:23:41.471607 WSConnection: Closing readPump().
+15:23:41.471712 WSConnection: Connection is teared down. Unsubscribing from channels #16
+15:23:41.471810 /Comment: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471826 /Comment/ahh7IVdE4V: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471835 /Comment/9GJDIa6Oqs: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471843 /Comment/vjifw7q1b4: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471854 /Comment/buiu1z0f9H: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471861 /Comment/KdtCQhE5QW: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471869 /Comment/Q3EWglFb51: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471879 /Comment/i6OL0aMrIW: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471887 /Comment/TDHGug26AA: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471895 /Comment/qW8q6Eu27y: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471903 /Comment/5z9gkgZmSw: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471913 /Comment/eUvG5Kr7Jx: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471921 /Comment/M5TrMLAez1: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471929 /Comment/9CSUHEVlq6: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471939 /Comment/2GthqxbcUP: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471947 /Comment/RuDuWdu9si: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:41.471981 WSConnection: Closing writePump().
+15:23:41.790664 Main: Got new connection.
+15:23:42.905534 WSConnection: Received message {"rid":37600996,"cmd":"get","res":"/Comment/","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:23:42.905586 WSConnection: Has no subscription for /Comment
+15:23:42.905643 /: Received message: {"rid":37600996,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:23:42.905731 /Comment: Received message: {"rid":37600996,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:23:42.905757 /Comment: Added new listener to subscribers. New size: #1
+15:23:42.905773 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+15:23:43.086589 RestAdapter: Fetched list of objects from source. Length: 15
+15:23:43.086632 /Comment: Received list of objects from adapter. Length: 15
+15:23:43.086663 /Comment/vjifw7q1b4: Added new listener to subscribers. New size: #1
+15:23:43.086676 /Comment: Child already exists for res /Comment/vjifw7q1b4
+15:23:43.086687 /Comment/5z9gkgZmSw: Added new listener to subscribers. New size: #1
+15:23:43.086699 /Comment: Child already exists for res /Comment/5z9gkgZmSw
+15:23:43.086710 /Comment/KdtCQhE5QW: Added new listener to subscribers. New size: #1
+15:23:43.086722 /Comment: Child already exists for res /Comment/KdtCQhE5QW
+15:23:43.086734 /Comment/eUvG5Kr7Jx: Added new listener to subscribers. New size: #1
+15:23:43.086745 /Comment: Child already exists for res /Comment/eUvG5Kr7Jx
+15:23:43.086766 /Comment/Q3EWglFb51: Added new listener to subscribers. New size: #1
+15:23:43.086779 /Comment: Child already exists for res /Comment/Q3EWglFb51
+15:23:43.086791 /Comment/i6OL0aMrIW: Added new listener to subscribers. New size: #1
+15:23:43.086803 /Comment: Child already exists for res /Comment/i6OL0aMrIW
+15:23:43.086815 /Comment/buiu1z0f9H: Added new listener to subscribers. New size: #1
+15:23:43.086826 /Comment: Child already exists for res /Comment/buiu1z0f9H
+15:23:43.086838 /Comment/TDHGug26AA: Added new listener to subscribers. New size: #1
+15:23:43.086849 /Comment: Child already exists for res /Comment/TDHGug26AA
+15:23:43.086861 /Comment/qW8q6Eu27y: Added new listener to subscribers. New size: #1
+15:23:43.086872 /Comment: Child already exists for res /Comment/qW8q6Eu27y
+15:23:43.086883 /Comment/ahh7IVdE4V: Added new listener to subscribers. New size: #1
+15:23:43.086895 /Comment: Child already exists for res /Comment/ahh7IVdE4V
+15:23:43.086906 /Comment/M5TrMLAez1: Added new listener to subscribers. New size: #1
+15:23:43.086952 /Comment: Child already exists for res /Comment/M5TrMLAez1
+15:23:43.086971 /Comment/9GJDIa6Oqs: Added new listener to subscribers. New size: #1
+15:23:43.086983 /Comment: Child already exists for res /Comment/9GJDIa6Oqs
+15:23:43.087001 /Comment/9CSUHEVlq6: Added new listener to subscribers. New size: #1
+15:23:43.087013 /Comment: Child already exists for res /Comment/9CSUHEVlq6
+15:23:43.087030 /Comment/2GthqxbcUP: Added new listener to subscribers. New size: #1
+15:23:43.087043 /Comment: Child already exists for res /Comment/2GthqxbcUP
+15:23:43.087060 /Comment/RuDuWdu9si: Added new listener to subscribers. New size: #1
+15:23:43.087075 /Comment: Child already exists for res /Comment/RuDuWdu9si
+15:23:50.336426 WSConnection: Closing readPump().
+15:23:50.336495 WSConnection: Connection is teared down. Unsubscribing from channels #16
+15:23:50.336579 /Comment/RuDuWdu9si: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336590 /Comment/ahh7IVdE4V: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336598 /Comment/KdtCQhE5QW: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336605 /Comment/eUvG5Kr7Jx: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336629 /Comment/Q3EWglFb51: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336636 /Comment/buiu1z0f9H: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336643 /Comment/M5TrMLAez1: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336651 /Comment/9CSUHEVlq6: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336658 /Comment/2GthqxbcUP: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336665 /Comment: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336673 /Comment/i6OL0aMrIW: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336681 /Comment/TDHGug26AA: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336688 /Comment/vjifw7q1b4: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336695 /Comment/qW8q6Eu27y: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336702 /Comment/9GJDIa6Oqs: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336709 /Comment/5z9gkgZmSw: Removed a listener from subscribers. Subscriptions remained: #0
+15:23:50.336726 WSConnection: Closing writePump().
+15:23:50.637287 Main: Got new connection.
+15:24:10.460649 /:  Started running.
+15:24:11.536371 Main: Got new connection.
+15:24:12.489702 WSConnection: Closing readPump().
+15:24:12.489825 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:24:12.490395 WSConnection: Closing writePump().
+15:24:12.754399 Main: Got new connection.
+15:24:13.327136 WSConnection: Closing readPump().
+15:24:13.327326 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:24:13.327891 WSConnection: Closing writePump().
+15:24:13.534530 Main: Got new connection.
+15:24:27.325427 /:  Started running.
+15:24:27.944011 Main: Got new connection.
+15:24:28.568724 WSConnection: Closing readPump().
+15:24:28.568982 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:24:28.569553 WSConnection: Closing writePump().
+15:24:28.835251 Main: Got new connection.
+15:24:29.161391 WSConnection: Closing readPump().
+15:24:29.161510 WSConnection: Connection is teared down. Unsubscribing from channels #0
+15:24:29.162096 WSConnection: Closing writePump().
+15:24:29.365099 Main: Got new connection.
+15:25:23.105109 /:  Started running.
+15:25:24.341718 Main: Got new connection.
+15:25:31.048537 /:  Started running.
+15:25:33.330641 Main: Got new connection.
+15:26:27.899350 /:  Started running.
+15:26:29.942480 Main: Got new connection.
+15:26:32.758488 WSConnection: Received message {"rid":34004911,"cmd":"get","res":"/Comment"}
+15:26:32.758662 WSConnection: Has no subscription for /Comment
+15:26:32.759430 /: Received message: {"rid":34004911,"res":"/Comment","cmd":"get"}
+15:26:32.759448 /Comment:  Started running.
+15:26:32.759454 /Comment: Received message: {"rid":34004911,"res":"/Comment","cmd":"get"}
+15:26:32.759460 /Comment: Added new listener to subscribers. New size: #1
+15:26:33.914741 RestAdapter: Request to source failed. 401
+15:26:33.914879 /CommentError occured when getting data from adapter. 
+15:26:36.798936 WSConnection: Received message {"rid":70625626,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:26:39.084805 WSConnection: Received message {"rid":45682071,"cmd":"get","res":"/Comment"}
+15:26:39.084983 /Comment: Received message: {"rid":45682071,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+15:26:39.085613 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+15:26:39.255976 RestAdapter: Fetched list of objects from source. Length: 15
+15:26:39.256028 /Comment: Received list of objects from adapter. Length: 15
+15:26:39.256070 /Comment: Created a new child for res: /Comment/vjifw7q1b4, with subscribers #1
+15:26:39.256126 /Comment: Created a new child for res: /Comment/5z9gkgZmSw, with subscribers #1
+15:26:39.256149 /Comment: Created a new child for res: /Comment/KdtCQhE5QW, with subscribers #1
+15:26:39.256172 /Comment: Created a new child for res: /Comment/eUvG5Kr7Jx, with subscribers #1
+15:26:39.256196 /Comment: Created a new child for res: /Comment/Q3EWglFb51, with subscribers #1
+15:26:39.256216 /Comment: Created a new child for res: /Comment/i6OL0aMrIW, with subscribers #1
+15:26:39.256265 /Comment: Created a new child for res: /Comment/buiu1z0f9H, with subscribers #1
+15:26:39.256288 /Comment: Created a new child for res: /Comment/TDHGug26AA, with subscribers #1
+15:26:39.256323 /Comment: Created a new child for res: /Comment/qW8q6Eu27y, with subscribers #1
+15:26:39.256346 /Comment: Created a new child for res: /Comment/ahh7IVdE4V, with subscribers #1
+15:26:39.256369 /Comment: Created a new child for res: /Comment/M5TrMLAez1, with subscribers #1
+15:26:39.256389 /Comment: Created a new child for res: /Comment/9GJDIa6Oqs, with subscribers #1
+15:26:39.256412 /Comment: Created a new child for res: /Comment/9CSUHEVlq6, with subscribers #1
+15:26:39.256435 /Comment: Created a new child for res: /Comment/2GthqxbcUP, with subscribers #1
+15:26:39.256454 /Comment: Created a new child for res: /Comment/RuDuWdu9si, with subscribers #1
+15:26:39.256778 /Comment/vjifw7q1b4:  Started running.
+15:26:39.256801 /Comment/vjifw7q1b4: Hub has initial subscribers #1
+15:26:39.256819 /Comment/5z9gkgZmSw:  Started running.
+15:26:39.256838 /Comment/5z9gkgZmSw: Hub has initial subscribers #1
+15:26:39.256850 /Comment/KdtCQhE5QW:  Started running.
+15:26:39.256882 /Comment/KdtCQhE5QW: Hub has initial subscribers #1
+15:26:39.256923 /Comment/eUvG5Kr7Jx:  Started running.
+15:26:39.256938 /Comment/eUvG5Kr7Jx: Hub has initial subscribers #1
+15:26:39.256950 /Comment/Q3EWglFb51:  Started running.
+15:26:39.256961 /Comment/Q3EWglFb51: Hub has initial subscribers #1
+15:26:39.256973 /Comment/i6OL0aMrIW:  Started running.
+15:26:39.256984 /Comment/i6OL0aMrIW: Hub has initial subscribers #1
+15:26:39.256996 /Comment/buiu1z0f9H:  Started running.
+15:26:39.257007 /Comment/buiu1z0f9H: Hub has initial subscribers #1
+15:26:39.257019 /Comment/TDHGug26AA:  Started running.
+15:26:39.257030 /Comment/TDHGug26AA: Hub has initial subscribers #1
+15:26:39.257041 /Comment/qW8q6Eu27y:  Started running.
+15:26:39.257053 /Comment/qW8q6Eu27y: Hub has initial subscribers #1
+15:26:39.257064 /Comment/ahh7IVdE4V:  Started running.
+15:26:39.257075 /Comment/ahh7IVdE4V: Hub has initial subscribers #1
+15:26:39.257086 /Comment/M5TrMLAez1:  Started running.
+15:26:39.257098 /Comment/M5TrMLAez1: Hub has initial subscribers #1
+15:26:39.257109 /Comment/9GJDIa6Oqs:  Started running.
+15:26:39.257121 /Comment/9GJDIa6Oqs: Hub has initial subscribers #1
+15:26:39.257132 /Comment/9CSUHEVlq6:  Started running.
+15:26:39.257143 /Comment/9CSUHEVlq6: Hub has initial subscribers #1
+15:26:39.257154 /Comment/2GthqxbcUP:  Started running.
+15:26:39.257165 /Comment/2GthqxbcUP: Hub has initial subscribers #1
+15:26:39.257177 /Comment/RuDuWdu9si:  Started running.
+15:26:39.257188 /Comment/RuDuWdu9si: Hub has initial subscribers #1
+15:26:43.169946 WSConnection: Received message {"rid":62541450,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"","X-Parse-REST-API-Key":""}}
+15:26:44.618675 WSConnection: Received message {"rid":28062058,"cmd":"get","res":"/Comment"}
+15:26:44.618728 WSConnection: Has subscription for /Comment
+15:26:44.618796 /Comment: Received message: {"rid":28062058,"res":"/Comment","cmd":"get"}
+15:26:44.618813 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+15:26:44.768199 RestAdapter: Request to source failed. 401
+15:26:44.768245 /CommentError occured when getting data from adapter. 

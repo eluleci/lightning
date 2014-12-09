@@ -210,7 +210,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 	}
 
 	// sending result of GET message
-	requestWrapper.Listener <- answer
+	h.checkAndSend(requestWrapper.Listener, answer)
 }
 
 func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
@@ -246,7 +246,7 @@ func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
 	}
 
 	// sending result of GET message
-	requestWrapper.Listener <- answer
+	h.checkAndSend(requestWrapper.Listener, answer)
 }
 
 func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
@@ -290,7 +290,7 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 	}
 
 	// sending result of GET message
-	requestWrapper.Listener <- answer
+	h.checkAndSend(requestWrapper.Listener, answer)
 }
 
 func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
@@ -324,7 +324,7 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 	}
 
 	// sending result of DELETE message
-	requestWrapper.Listener <- answer
+	h.checkAndSend(requestWrapper.Listener, answer)
 }
 
 func (h *Hub) initialiseModel(requestWrapper message.RequestWrapper) {
