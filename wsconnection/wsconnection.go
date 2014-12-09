@@ -4,13 +4,13 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"time"
-	"fmt"
 	"encoding/json"
 	"strings"
 	"regexp"
 	"github.com/eluleci/lightning/roothub"
 	"github.com/eluleci/lightning/message"
 	"github.com/eluleci/lightning/util"
+	"strconv"
 )
 
 const (
@@ -51,7 +51,7 @@ func CreateConnection(w http.ResponseWriter, r *http.Request) (c Connection) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("err: ", err)
+		util.Log("error", "WSConnection: Error while upgrading to ws connection.")
 		return
 	}
 	c.ws = ws
@@ -60,7 +60,7 @@ func CreateConnection(w http.ResponseWriter, r *http.Request) (c Connection) {
 
 func (c *Connection) Run() {
 	defer func() {
-		fmt.Println("Connection is teared down. Unsubscribing from channels #", len(c.subscriptions))
+		util.Log("debug", "WSConnection: Connection is teared down. Unsubscribing from channels #"+strconv.Itoa(len(c.subscriptions)))
 		// un-registering from all hubs
 		for _, subscription := range c.subscriptions {
 			//			fmt.Println("Unsubscribing from ", subscription.res)
@@ -104,7 +104,7 @@ func (c *Connection) readPump() {
 				//				fmt.Println("Recovered in connection. Teardown already closed", r)
 			}
 		}()
-		fmt.Println("Closing readPump() of connection.")
+		util.Log("debug", "WSConnection: Closing readPump().")
 		c.tearDown <- true
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
@@ -115,13 +115,13 @@ func (c *Connection) readPump() {
 		if err != nil {
 			break
 		}
-		fmt.Println("Connection received message ", string(m))
+		util.Log("debug", "WSConnection: Received message "+string(m))
 
 		var msg message.Message
 
 		err = json.Unmarshal([]byte(string(m[:])), &msg)
 		if err != nil {
-			fmt.Println("Error while parsing message: ", err)
+			util.Log("error", "WSConnection: Error while parsing message.")
 			answer := util.CreateErrorMessage(msg.Rid, 400, "Error while parsing message")
 			c.send <- answer    // sending the answer back to the connection
 		} else {
@@ -136,7 +136,7 @@ func (c *Connection) readPump() {
 			// checking that the resource path is valid path
 			matched, err := regexp.MatchString("^(\\/{1}[0-9a-zA-Z]+)+$", msg.Res)
 			if !matched || err != nil {
-				fmt.Println("Error while validating resource path")
+				util.Log("error", "WSConnection: Error while validating resource path.")
 				answer := util.CreateErrorMessage(msg.Rid, 400, "Given resource path is not a valid path.")
 				c.send <- answer    // sending the answer back to the connection
 			} else {
@@ -151,18 +151,18 @@ func (c *Connection) readPump() {
 				var inbox chan message.RequestWrapper
 				subscription, exists := c.subscriptions[msg.Res]
 				if exists {
-					fmt.Println("Connection has subscription for " + msg.Res)
+					util.Log("debug", "WSConnection: Has subscription for "+msg.Res)
 					inbox = subscription.InboxChannel
 				} else {
 					for k, v := range c.subscriptions {
 						if strings.Index(msg.Res, k) > -1 {
-							fmt.Println("Connection has subscription for a parent of " + msg.Res)
+							util.Log("debug", "WSConnection: Has subscription for a parent of "+msg.Res)
 							inbox = v.InboxChannel
 							break
 						}
 					}
 					if inbox == nil {
-						fmt.Println("Connection has no subscription for " + msg.Res)
+						util.Log("debug", "WSConnection: Has no subscription for "+msg.Res)
 						inbox = roothub.RootHub.Inbox
 					}
 				}
@@ -190,7 +190,7 @@ func (c *Connection) writePump() {
 					//					fmt.Println("Recovered in connection. Teardown already closed", r)
 				}
 			}()
-			fmt.Println("Closing writePump() of connection.")
+			util.Log("debug", "WSConnection: Closing writePump().")
 			c.tearDown <- true
 		}()
 		ticker.Stop()

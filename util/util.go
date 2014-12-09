@@ -3,6 +3,9 @@ package util
 import (
 	"math/rand"
 	"github.com/eluleci/lightning/message"
+	"fmt"
+	"os"
+	"log"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -20,4 +23,20 @@ func CreateErrorMessage(rid, status int, messageContent string) (m message.Messa
 	m.Rid = rid
 	m.Status = status
 	return
+}
+
+var logFile *os.File
+
+func Log(level, message string) {
+
+	var err error
+	logFile, err = os.OpenFile("log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Println("error opening file: %v", err)
+	}
+	log.SetOutput(logFile)
+	log.SetFlags(log.Lmicroseconds)
+	defer logFile.Close()
+
+	log.Println(message)
 }

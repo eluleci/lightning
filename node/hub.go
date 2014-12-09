@@ -1,8 +1,9 @@
 package node
 
 import (
-	"fmt"
 	"strings"
+	"encoding/json"
+	"strconv"
 	"github.com/eluleci/lightning/message"
 	"github.com/eluleci/lightning/adapter"
 	"github.com/eluleci/lightning/util"
@@ -23,18 +24,18 @@ type Hub struct {
 
 func (h *Hub) Run() {
 
-	fmt.Println(h.res + ":  Started running.")
+	util.Log("debug", h.res+":  Started running.")
 
 	if len(h.subscribers) > 0 {
-		fmt.Println(h.res + ": Hub has initial subscribers.")
-		h.printSubscribers()
+		util.Log("debug", h.res+": Hub has initial subscribers #"+strconv.Itoa(len(h.subscribers)))
 	}
 
 	for {
 		select {
 		case requestWrapper := <-h.Inbox:
-			fmt.Println(h.res+": Received message: ", requestWrapper.Message)
-			fmt.Println(h.res+" ?? ", requestWrapper.Res)
+
+			messageString, _ := json.Marshal(requestWrapper.Message)
+			util.Log("debug", h.res+": Received message: "+string(messageString))
 
 			if requestWrapper.Res == h.res {
 				// if the resource of the message is this hub's resource
@@ -108,37 +109,6 @@ func (h *Hub) Run() {
 					}
 				}
 
-				/*if h.model.model["res"] != nil {
-					// if model exists, forward message to model handler
-					go func() {
-						h.model.handle <- requestWrapper
-					}()
-
-				} else if (requestWrapper.Message.Command == "post" && requestWrapper.Message.Body["id"] != nil) {
-					// if model doesn't exists, and if there is id in body, it means this is model initialisation message
-					h.model = createModelHolder(h.res, h.broadcast)
-					go h.model.run()
-					h.model.handle <- requestWrapper
-
-				} else if requestWrapper.Message.Command == "post" && requestWrapper.Message.Body["id"] == nil {
-					// if model doesn't exists, if command is post, and if there is no id inside the message, it means
-					// that this is a message for object creation under this domain
-					h.createNewChild(requestWrapper)
-					continue    // calling continue not to subscribe the request at the end of the if statement
-
-				} else if requestWrapper.Message.Command == "get" && len(h.children) > 0 {
-					// if model doesn't exists, if command is get, and if there are children hubs, it means that this is
-					// a domain hub and this message is a get message of the list
-					fmt.Println(h.res + ": Returning list of models.")
-					h.returnChildListToRequest(requestWrapper)
-				} else {
-					// if model doesn't exists, and if there is no children hub, it means that the resource doesn't exists
-					requestWrapper.Listener <- util.CreateErrorMessage(requestWrapper.Message.Rid, 404, "Not found.")
-					continue    // calling continue not to subscribe the request at the end of the if statement
-				}*/
-
-
-
 			} else {
 				// if the resource belongs to a children hub
 				_, childRes := getChildRes(requestWrapper.Res, h.res)
@@ -155,13 +125,13 @@ func (h *Hub) Run() {
 			}
 
 		case requestWrapper := <-h.broadcast:
-			fmt.Println(h.res+": Broadcasting message. Number of subscribers: #", len(h.subscribers))
+			util.Log("debug", h.res+": Broadcasting message. Number of subscribers: #"+strconv.Itoa(len(h.subscribers)))
 
 			// broadcasting a message to all connections. only the owner of the request doesn't receive this broadcast
 			// because we send 'response message' to the request owner
 		for listenerChannel, _ := range h.subscribers {
 			if listenerChannel != requestWrapper.Listener {
-				go checkAndSend(listenerChannel, requestWrapper.Message)
+				go h.checkAndSend(listenerChannel, requestWrapper.Message)
 			}
 		}
 
@@ -170,10 +140,9 @@ func (h *Hub) Run() {
 			// remove listener from subscribers if it is in subscribers list
 			if _, exists := h.subscribers[requestWrapper.Listener]; exists {
 				delete(h.subscribers, requestWrapper.Listener)
-				fmt.Println(h.res+": Removed a listener from subscribers. Subscriptions remained: #", len(h.subscribers))
+				util.Log("debug", h.res+": Removed a listener from subscribers. Subscriptions remained: #"+strconv.Itoa(len(h.subscribers)))
 			} else {
-				fmt.Println(h.res + ": Listener doesn't exists in subscriber list:")
-				h.printSubscribers()
+				util.Log("debug", h.res+": The channel to remove doesn't exists in subscriber list.")
 			}
 		}
 	}
@@ -188,12 +157,13 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 
 	object, objectArray, adapterErr := h.adapter.ExecuteGetRequest(requestWrapper)
 	if adapterErr != nil {
-		fmt.Printf("Error occured when getting data from adapter. ", adapterErr)
+		util.Log("error", h.res+"Error occured when getting data from adapter. ")
 		// TODO get more specific error from the adapter
 		answer.Status = 404
 
 	} else if object != nil {
 		// if object is not null, it means that this is the object that this hub is responsible of
+		util.Log("debug", h.res+": Received one object from adapter with id "+object[config.DefaultConfig.ObjectIdentifier].(string))
 
 		// adding a new field to object body for subscription purposes
 		object["::res"] = h.res
@@ -211,6 +181,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 		// if object array is not null, it means that this hub is responsible of the collections of
 		// of these objects. so we create a new hub for each object in the list and return the
 		// result to listener
+		util.Log("debug", h.res+": Received list of objects from adapter. Length: "+strconv.Itoa(len(objectArray)))
 
 		// creating a new child hub and  adding it to children hub list
 		for _, objectData := range (objectArray) {
@@ -219,12 +190,14 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 			childRes := h.res + "/" + objectData[config.DefaultConfig.ObjectIdentifier].(string)
 			objectData["::res"] = childRes
 
-			if _, exists := h.children[childRes]; !exists {
+			if existingChild, exists := h.children[childRes]; !exists {
 				childHub := h.generateChild(childRes, objectData)
 				h.children[childHub.res] = childHub
 			} else {
+				// adding the listener to childs subscribers
+				existingChild.addSubscription(requestWrapper)
 				// TODO decide to give the fresh data to child hub or not
-				fmt.Println("Child already exists")
+				util.Log("debug", h.res+": Child already exists for res "+childRes)
 			}
 		}
 
@@ -232,6 +205,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 		answer.Body = make(map[string]interface{})
 		answer.Body["::list"] = objectArray
 	} else {
+		util.Log("debug", h.res+": Received object or list from adapter failed.")
 		answer.Status = 404
 	}
 
@@ -247,7 +221,7 @@ func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
 
 	response, adapterErr := h.adapter.ExecutePutRequest(requestWrapper)
 	if adapterErr != nil {
-		fmt.Printf("Error occured when putting data with adapter. ", adapterErr)
+		util.Log("error", "Error occured when putting data with adapter. ")
 		// TODO get more specific error from the adapter
 		answer.Status = 404
 
@@ -281,7 +255,7 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 
 	response, adapterErr := h.adapter.ExecutePostRequest(requestWrapper)
 	if adapterErr != nil {
-		fmt.Printf("Error occured when posting data with adapter. ", adapterErr)
+		util.Log("error", "Error occured when posting data with adapter. ")
 		// TODO get more specific error from the adapter
 		answer.Status = 404
 
@@ -325,7 +299,7 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 
 	_, adapterErr := h.adapter.ExecuteDeleteRequest(requestWrapper)
 	if adapterErr != nil {
-		fmt.Printf("Error occured when posting data with adapter. ", adapterErr)
+		util.Log("error", "Error occured when posting data with adapter. ")
 		// TODO get more specific error from the adapter
 		answer.Status = 404
 	} else {
@@ -345,8 +319,6 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 		deleteRequest.Message.Body["::res"] = h.res
 		deleteRequest.Listener = requestWrapper.Listener       // for not sending push message from parent to connection
 		h.parentInbox <- deleteRequest
-
-		fmt.Println("pr: ", deleteRequest.Message.Res)
 	}
 
 	// sending result of DELETE message
@@ -376,14 +348,14 @@ func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 		}
 		requestWrapper.Subscribe <- subscription
 		h.subscribers[requestWrapper.Listener] = requestWrapper.Subscribe
-		fmt.Println(h.res+": Added new listener to subscribers. New size: #", len(h.subscribers))
+		util.Log("debug", h.res+": Added new listener to subscribers. New size: #"+strconv.Itoa(len(h.subscribers)))
 	}
 }
 
-func checkAndSend(c chan message.Message, m message.Message) {
+func (h *Hub) checkAndSend(c chan message.Message, m message.Message) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("TODO: remove the channel from subscribers", r)
+			util.Log("debug", h.res+"Trying to send on closed channel. Removing channel from subscribers.")
 			//			h.unsubscribe <- c
 		}
 	}()
@@ -401,18 +373,20 @@ func (h *Hub) generateChild(objectRes string, objectData map[string]interface{})
 	// creating a child hub with initial subscribers
 	hub := CreateHub(objectRes, subscribersCopy, h.Inbox)
 	go hub.Run()
-	fmt.Println(h.res+": Created a new object for res: ", hub.res)
+	util.Log("debug", h.res+": Created a new child for res: "+hub.res+", with subscribers #"+strconv.Itoa(len(h.subscribers)))
 
-	initialiseRequest := createInitialiseRequest(objectData, objectRes)
-	hub.Inbox <- initialiseRequest
-
+	// creating model holder if PersistInMemory enabled
+	if config.DefaultConfig.PersistInMemory {
+		initialiseRequest := createInitialiseRequest(objectData, objectRes)
+		hub.Inbox <- initialiseRequest
+	}
 	return hub
 }
 
 func createInitialiseRequest(objectData map[string]interface{}, objectRes string) message.RequestWrapper {
 
 	var initialiseMessage message.Message
-	initialiseMessage.Command = "initialise"
+	initialiseMessage.Command = "::initialise"
 	initialiseMessage.Body = objectData
 
 	var initialiseRequest message.RequestWrapper
@@ -438,7 +412,6 @@ func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
 	// creating a child hub with initial subscribers
 	hub := CreateHub(generatedRes, subscribersCopy, h.Inbox)
 	go hub.Run()
-	fmt.Println(h.res+": Created a new object for res: ", hub.res)
 
 	// adding new child to children hub
 	h.children[hub.res] = hub
@@ -544,10 +517,4 @@ func getParentRes(res string) (path string) {
 	li := strings.LastIndex(res, "/")
 	path = "/"+res[:li]
 	return
-}
-
-func (h *Hub) printSubscribers() {
-	for k, _ := range h.subscribers {
-		fmt.Println(k)
-	}
 }

@@ -1,0 +1,53 @@
+10:54:03.842027 Main: Got new connection.
+10:54:08.490476 WSConnection: Received message {"rid":92145817,"cmd":"get","res":"/Comment"}
+10:54:08.490773 WSConnection: Has no subscription for /Comment
+10:54:08.491260 /: Received message: {"rid":92145817,"res":"/Comment","cmd":"get"}
+10:54:08.491316 /Comment:  Started running.
+10:54:08.491450 /Comment: Received message: {"rid":92145817,"res":"/Comment","cmd":"get"}
+10:54:08.491605 /Comment: Added new listener to subscribers. New size: #1
+10:54:08.491748 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+10:54:09.639981 RestAdapter: Fetched list of objects from source. Length: 4
+10:54:09.640126 /Comment: Received list of objects from adapter. Length: 4
+10:54:09.640877 /Comment: Created a new child for res: /Comment/Tu2knBN093, with subscribers #1
+10:54:09.641023 /Comment: Created a new child for res: /Comment/AKOtqPUzwQ, with subscribers #1
+10:54:09.641164 /Comment: Created a new child for res: /Comment/q8I42iRDZZ, with subscribers #1
+10:54:09.641198 /Comment: Created a new child for res: /Comment/ccmvdw0P6O, with subscribers #1
+10:54:09.641217 /Comment/Tu2knBN093:  Started running.
+10:54:09.641230 /Comment/Tu2knBN093: Hub has initial subscribers #1
+10:54:09.641251 /Comment/q8I42iRDZZ:  Started running.
+10:54:09.641264 /Comment/q8I42iRDZZ: Hub has initial subscribers #1
+10:54:09.641282 /Comment/ccmvdw0P6O:  Started running.
+10:54:09.641295 /Comment/ccmvdw0P6O: Hub has initial subscribers #1
+10:54:09.641449 /Comment/AKOtqPUzwQ:  Started running.
+10:54:09.641519 /Comment/AKOtqPUzwQ: Hub has initial subscribers #1
+10:54:17.593787 Main: Got new connection.
+10:54:19.022987 WSConnection: Received message {"rid":91097530,"cmd":"get","res":"/Comment"}
+10:54:19.023174 WSConnection: Has no subscription for /Comment
+10:54:19.023231 /: Received message: {"rid":91097530,"res":"/Comment","cmd":"get"}
+10:54:19.023268 /Comment: Received message: {"rid":91097530,"res":"/Comment","cmd":"get"}
+10:54:19.023289 /Comment: Added new listener to subscribers. New size: #2
+10:54:19.023309 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+10:54:19.196585 RestAdapter: Fetched list of objects from source. Length: 4
+10:54:19.196652 /Comment: Received list of objects from adapter. Length: 4
+10:54:19.196676 /Comment/Tu2knBN093: Added new listener to subscribers. New size: #2
+10:54:19.196694 /Comment: Child already exists for res /Comment/Tu2knBN093
+10:54:19.196709 /Comment/AKOtqPUzwQ: Added new listener to subscribers. New size: #2
+10:54:19.196727 /Comment: Child already exists for res /Comment/AKOtqPUzwQ
+10:54:19.196740 /Comment/q8I42iRDZZ: Added new listener to subscribers. New size: #2
+10:54:19.196758 /Comment: Child already exists for res /Comment/q8I42iRDZZ
+10:54:19.196772 /Comment/ccmvdw0P6O: Added new listener to subscribers. New size: #2
+10:54:19.196789 /Comment: Child already exists for res /Comment/ccmvdw0P6O
+10:54:31.991656 WSConnection: Received message {"rid":23782067,"cmd":"get","res":"/Comment/Tu2knBN093"}
+10:54:31.991819 WSConnection: Has subscription for /Comment/Tu2knBN093
+10:54:31.991873 /Comment/Tu2knBN093: Received message: {"rid":23782067,"res":"/Comment/Tu2knBN093","cmd":"get"}
+10:54:31.991896 RestAdapter: Target url: https://api.parse.com/1/classes/Comment/Tu2knBN093
+10:54:32.165014 RestAdapter: Fetched an object from source.
+10:54:32.165078 /Comment/Tu2knBN093: Received one object from adapter with id Tu2knBN093
+10:54:42.171588 WSConnection: Received message {"rid":72374200,"cmd":"post","res":"/Comment","body":{"content":"new comment","likes":0}}
+10:54:42.171807 WSConnection: Has subscription for /Comment
+10:54:42.171891 /Comment: Received message: {"rid":72374200,"res":"/Comment","cmd":"post","body":{"content":"new comment","likes":0}}
+10:54:42.355183 RestAdapter: Response for post request is successful.
+10:54:42.355242 /Comment: Created a new child for res: /Comment/3HFq8VBnO8, with subscribers #2
+10:54:42.355289 /Comment/3HFq8VBnO8:  Started running.
+10:54:42.355304 /Comment/3HFq8VBnO8: Hub has initial subscribers #2
+10:54:42.355450 /Comment: Broadcasting message. Number of subscribers: #2

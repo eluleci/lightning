@@ -3,12 +3,13 @@ package adapter
 import (
 	"github.com/eluleci/lightning/message"
 	"github.com/eluleci/lightning/config"
-	"fmt"
+	"github.com/eluleci/lightning/util"
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
 	"errors"
 	"bytes"
+	"strconv"
 )
 
 const serverRoot = "https://api.parse.com/1/classes"
@@ -27,14 +28,15 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 	// TODO use custom converter for different end points
 
 	targetUrl = serverRoot+requestWrapper.Res
-	fmt.Println("targetUrl: ", targetUrl)
+	util.Log("debug", "RestAdapter: Target url: "+targetUrl)
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
-		fmt.Printf("RestAdapter: Error occured when making request. ", requestErr)
+		util.Log("error", "RestAdapter: Error occured when making request. ")
 		return nil, nil, requestErr
 	} else if response.StatusCode == 404 {
 		err := errors.New("Not found")
+		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
 		return nil, nil, err
 	} else {
 		defer response.Body.Close()
@@ -42,7 +44,7 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 		// getting data from response
 		data, ioErr := ioutil.ReadAll(response.Body)
 		if ioErr != nil {
-			fmt.Printf("RestAdapter: Error occured when reading response. ", ioErr)
+			util.Log("error", "RestAdapter: Error occured when reading response. ")
 			return nil, nil, ioErr
 		}
 
@@ -54,10 +56,11 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 
 			objects, listParseErr := getJSONArrayFromResponse(data)
 			if listParseErr != nil {
-				fmt.Printf("RestAdapter: Error occured when parsing data.")
+				util.Log("error", "RestAdapter: Error occured when parsing data.")
 				return nil, nil, listParseErr
 			} else {
 				// if the list is successfully retrieved from the data, return the list
+				util.Log("debug", "RestAdapter: Fetched list of objects from source. Length: "+strconv.Itoa(len(objects)))
 				return nil, objects, nil
 			}
 		} else {
@@ -73,13 +76,16 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 					objects, listParseErr := getJSONArrayFromResponse(arrayData)
 					if listParseErr != nil {
 						// if the field couldn't be extracted as an array, return the object only
+						util.Log("debug", "RestAdapter: Fetched an object from source.")
 						return object, nil, nil
 					}
 
 					// if the list is successfully extracted from the object, return the list only
+					util.Log("debug", "RestAdapter: Fetched list of objects from source. Length: "+strconv.Itoa(len(objects)))
 					return nil, objects, nil
 				}
 			}
+			util.Log("debug", "RestAdapter: Fetched an object from source.")
 			return object, nil, nil
 		}
 	}
@@ -93,14 +99,14 @@ func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrap
 	// TODO use custom converter for different end points
 
 	targetUrl = serverRoot+requestWrapper.Res
-	fmt.Println("targetUrl: ", targetUrl)
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
-		fmt.Printf("RestAdapter: Error occured when making request. ", requestErr)
+		util.Log("error", "RestAdapter: Error occured when making request. ")
 		return nil, requestErr
 	} else if response.StatusCode == 404 {
 		err := errors.New("Not found")
+		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
 		return nil, err
 	} else {
 		defer response.Body.Close()
@@ -108,7 +114,7 @@ func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrap
 		// getting data from response
 		data, ioErr := ioutil.ReadAll(response.Body)
 		if ioErr != nil {
-			fmt.Printf("RestAdapter: Error occured when reading response. ", ioErr)
+			util.Log("error", "RestAdapter: Error occured when reading response. ")
 			return nil, ioErr
 		}
 
@@ -116,9 +122,11 @@ func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrap
 		object, objectParseErr := getJSONObjectFromResponse(data)
 		if objectParseErr != nil {
 			// if there is an error while getting object, try getting it as an array
+			util.Log("error", "RestAdapter: Error occured when parsing response.")
 			return nil, objectParseErr
 
 		} else {
+			util.Log("debug", "RestAdapter: Successfully parsed put response body.")
 			return object, nil
 		}
 	}
@@ -132,14 +140,14 @@ func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWra
 	// TODO use custom converter for different end points
 
 	targetUrl = serverRoot+requestWrapper.Res
-	fmt.Println("targetUrl: ", targetUrl)
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
-		fmt.Printf("RestAdapter: Error occured when making request. ", requestErr)
+		util.Log("error", "RestAdapter: Error occured when making request. ")
 		return nil, requestErr
 	} else if response.StatusCode == 404 {
 		err := errors.New("Not found")
+		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
 		return nil, err
 	} else {
 		defer response.Body.Close()
@@ -147,7 +155,7 @@ func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWra
 		// getting data from response
 		data, ioErr := ioutil.ReadAll(response.Body)
 		if ioErr != nil {
-			fmt.Printf("RestAdapter: Error occured when reading response. ", ioErr)
+			util.Log("error", "RestAdapter: Error occured when reading response. ")
 			return nil, ioErr
 		}
 
@@ -155,9 +163,11 @@ func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWra
 		object, objectParseErr := getJSONObjectFromResponse(data)
 		if objectParseErr != nil {
 			// if there is an error while getting object, try getting it as an array
+			util.Log("error", "RestAdapter: Error occured when parsing response for post request.")
 			return nil, objectParseErr
 
 		} else {
+			util.Log("debug", "RestAdapter: Response for post request is successful.")
 			return object, nil
 		}
 	}
@@ -171,16 +181,17 @@ func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestW
 	// TODO use custom converter for different end points
 
 	targetUrl = serverRoot+requestWrapper.Res
-	fmt.Println("targetUrl: ", targetUrl)
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
-		fmt.Printf("RestAdapter: Error occured when making request. ", requestErr)
+		util.Log("debug", "RestAdapter: Error occured when making request. ")
 		return nil, requestErr
 	} else if response.StatusCode == 404 {
 		err := errors.New("Not found")
+		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
 		return nil, err
 	} else if response.StatusCode == 200 {
+		util.Log("debug", "RestAdapter: Response for delete request is successful.")
 		return nil, nil
 	}
 	return nil, nil

@@ -1,8 +1,9 @@
 package node
 
 import (
-	"fmt"
 	"github.com/eluleci/lightning/message"
+	"github.com/eluleci/lightning/util"
+	"encoding/json"
 )
 
 type ModelHolder struct {
@@ -18,12 +19,13 @@ func (mh *ModelHolder) run() {
 		select {
 		case requestWrapper := <-mh.handle:
 			if mh.model != nil {
-				fmt.Println("MH("+mh.model["::res"].(string)+"): received message: ", requestWrapper.Message)
+				messageString, _ := json.Marshal(requestWrapper.Message)
+				util.Log("debug", "MH-"+mh.model["::res"].(string)+": received message: "+string(messageString))
 			}
 
 			if mh.model == nil && requestWrapper.Message.Command == "initialise" {
 				mh.model = requestWrapper.Message.Body
-				fmt.Println("MH(" + mh.model["::res"].(string) + "): Initialised the model.")
+				util.Log("debug", "MH-"+mh.model["::res"].(string)+": Initialised the model.")
 
 			} else if requestWrapper.Message.Command == "get" {
 
@@ -33,7 +35,7 @@ func (mh *ModelHolder) run() {
 				answer.Status = 200
 				answer.Body = mh.model
 				requestWrapper.Listener <- answer
-				
+
 			}
 
 			/*if mh.model == nil {

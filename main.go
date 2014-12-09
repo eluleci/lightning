@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 	"text/template"
-	"fmt"
 	"github.com/eluleci/lightning/roothub"
 	"github.com/eluleci/lightning/wsconnection"
 	"github.com/eluleci/lightning/node"
+	"github.com/eluleci/lightning/util"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -34,8 +34,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := wsconnection.CreateConnection(w, r)
-	//	c := &wsconnection.Connection{ ws: ws, send: make(chan message.Message, 256), subscribed: make(chan message.Subscription, 256), subscriptions: make(map[string]message.Subscription), tearDown: make(chan bool)}
-	fmt.Println("Got new connection.")
+	util.Log("debug", "Main: Got new connection.")
 	c.Run()
 }
 
