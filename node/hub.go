@@ -8,6 +8,7 @@ import (
 	"github.com/eluleci/lightning/adapter"
 	"github.com/eluleci/lightning/util"
 	"github.com/eluleci/lightning/config"
+	"fmt"
 )
 
 type Hub struct {
@@ -106,7 +107,24 @@ func (h *Hub) Run() {
 
 						// delete the child hub
 						delete(h.children, childRes)
+						util.Log("debug", h.res+": Deleted child "+string(childRes))
+
+						h.checkAndDestroy()
 					}
+				} else if requestWrapper.Message.Command == "::destroyChild" {
+
+					childRes := requestWrapper.Message.Body["::res"].(string)
+					if _, exists := h.children[childRes]; exists {
+
+						// delete the child hub
+						delete(h.children, childRes)
+						util.Log("debug", h.res+": Destroyed child "+string(childRes))
+
+						h.checkAndDestroy()
+					}
+				} else if requestWrapper.Message.Command == "::destroy" {
+					util.Log("debug", h.res+": Destroying self.")
+					break
 				}
 
 			} else {
@@ -141,6 +159,8 @@ func (h *Hub) Run() {
 			if _, exists := h.subscribers[requestWrapper.Listener]; exists {
 				delete(h.subscribers, requestWrapper.Listener)
 				util.Log("debug", h.res+": Removed a listener from subscribers. Subscriptions remained: #"+strconv.Itoa(len(h.subscribers)))
+
+				h.checkAndDestroy()
 			} else {
 				util.Log("debug", h.res+": The channel to remove doesn't exists in subscriber list.")
 			}
@@ -416,6 +436,34 @@ func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
 	requestWrapper.Listener <- answer
 }
 
+func (h *Hub) checkAndDestroy() {
+
+	if len(h.subscribers) == 0 && len(h.children) == 0 && !config.DefaultConfig.PersistInMemory {
+
+		if h.res == "/" {
+			// don't remove the root hub
+			return
+		}
+		util.Log("debug", h.res+": No more subscriber or child remained. Destroying...")
+
+		fmt.Println("Destroying " + h.res)
+		var destroyRequest message.RequestWrapper
+		destroyRequest.Res = getParentRes(h.res)
+		destroyRequest.Message.Body = make(map[string]interface{})
+		destroyRequest.Message.Body["::res"] = h.res
+		destroyRequest.Message.Command = "::destroyChild"
+		h.parentInbox <- destroyRequest
+		fmt.Println(destroyRequest)
+
+		destroyRequest.Message.Command = "::destroy"
+		destroyRequest.Res = h.res
+		fmt.Println(destroyRequest)
+		go func() {
+			h.Inbox <- destroyRequest
+		}()
+	}
+}
+
 func CreateHub(res string, initialSubscribers map[chan message.Message]chan message.Subscription, parentInbox chan message.RequestWrapper) (h Hub) {
 	h.res = res
 	h.children = make(map[string]Hub)
@@ -477,6 +525,10 @@ func getChildRes(res, parentRes string) (fullPath string) {
 func getParentRes(res string) (path string) {
 	res = strings.Trim(res, "/")
 	li := strings.LastIndex(res, "/")
+	if li == -1 {
+		// if there is no "/" char in trimmed version of res, it means that the parent is root
+		return "/"
+	}
 	path = "/"+res[:li]
 	return
 }
