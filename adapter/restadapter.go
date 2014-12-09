@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
-	"errors"
 	"bytes"
 	"strconv"
 )
@@ -20,7 +19,7 @@ type RestAdapter struct {
 
 }
 
-func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, []map[string]interface{}, error) {
+func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, []map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 	object := make(map[string]interface{})
@@ -33,19 +32,16 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
 		util.Log("error", "RestAdapter: Error occured when making request. ")
-		return nil, nil, requestErr
-	} else if response.StatusCode == 404 {
-		err := errors.New("Not found")
-		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
-		return nil, nil, err
-	} else {
+		return nil, nil, &message.RequestError{500, "Error occured when making request.", nil}
+	} else if response.StatusCode >= 200 && response.StatusCode < 300 {
+
 		defer response.Body.Close()
 
 		// getting data from response
 		data, ioErr := ioutil.ReadAll(response.Body)
 		if ioErr != nil {
-			util.Log("error", "RestAdapter: Error occured when reading response. ")
-			return nil, nil, ioErr
+			util.Log("error", "RestAdapter: Error occured when reading response from source.")
+			return nil, nil, &message.RequestError{500, "Error occured when reading response from source.", nil}
 		}
 
 		var objectParseErr error
@@ -57,7 +53,7 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 			objects, listParseErr := getJSONArrayFromResponse(data)
 			if listParseErr != nil {
 				util.Log("error", "RestAdapter: Error occured when parsing data.")
-				return nil, nil, listParseErr
+				return nil, nil, &message.RequestError{500, "Error occured when parsing data that is received from server.", nil}
 			} else {
 				// if the list is successfully retrieved from the data, return the list
 				util.Log("debug", "RestAdapter: Fetched list of objects from source. Length: "+strconv.Itoa(len(objects)))
@@ -88,11 +84,14 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 			util.Log("debug", "RestAdapter: Fetched an object from source.")
 			return object, nil, nil
 		}
+	} else {
+		err := generateRequestError(response)
+		return nil, nil, &err
 	}
 	return nil, nil, nil
 }
 
-func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, error) {
+func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 
@@ -103,37 +102,36 @@ func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrap
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
 		util.Log("error", "RestAdapter: Error occured when making request. ")
-		return nil, requestErr
-	} else if response.StatusCode == 404 {
-		err := errors.New("Not found")
-		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
-		return nil, err
-	} else {
+		return nil, &message.RequestError{500, "Error occured when making request.", nil}
+	} else if response.StatusCode >= 200 && response.StatusCode < 300 {
 		defer response.Body.Close()
 
 		// getting data from response
 		data, ioErr := ioutil.ReadAll(response.Body)
 		if ioErr != nil {
-			util.Log("error", "RestAdapter: Error occured when reading response. ")
-			return nil, ioErr
+			util.Log("error", "RestAdapter: Error occured when reading response from source.")
+			return nil, &message.RequestError{500, "Error occured when reading response from source.", nil}
 		}
 
 		// getting object out of the response
 		object, objectParseErr := getJSONObjectFromResponse(data)
 		if objectParseErr != nil {
 			// if there is an error while getting object, try getting it as an array
-			util.Log("error", "RestAdapter: Error occured when parsing response.")
-			return nil, objectParseErr
+			util.Log("error", "RestAdapter: Error occured when parsing data.")
+			return nil, &message.RequestError{500, "Error occured when parsing data that is received from server.", nil}
 
 		} else {
 			util.Log("debug", "RestAdapter: Successfully parsed put response body.")
 			return object, nil
 		}
+	} else {
+		err := generateRequestError(response)
+		return nil, &err
 	}
 	return nil, nil
 }
 
-func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, error) {
+func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 
@@ -144,37 +142,36 @@ func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWra
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
 		util.Log("error", "RestAdapter: Error occured when making request. ")
-		return nil, requestErr
-	} else if response.StatusCode == 404 {
-		err := errors.New("Not found")
-		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
-		return nil, err
-	} else {
+		return nil, &message.RequestError{500, "Error occured when making request.", nil}
+	} else if response.StatusCode >= 200 && response.StatusCode < 300 {
 		defer response.Body.Close()
 
 		// getting data from response
 		data, ioErr := ioutil.ReadAll(response.Body)
 		if ioErr != nil {
-			util.Log("error", "RestAdapter: Error occured when reading response. ")
-			return nil, ioErr
+			util.Log("error", "RestAdapter: Error occured when reading response from source.")
+			return nil, &message.RequestError{500, "Error occured when reading response from source.", nil}
 		}
 
 		// getting object out of the response
 		object, objectParseErr := getJSONObjectFromResponse(data)
 		if objectParseErr != nil {
 			// if there is an error while getting object, try getting it as an array
-			util.Log("error", "RestAdapter: Error occured when parsing response for post request.")
-			return nil, objectParseErr
+			util.Log("error", "RestAdapter: Error occured when parsing data.")
+			return nil, &message.RequestError{500, "Error occured when parsing data that is received from server.", nil}
 
 		} else {
 			util.Log("debug", "RestAdapter: Response for post request is successful.")
 			return object, nil
 		}
+	} else {
+		err := generateRequestError(response)
+		return nil, &err
 	}
 	return nil, nil
 }
 
-func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, error) {
+func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 
@@ -184,15 +181,14 @@ func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestW
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
-		util.Log("debug", "RestAdapter: Error occured when making request. ")
-		return nil, requestErr
-	} else if response.StatusCode == 404 {
-		err := errors.New("Not found")
-		util.Log("debug", "RestAdapter: Response from source is 'not found'. 404")
-		return nil, err
-	} else if response.StatusCode == 200 {
+		util.Log("error", "RestAdapter: Error occured when making request. ")
+		return nil, &message.RequestError{500, "Error occured when making request.", nil}
+	} else if response.StatusCode >= 200 && response.StatusCode < 300 {
 		util.Log("debug", "RestAdapter: Response for delete request is successful.")
 		return nil, nil
+	} else {
+		err := generateRequestError(response)
+		return nil, &err
 	}
 	return nil, nil
 }
@@ -202,8 +198,8 @@ func buildAndExecuteHttpRequest(requestWrapper message.RequestWrapper, url strin
 	body, _ := json.Marshal(requestWrapper.Message.Body)
 	request, _ := http.NewRequest(requestWrapper.Message.Command, url, bytes.NewBuffer(body))
 	//	request, _ := http.NewRequest(requestWrapper.Message.Command, url, nil)
-	request.Header.Set("X-Parse-Application-Id", parseAppId)
-	request.Header.Set("X-Parse-REST-API-Key", parseApiKey)
+	//	request.Header.Set("X-Parse-Application-Id", parseAppId)
+	//	request.Header.Set("X-Parse-REST-API-Key", parseApiKey)
 	resp, err = client.Do(request)
 	return
 }
@@ -217,5 +213,19 @@ func getJSONObjectFromResponse(inputData []byte) (object map[string]interface{},
 func getJSONArrayFromResponse(inputData []byte) (objects []map[string]interface{}, err error) {
 
 	err = json.Unmarshal(inputData, &objects)
+	return
+}
+
+func generateRequestError(response *http.Response) (err message.RequestError) {
+	err.Code = response.StatusCode
+	err.Message = "Request to source failed."
+	data, ioErr := ioutil.ReadAll(response.Body)
+	if ioErr == nil {
+		errorBody, parseErr := getJSONObjectFromResponse(data)
+		if parseErr == nil {
+			err.Body = errorBody
+		}
+	}
+	util.Log("debug", "RestAdapter: Request to source failed. "+strconv.Itoa(response.StatusCode))
 	return
 }

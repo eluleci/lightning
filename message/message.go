@@ -3,11 +3,12 @@ package message
 type Message struct {
 
 	Rid                      int `json:"rid,omitempty"`
-	Status                   int `json:"status,omitempty"`
 	Res                      string `json:"res,omitempty"`
 	Command                  string `json:"cmd,omitempty"`
-	Parameters               string `json:"params,omitempty"`
+	Headers                  map[string]string `json:"headers,omitempty"`
 	Body                     map[string]interface{} `json:"body,omitempty"`
+	Parameters               string `json:"params,omitempty"`
+	Status                   int `json:"status,omitempty"` // used only in responses
 }
 
 // this struct is used for connections to send a message to a hub that they are not subscribed before
@@ -30,4 +31,10 @@ type Subscription struct {
 	InboxChannel          chan RequestWrapper // inbox channel of hub to send message
 	//	broadcastChannel      chan RequestWrapper // broadcast channel of hub to receive updates
 	UnsubscriptionChannel chan RequestWrapper // unsubscription channel of hub for unsubscription
+}
+
+type RequestError struct {
+	Code    int
+	Message string
+	Body    map[string]interface{}
 }

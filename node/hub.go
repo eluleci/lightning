@@ -111,7 +111,7 @@ func (h *Hub) Run() {
 
 			} else {
 				// if the resource belongs to a children hub
-				_, childRes := getChildRes(requestWrapper.Res, h.res)
+				childRes := getChildRes(requestWrapper.Res, h.res)
 
 				hub, exists := h.children[childRes]
 				if !exists {
@@ -155,11 +155,11 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 	answer.Rid = requestWrapper.Message.Rid
 	answer.Res = h.res
 
-	object, objectArray, adapterErr := h.adapter.ExecuteGetRequest(requestWrapper)
-	if adapterErr != nil {
+	object, objectArray, requestErr := h.adapter.ExecuteGetRequest(requestWrapper)
+	if requestErr != nil {
 		util.Log("error", h.res+"Error occured when getting data from adapter. ")
-		// TODO get more specific error from the adapter
-		answer.Status = 404
+		answer.Status = requestErr.Code
+		answer.Body = requestErr.Body
 
 	} else if object != nil {
 		// if object is not null, it means that this is the object that this hub is responsible of
@@ -205,8 +205,8 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 		answer.Body = make(map[string]interface{})
 		answer.Body["::list"] = objectArray
 	} else {
-		util.Log("debug", h.res+": Received object or list from adapter failed.")
-		answer.Status = 404
+		util.Log("debug", h.res+": Receive object or list from adapter failed.")
+		answer.Status = 500
 	}
 
 	// sending result of GET message
@@ -219,17 +219,19 @@ func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
 	answer.Rid = requestWrapper.Message.Rid
 	answer.Res = h.res
 
-	response, adapterErr := h.adapter.ExecutePutRequest(requestWrapper)
-	if adapterErr != nil {
-		util.Log("error", "Error occured when putting data with adapter. ")
-		// TODO get more specific error from the adapter
-		answer.Status = 404
+	response, requestErr := h.adapter.ExecutePutRequest(requestWrapper)
+	if requestErr != nil {
+		util.Log("error", h.res+"Error occured when updating data via adapter. ")
+		answer.Status = requestErr.Code
+		answer.Body = requestErr.Body
 
 	} else if response != nil {
 
 		answer.Status = 200
 		answer.Body = response
-		answer.Body["updatedAt"] = response["updatedAt"]
+		if response["updatedAt"] != nil {
+			answer.Body["updatedAt"] = response["updatedAt"]
+		}
 
 		// TODO: update the model holder if exists
 
@@ -253,11 +255,11 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 	answer.Rid = requestWrapper.Message.Rid
 	answer.Res = h.res
 
-	response, adapterErr := h.adapter.ExecutePostRequest(requestWrapper)
-	if adapterErr != nil {
-		util.Log("error", "Error occured when posting data with adapter. ")
-		// TODO get more specific error from the adapter
-		answer.Status = 404
+	response, requestErr := h.adapter.ExecutePostRequest(requestWrapper)
+	if requestErr != nil {
+		util.Log("error", h.res+"Error occured when posting data to adapter. ")
+		answer.Status = requestErr.Code
+		answer.Body = requestErr.Body
 
 	} else if response != nil {
 
@@ -284,7 +286,7 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 		}()
 
 	} else {
-		answer.Status = 404
+		answer.Status = 500
 	}
 
 	// sending result of GET message
@@ -297,11 +299,11 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 	answer.Rid = requestWrapper.Message.Rid
 	answer.Res = h.res
 
-	_, adapterErr := h.adapter.ExecuteDeleteRequest(requestWrapper)
-	if adapterErr != nil {
-		util.Log("error", "Error occured when posting data with adapter. ")
-		// TODO get more specific error from the adapter
-		answer.Status = 404
+	_, requestErr := h.adapter.ExecuteDeleteRequest(requestWrapper)
+	if requestErr != nil {
+		util.Log("error", h.res+"Error occured when deleting data via adapter. ")
+		answer.Status = requestErr.Code
+		answer.Body = requestErr.Body
 	} else {
 		// if there is no error, it means that the object is deleted successfully
 		answer.Status = 200
@@ -332,6 +334,27 @@ func (h *Hub) initialiseModel(requestWrapper message.RequestWrapper) {
 	h.model.handle <- requestWrapper
 }
 
+func (h *Hub) generateChild(objectRes string, objectData map[string]interface{}) Hub {
+
+	// copying subscribers of parent to pass to the newly created child hub
+	subscribersCopy := make(map[chan message.Message]chan message.Subscription)
+	for listenChannel, subscriptionChannel := range (h.subscribers) {
+		subscribersCopy[listenChannel] = subscriptionChannel
+	}
+
+	// creating a child hub with initial subscribers
+	hub := CreateHub(objectRes, subscribersCopy, h.Inbox)
+	go hub.Run()
+	util.Log("debug", h.res+": Created a new child for res: "+hub.res+", with subscribers #"+strconv.Itoa(len(h.subscribers)))
+
+	// creating model holder if PersistInMemory enabled
+	if config.DefaultConfig.PersistInMemory {
+		initialiseRequest := createInitialiseRequest(objectData, objectRes)
+		hub.Inbox <- initialiseRequest
+	}
+	return hub
+}
+
 func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -360,79 +383,6 @@ func (h *Hub) checkAndSend(c chan message.Message, m message.Message) {
 		}
 	}()
 	c <- m
-}
-
-func (h *Hub) generateChild(objectRes string, objectData map[string]interface{}) Hub {
-
-	// copying subscribers of parent to pass to the newly created child hub
-	subscribersCopy := make(map[chan message.Message]chan message.Subscription)
-	for listenChannel, subscriptionChannel := range (h.subscribers) {
-		subscribersCopy[listenChannel] = subscriptionChannel
-	}
-
-	// creating a child hub with initial subscribers
-	hub := CreateHub(objectRes, subscribersCopy, h.Inbox)
-	go hub.Run()
-	util.Log("debug", h.res+": Created a new child for res: "+hub.res+", with subscribers #"+strconv.Itoa(len(h.subscribers)))
-
-	// creating model holder if PersistInMemory enabled
-	if config.DefaultConfig.PersistInMemory {
-		initialiseRequest := createInitialiseRequest(objectData, objectRes)
-		hub.Inbox <- initialiseRequest
-	}
-	return hub
-}
-
-func createInitialiseRequest(objectData map[string]interface{}, objectRes string) message.RequestWrapper {
-
-	var initialiseMessage message.Message
-	initialiseMessage.Command = "::initialise"
-	initialiseMessage.Body = objectData
-
-	var initialiseRequest message.RequestWrapper
-	initialiseRequest.Res = objectRes
-	initialiseRequest.Message = initialiseMessage
-	return initialiseRequest
-}
-
-/**
- * Creates a new object with the given data. Works independent fron adapter
- */
-func (h *Hub) createNewChild(requestWrapper message.RequestWrapper) {
-
-	generatedId := util.RandSeq(32)
-	generatedRes := requestWrapper.Res + "/" + generatedId
-
-	// copying subscribers of parent to pass to the newly created child hub
-	subscribersCopy := make(map[chan message.Message]chan message.Subscription)
-	for listenChannel, subscriptionChannel := range (h.subscribers) {
-		subscribersCopy[listenChannel] = subscriptionChannel
-	}
-
-	// creating a child hub with initial subscribers
-	hub := CreateHub(generatedRes, subscribersCopy, h.Inbox)
-	go hub.Run()
-
-	// adding new child to children hub
-	h.children[hub.res] = hub
-
-	// adding generated id and res to the request wrapper
-	requestWrapper.Message.Body["id"] = generatedId
-	requestWrapper.Message.Body["res"] = generatedRes
-
-	// broadcasting the object creation. we need to create a new request wrapper because we are changing
-	// the res of the request wrapper when sending it to newly created hub. but subscribers of this
-	// domain will expect a broadcast message with the resource path of parent domain
-	requestWrapperForBroadcast := requestWrapper
-	requestWrapperForBroadcast.Message.Rid = 0
-	go func() {
-		h.broadcast <- requestWrapperForBroadcast
-	}()
-
-	// sending request to the new hub with new res
-	requestWrapper.Message.Res = generatedRes
-	requestWrapper.Res = generatedRes
-	hub.Inbox <- requestWrapper
 }
 
 func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
@@ -496,14 +446,26 @@ func createModelHolder(res string, broadcastChannel chan message.RequestWrapper)
 	return
 }
 
-func getChildRes(res, parentRes string) (relativePath, fullPath string) {
+func createInitialiseRequest(objectData map[string]interface{}, objectRes string) message.RequestWrapper {
+
+	var initialiseMessage message.Message
+	initialiseMessage.Command = "::initialise"
+	initialiseMessage.Body = objectData
+
+	var initialiseRequest message.RequestWrapper
+	initialiseRequest.Res = objectRes
+	initialiseRequest.Message = initialiseMessage
+	return initialiseRequest
+}
+
+func getChildRes(res, parentRes string) (fullPath string) {
 	res = strings.Trim(res, "/")
 	parentRes = strings.Trim(parentRes, "/")
 	currentResSize := len(parentRes)
 	resSuffix := res[currentResSize:]
 	trimmedSuffix := strings.Trim(resSuffix, "/")
 	directChild := strings.Split(trimmedSuffix, "/")
-	relativePath = directChild[0]
+	relativePath := directChild[0]
 	if len(parentRes) > 0 {
 		fullPath = "/"+parentRes+"/"+relativePath
 	} else {
