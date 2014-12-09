@@ -291,6 +291,22 @@
                 return false
             });
 
+            $("#deleteHeaders").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: '::setHeaders',
+                    body: {
+                        'X-Parse-Application-Id': '',
+                        'X-Parse-REST-API-Key': ''
+                    }
+                }
+                sendMessage(message)
+                return false
+            });
+
             if (window["WebSocket"]) {
                 conn = new WebSocket("ws://{{$}}/ws");
                 conn.onclose = function (evt) {
@@ -316,6 +332,7 @@
                 document.body.appendChild(document.createElement('h1')).innerHTML = "Your browser does not support WebSockets.";
             }
         });
+
 
 
 
@@ -363,6 +380,7 @@
     <button id="createComment">createComment()</button>
     <button id="deleteComment">deleteComment()</button>
     <button id="setHeaders">setHeaders()</button>
+    <button id="deleteHeaders">deleteHeaders()</button>
 </form>
 </body>
 </html>

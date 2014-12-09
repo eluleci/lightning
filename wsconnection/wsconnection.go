@@ -190,7 +190,13 @@ func isResValid(res *string) bool {
 func (c *Connection) setHeaders(headers map[string]interface{}) bool {
 	if headers != nil && len(headers) > 0 {
 		for k, v := range headers {
-			c.headers[k] = v.(string)
+			if len(v.(string)) > 0 {
+				// set the header if value is not empty
+				c.headers[k] = v.(string)
+			} else {
+				// delete the header if value is empty
+				delete(c.headers, k)
+			}
 		}
 		return true
 	} else {
