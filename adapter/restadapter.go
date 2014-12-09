@@ -197,9 +197,11 @@ func buildAndExecuteHttpRequest(requestWrapper message.RequestWrapper, url strin
 	client := &http.Client{}
 	body, _ := json.Marshal(requestWrapper.Message.Body)
 	request, _ := http.NewRequest(requestWrapper.Message.Command, url, bytes.NewBuffer(body))
-	//	request, _ := http.NewRequest(requestWrapper.Message.Command, url, nil)
-	//	request.Header.Set("X-Parse-Application-Id", parseAppId)
-	//	request.Header.Set("X-Parse-REST-API-Key", parseApiKey)
+	for k, v := range requestWrapper.Message.Headers {
+		if len(v) > 0 {
+			request.Header.Set(k, v)
+		}
+	}
 	resp, err = client.Do(request)
 	return
 }

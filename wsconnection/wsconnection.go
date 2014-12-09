@@ -45,6 +45,8 @@ type Connection struct {
 	subscriptions  map[string]message.Subscription
 
 	tearDown chan bool
+
+	headers map[string]string
 }
 
 func CreateConnection(w http.ResponseWriter, r *http.Request) (c Connection) {
@@ -78,6 +80,7 @@ func (c *Connection) Run() {
 	c.subscribed = make(chan message.Subscription, 256)
 	c.subscriptions = make(map[string]message.Subscription)
 	c.tearDown = make(chan bool)
+	c.headers = make(map[string]string)
 
 	go c.writePump()    // running message wait and send function
 	go c.readPump()     // running message receive function
@@ -118,60 +121,125 @@ func (c *Connection) readPump() {
 		util.Log("debug", "WSConnection: Received message "+string(m))
 
 		var msg message.Message
-
 		err = json.Unmarshal([]byte(string(m[:])), &msg)
 		if err != nil {
 			util.Log("error", "WSConnection: Error while parsing message.")
-			answer := util.CreateErrorMessage(msg.Rid, 400, "Error while parsing message")
-			c.send <- answer    // sending the answer back to the connection
-		} else {
+			c.send <- createErrorMessage(msg.Rid, 400, "Error while parsing message")
+		}
 
-			if msg.Command == "disconnect" {
-				return
-			}
+		// checking the command of the message
+		if len(msg.Command) == 0 || !isCommandValid(msg.Command) {
+			util.Log("error", "WSConnection: Error while validating command.")
+			c.send <- createErrorMessage(msg.Rid, 400, "Given command is not a valid command.")
+			continue
+		}
 
-			// making sure that the resource has a correct path (ex: "/type/id/type/id")
-			msg.Res = "/"+strings.Trim(msg.Res, "/")
+		// checking custom messages first
+		// TODO: subscribe to hub
+		// TODO: un-subscribe from hub
+		// TODO: disconnect
+		if msg.Command == "::setHeaders" {
 
-			// checking that the resource path is valid path
-			matched, err := regexp.MatchString("^(\\/{1}[0-9a-zA-Z]+)+$", msg.Res)
-			if !matched || err != nil {
-				util.Log("error", "WSConnection: Error while validating resource path.")
-				answer := util.CreateErrorMessage(msg.Rid, 400, "Given resource path is not a valid path.")
-				c.send <- answer    // sending the answer back to the connection
+			if success := c.setHeaders(msg.Body); success {
+				c.send <- createSuccessMessage(msg.Rid)
 			} else {
+				c.send <- createErrorMessage(msg.Rid, 400, "Headers couldn't be set.")
+			}
+			continue
+		}
 
-				rw := message.RequestWrapper{
-					msg.Res,
-					msg,
-					c.send,
-					c.subscribed,
-				}
+		// checking the res of the message
+		isResValid := isResValid(&msg.Res)
+		if !isResValid {
+			util.Log("error", "WSConnection: Error while validating resource path.")
+			c.send <- createErrorMessage(msg.Rid, 400, "Given resource path is not a valid path.")
+			continue
+		}
 
-				var inbox chan message.RequestWrapper
-				subscription, exists := c.subscriptions[msg.Res]
-				if exists {
-					util.Log("debug", "WSConnection: Has subscription for "+msg.Res)
-					inbox = subscription.InboxChannel
-				} else {
-					for k, v := range c.subscriptions {
-						if strings.Index(msg.Res, k) > -1 {
-							util.Log("debug", "WSConnection: Has subscription for a parent of "+msg.Res)
-							inbox = v.InboxChannel
-							break
-						}
-					}
-					if inbox == nil {
-						util.Log("debug", "WSConnection: Has no subscription for "+msg.Res)
-						inbox = roothub.RootHub.Inbox
-					}
-				}
-				go func() {
-					inbox <- rw
-				}()
+		// add the headers that the connection keeps to the current message
+		c.appendHeadersToMessage(&msg)
+
+		// generating request wrapper for the message
+		requestWrapper := c.constructRequestFromMessage(msg)
+
+		// finding the best hub to send message
+		inbox := c.findAppropriateInbox(msg.Res)
+
+		go func() {
+			inbox <- requestWrapper
+		}()
+	}
+}
+
+func isCommandValid(cmd string) bool {
+	return cmd == "::subscribe" || cmd == "::unsubscribe" || cmd == "::setHeaders" || cmd == "::disconnect" || cmd == "get" || cmd == "put" || cmd == "post" || cmd == "delete"
+}
+
+func isResValid(res *string) bool {
+	if len(*res) == 0 {
+		return false
+	}
+	// making sure that the resource has a correct path (ex: "/type/id/type/id")
+	*res = "/"+strings.Trim(*res, "/")
+
+	// checking that the resource path is valid path
+	matched, err := regexp.MatchString("^(\\/{1}[0-9a-zA-Z]+)+$", *res)
+	return matched && err == nil
+}
+
+func (c *Connection) setHeaders(headers map[string]interface{}) bool {
+	if headers != nil && len(headers) > 0 {
+		for k, v := range headers {
+			c.headers[k] = v.(string)
+		}
+		return true
+	} else {
+		return false
+	}
+}
+
+func (c *Connection) appendHeadersToMessage(msg *message.Message) {
+
+	if c.headers != nil {
+		if msg.Headers == nil {
+			msg.Headers = make(map[string]string)
+		}
+		for k, v := range c.headers {
+			if _, exists := msg.Headers[k]; !exists {
+				// add the header if it doesn't exist in the message already (new headers override the existing ones)
+				msg.Headers[k] = v
 			}
 		}
 	}
+}
+
+func (c *Connection) constructRequestFromMessage(msg message.Message) (rw message.RequestWrapper) {
+	rw.Res = msg.Res
+	rw.Message = msg
+	rw.Listener = c.send
+	rw.Subscribe = c.subscribed
+	return
+}
+
+func (c *Connection) findAppropriateInbox(res string) (inbox chan message.RequestWrapper) {
+	subscription, exists := c.subscriptions[res]
+	if exists {
+		util.Log("debug", "WSConnection: Has subscription for "+res)
+		inbox = subscription.InboxChannel
+	} else {
+		for k, v := range c.subscriptions {
+			if strings.Index(res, k) > -1 {
+				util.Log("debug", "WSConnection: Has subscription for a parent of "+res)
+				inbox = v.InboxChannel
+				break
+			}
+		}
+		if inbox == nil {
+			util.Log("debug", "WSConnection: Has no subscription for "+res)
+			inbox = roothub.RootHub.Inbox
+		}
+	}
+	return
 }
 
 // write writes a message with the given message type and payload.
@@ -215,3 +283,15 @@ func (c *Connection) writePump() {
 	}
 }
 
+func createSuccessMessage(rid int) (m message.Message) {
+	m.Rid = rid
+	m.Status = 200
+	return
+}
+
+func createErrorMessage(rid, status int, messageContent string) (m message.Message) {
+	_ = messageContent
+	m.Rid = rid
+	m.Status = status
+	return
+}

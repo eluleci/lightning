@@ -2,7 +2,6 @@ package util
 
 import (
 	"math/rand"
-	"github.com/eluleci/lightning/message"
 	"fmt"
 	"os"
 	"log"
@@ -16,13 +15,6 @@ func RandSeq(n int) string {
 		b[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(b)
-}
-
-func CreateErrorMessage(rid, status int, messageContent string) (m message.Message) {
-	_ = messageContent
-	m.Rid = rid
-	m.Status = status
-	return
 }
 
 var logFile *os.File
