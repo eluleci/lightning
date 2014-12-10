@@ -482,3 +482,73 @@
 11:58:47.983862 /Comment/iYLcIvWxiF: Hub has initial subscribers #1
 11:58:47.983866 /Comment/DT780prtvb:  Started running.
 11:58:47.983871 /Comment/DT780prtvb: Hub has initial subscribers #1
+12:00:41.909429 /:  Started running.
+12:00:55.858104 /:  Started running.
+12:01:04.926046 Main: Got new connection.
+12:01:07.214507 WSConnection: Received message {"rid":19595777,"cmd":"::setHeaders","body":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+12:01:07.214749 WSConnection: Sending message {"rid":19595777,"status":200}
+12:01:08.449653 WSConnection: Received message {"rid":81800555,"cmd":"get","res":"/Comment"}
+12:01:08.449755 WSConnection: Has no subscription for /Comment
+12:01:08.450378 /: Received message: {"rid":81800555,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+12:01:08.450400 /Comment:  Started running.
+12:01:08.450407 /Comment: Received message: {"rid":81800555,"res":"/Comment","cmd":"get","headers":{"X-Parse-Application-Id":"oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8","X-Parse-REST-API-Key":"qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"}}
+12:01:08.450412 /Comment: Added new listener to subscribers. New size: #1
+12:01:10.115698 RestAdapter: Fetched list of objects from source. Length: 4
+12:01:10.115891 /Comment: Created a new child for res: /Comment/RuDuWdu9si, with subscribers #1
+12:01:10.116493 /Comment: Created a new child for res: /Comment/wL4hD6uDSn, with subscribers #1
+12:01:10.116519 /Comment: Created a new child for res: /Comment/iYLcIvWxiF, with subscribers #1
+12:01:10.116527 /Comment: Created a new child for res: /Comment/DT780prtvb, with subscribers #1
+12:01:10.116536 /Comment/RuDuWdu9si:  Started running.
+12:01:10.116543 /Comment/RuDuWdu9si: Hub has initial subscribers #1
+12:01:10.116550 /Comment/wL4hD6uDSn:  Started running.
+12:01:10.116557 /Comment/wL4hD6uDSn: Hub has initial subscribers #1
+12:01:10.116564 /Comment/iYLcIvWxiF:  Started running.
+12:01:10.116571 /Comment/iYLcIvWxiF: Hub has initial subscribers #1
+12:01:10.116578 /Comment/DT780prtvb:  Started running.
+12:01:10.116585 /Comment/DT780prtvb: Hub has initial subscribers #1
+12:01:10.116594 WSConnection: Sending message {"rid":81800555,"res":"/Comment","body":{"::list":[{"::res":"/Comment/RuDuWdu9si","content":"comment","createdAt":"2014-12-09T13:09:15.415Z","likes":0,"objectId":"RuDuWdu9si","updatedAt":"2014-12-09T13:09:15.415Z"},{"::res":"/Comment/wL4hD6uDSn","content":"new comment","createdAt":"2014-12-09T15:28:17.757Z","likes":0,"objectId":"wL4hD6uDSn","updatedAt":"2014-12-09T15:28:17.757Z"},{"::res":"/Comment/iYLcIvWxiF","content":"new comment","createdAt":"2014-12-09T15:28:24.172Z","likes":0,"objectId":"iYLcIvWxiF","updatedAt":"2014-12-09T15:28:24.172Z"},{"::res":"/Comment/DT780prtvb","content":"new comment","createdAt":"2014-12-09T15:28:26.910Z","likes":0,"objectId":"DT780prtvb","updatedAt":"2014-12-09T15:28:26.910Z"}]},"status":200}
+12:01:40.667216 /:  Started running.
+12:01:58.885076 /:  Started running.
+12:02:12.791457 /:  Started running.
+12:02:38.535546 /:  Started running.
+13:07:31.882516 /:  Started running.
+13:08:45.393147 /:  Started running.
+13:10:36.198704 /:  Started running.
+13:16:52.216189 /:  Started running.
+13:23:25.795968 /:  Started running.
+13:23:28.533434 /: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:23:28.533632 /Comment:  Started running.
+13:23:28.534161 /Comment: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:24:03.359937 /:  Started running.
+13:24:04.533520 /: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:24:04.533743 /Comment:  Started running.
+13:24:04.534287 /Comment: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:28:12.916671 /:  Started running.
+13:28:16.668796 /: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:28:16.669002 /Comment:  Started running.
+13:28:16.669468 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+13:28:17.742480 RestAdapter: Request to source failed. 401
+13:28:17.742578 /CommentError occured when getting data from adapter. 
+13:28:40.041078 /: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:28:40.041245 /Comment: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:28:40.041324 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+13:28:40.181969 RestAdapter: Request to source failed. 401
+13:28:40.182092 /CommentError occured when getting data from adapter. 
+13:28:46.260567 /:  Started running.
+13:28:47.903014 /: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:28:47.903211 /Comment:  Started running.
+13:28:47.903727 /Comment: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["max-age=0"],"Connection":["keep-alive"],"Cookie":["_ga=GA1.1.10573810.1417981593"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"]}}
+13:29:18.915212 /:  Started running.
+13:29:24.679427 /: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["*/*"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["no-cache"],"Connection":["keep-alive"],"Postman-Token":["9c46e343-dcf5-eb32-398d-2b01a26dd24a"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"],"X-Parse-Application-Id":["oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8"],"X-Parse-Rest-Api-Key":["qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"]}}
+13:29:24.696552 /Comment:  Started running.
+13:29:24.696712 /Comment: Received message: {"res":"/Comment","cmd":"GET","headers":{"Accept":["*/*"],"Accept-Encoding":["gzip, deflate, sdch"],"Accept-Language":["en-US,en;q=0.8"],"Cache-Control":["no-cache"],"Connection":["keep-alive"],"Postman-Token":["9c46e343-dcf5-eb32-398d-2b01a26dd24a"],"User-Agent":["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"],"X-Parse-Application-Id":["oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8"],"X-Parse-Rest-Api-Key":["qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"]}}
+13:29:24.696982 RestAdapter: Target url: https://api.parse.com/1/classes/Comment
+13:29:25.901096 RestAdapter: Fetched list of objects from source. Length: 4
+13:29:25.901191 /Comment: Received list of objects from adapter. Length: 4
+13:29:25.902280 /Comment: Created a new child for res: /Comment/wL4hD6uDSn, with subscribers #0
+13:29:25.902302 /Comment: Created a new child for res: /Comment/iYLcIvWxiF, with subscribers #0
+13:29:25.902307 /Comment: Created a new child for res: /Comment/DT780prtvb, with subscribers #0
+13:29:25.902312 /Comment/RuDuWdu9si:  Started running.
+13:29:25.902317 /Comment/wL4hD6uDSn:  Started running.
+13:29:25.902323 /Comment/iYLcIvWxiF:  Started running.
+13:29:25.902328 /Comment/DT780prtvb:  Started running.

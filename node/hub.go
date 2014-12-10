@@ -47,6 +47,9 @@ func (h *Hub) Run() {
 					h.addSubscription(requestWrapper)
 				}
 
+				// converting command to lower case for string comparison
+				requestWrapper.Message.Command = strings.ToLower(requestWrapper.Message.Command)
+
 				if requestWrapper.Message.Command == "get" {
 
 					if config.DefaultConfig.PersistItemInMemory && h.model != nil {
@@ -127,6 +130,13 @@ func (h *Hub) Run() {
 							break
 						}
 					}
+				} else {
+					var answer message.Message
+					answer.Rid = requestWrapper.Message.Rid
+					answer.Res = h.res
+					answer.Status = 500
+					answer.Body = h.model
+					h.checkAndSend(requestWrapper.Listener, answer)
 				}
 
 			} else {

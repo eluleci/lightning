@@ -5,7 +5,7 @@ type Message struct {
 	Rid                      int `json:"rid,omitempty"`
 	Res                      string `json:"res,omitempty"`
 	Command                  string `json:"cmd,omitempty"`
-	Headers                  map[string]string `json:"headers,omitempty"`
+	Headers                  map[string][]string `json:"headers,omitempty"`
 	Body                     map[string]interface{} `json:"body,omitempty"`
 	Parameters               string `json:"params,omitempty"`
 	Status                   int `json:"status,omitempty"` // used only in responses

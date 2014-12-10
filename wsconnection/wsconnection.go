@@ -46,7 +46,7 @@ type Connection struct {
 
 	tearDown chan bool
 
-	headers map[string]string
+	headers map[string][]string
 }
 
 func CreateConnection(w http.ResponseWriter, r *http.Request) (c Connection) {
@@ -80,7 +80,7 @@ func (c *Connection) Run() {
 	c.subscribed = make(chan message.Subscription, 256)
 	c.subscriptions = make(map[string]message.Subscription)
 	c.tearDown = make(chan bool)
-	c.headers = make(map[string]string)
+	c.headers = make(map[string][]string)
 
 	go c.writePump()    // running message wait and send function
 	go c.readPump()     // running message receive function
@@ -176,7 +176,7 @@ func (c *Connection) setHeaders(headers map[string]interface{}) bool {
 		for k, v := range headers {
 			if len(v.(string)) > 0 {
 				// set the header if value is not empty
-				c.headers[k] = v.(string)
+				c.headers[k] = v.([]string)
 			} else {
 				// delete the header if value is empty
 				delete(c.headers, k)
@@ -192,12 +192,14 @@ func (c *Connection) appendHeadersToMessage(msg *message.Message) {
 
 	if c.headers != nil {
 		if msg.Headers == nil {
-			msg.Headers = make(map[string]string)
+			msg.Headers = c.headers
+			return
 		}
-		for k, v := range c.headers {
-			if _, exists := msg.Headers[k]; !exists {
-				// add the header if it doesn't exist in the message already (new headers override the existing ones)
-				msg.Headers[k] = v
+		for existingHeaderName, existingValues := range c.headers {
+			for messageHeaderName, messageHeaderValues := range msg.Headers {
+				if existingHeaderName == messageHeaderName {
+					existingValues = append(existingValues, messageHeaderValues...)
+				}
 			}
 		}
 	}

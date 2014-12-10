@@ -197,11 +197,7 @@ func buildAndExecuteHttpRequest(requestWrapper message.RequestWrapper, url strin
 	client := &http.Client{}
 	body, _ := json.Marshal(requestWrapper.Message.Body)
 	request, _ := http.NewRequest(requestWrapper.Message.Command, url, bytes.NewBuffer(body))
-	for k, v := range requestWrapper.Message.Headers {
-		if len(v) > 0 {
-			request.Header.Set(k, v)
-		}
-	}
+	request.Header = requestWrapper.Message.Headers
 	resp, err = client.Do(request)
 	return
 }

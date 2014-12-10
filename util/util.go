@@ -21,7 +21,7 @@ var logFile *os.File
 
 func Log(level, message string) {
 
-//	fmt.Println(message)
+	fmt.Println(message)
 	go func() {
 		var err error
 		logFile, err = os.OpenFile("log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
