@@ -11,10 +11,6 @@ import (
 	"strconv"
 )
 
-const serverRoot = "https://api.parse.com/1/classes"
-const parseAppId = "oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8"
-const parseApiKey = "qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"
-
 type RestAdapter struct {
 
 }
@@ -26,7 +22,7 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 
 	// TODO use custom converter for different end points
 
-	targetUrl = serverRoot+requestWrapper.Res
+	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
 	util.Log("debug", "RestAdapter: Target url: "+targetUrl)
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
@@ -97,7 +93,7 @@ func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrap
 
 	// TODO use custom converter for different end points
 
-	targetUrl = serverRoot+requestWrapper.Res
+	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
@@ -137,7 +133,7 @@ func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWra
 
 	// TODO use custom converter for different end points
 
-	targetUrl = serverRoot+requestWrapper.Res
+	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
@@ -177,7 +173,7 @@ func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestW
 
 	// TODO use custom converter for different end points
 
-	targetUrl = serverRoot+requestWrapper.Res
+	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {

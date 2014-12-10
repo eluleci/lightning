@@ -43,9 +43,7 @@ func (h *Hub) Run() {
 				// if there is a subscription channel inside the request, subscribed the request sender
 				// we need to subscribe the channel before we continue because there may be children hub creation
 				// afterwords and we need to give all subscriptions of this hub to it's children
-				if requestWrapper.Subscribe != nil {
-					h.addSubscription(requestWrapper)
-				}
+				h.addSubscription(requestWrapper)
 
 				// converting command to lower case for string comparison
 				requestWrapper.Message.Command = strings.ToLower(requestWrapper.Message.Command)
@@ -228,7 +226,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 				childHub := h.generateChild(childRes, objectData)
 				h.children[childHub.res] = childHub
 			} else {
-				// adding the listener to childs subscribers
+				// adding the listener to child
 				existingChild.addSubscription(requestWrapper)
 				// TODO decide to give the fresh data to child hub or not
 				util.Log("debug", h.res+": Child already exists for res "+childRes)
@@ -392,6 +390,10 @@ func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 		}
 	}()
 
+	if requestWrapper.Subscribe == nil {
+		return
+	}
+
 	// add the connection if it is not already in subscribers list
 	if _, exists := h.subscribers[requestWrapper.Listener]; !exists {
 		subscription := message.Subscription {
@@ -427,10 +429,10 @@ func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
 	rw.Listener = callback
 
 	// sending get messages to all children
-	for k, chlidrenHub := range h.children {
+	for k, childHub := range h.children {
 		rw.Res = k
-		chlidrenHub.addSubscription(requestWrapper)
-		chlidrenHub.Inbox <- rw
+		childHub.addSubscription(requestWrapper)
+		childHub.Inbox <- rw
 	}
 
 	// receiving responses (receiving response is done after sending all messages for preventing being blocked by a child)

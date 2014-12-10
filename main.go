@@ -12,31 +12,43 @@ import (
 	"github.com/eluleci/lightning/util"
 	"github.com/eluleci/lightning/message"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
-var homeTempl = template.Must(template.ParseFiles("home.html"))
+var parsePanel = template.Must(template.ParseFiles("parsePanel.html"))
+var maidanPanel = template.Must(template.ParseFiles("maidanPanel.html"))
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("serveHome")
+func serveParsePanel(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Path != "/panel" {
-		http.Error(w, "Not found", 404)
+	if r.URL.Path != "/parsePanel" {
+		http.Error(w, "Not found.", 404)
 		return
 	}
 	if r.Method != "GET" {
-		http.Error(w, "Method not allowed", 405)
+		http.Error(w, "Method not allowed.", 405)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	homeTempl.Execute(w, r.Host)
+	parsePanel.Execute(w, r.Host)
 }
 
-func serveApi(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("serveApi")
+func serveMaidanPanel(w http.ResponseWriter, r *http.Request) {
+
+	if r.URL.Path != "/maidanPanel" {
+		http.Error(w, "Not found.", 404)
+		return
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed.", 405)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	maidanPanel.Execute(w, r.Host)
+}
+
+func serveHTTP(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	res := vars["res"]
@@ -53,19 +65,25 @@ func serveApi(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Internal server error", 500)
 	}
+	util.Log("debug", "HTTP: Received request: "+string(bytes))
 
 	responseChannel := make(chan message.Message)
 	requestWrapper.Listener = responseChannel
 
 	roothub.RootHub.Inbox <- requestWrapper
 
-	response := <- responseChannel
-	fmt.Println(response)
+	response := <-responseChannel
+	response.Status = 0    // there is no need to status in http response
+	bytes, err = json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Internal server error", 500)
+	}
+	util.Log("debug", "HTTP: Sending response: "+string(bytes))
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	io.WriteString(w, string(bytes))
 
-
+	close(responseChannel)
 }
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
@@ -85,9 +103,10 @@ func main() {
 	go roothub.RootHub.Run()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/api/{res}", serveApi)
-	r.HandleFunc("/panel", serveHome)
+	r.HandleFunc("/parsePanel", serveParsePanel)
+	r.HandleFunc("/maidanPanel", serveMaidanPanel)
 	r.HandleFunc("/ws", serveWs)
+	r.HandleFunc("/{res}", serveHTTP)
 	http.Handle("/", r)
 
 	err := http.ListenAndServe(*addr, nil)

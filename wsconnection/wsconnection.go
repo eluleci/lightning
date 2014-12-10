@@ -173,13 +173,17 @@ func (c *Connection) readPump() {
 
 func (c *Connection) setHeaders(headers map[string]interface{}) bool {
 	if headers != nil && len(headers) > 0 {
-		for k, v := range headers {
-			if len(v.(string)) > 0 {
-				// set the header if value is not empty
-				c.headers[k] = v.([]string)
-			} else {
-				// delete the header if value is empty
-				delete(c.headers, k)
+		for headerName, headerValues := range headers {
+
+			// if values array is empty, it is for removing the header
+			if len(headerValues.([]interface{})) == 0 {
+				delete(c.headers, headerName)
+				continue
+			}
+
+			// adding values to headerValues array
+			for _, value := range headerValues.([]interface{}) {
+				c.headers[headerName] = append(c.headers[headerName], value.(string))
 			}
 		}
 		return true

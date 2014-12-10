@@ -5,10 +5,13 @@ type Config struct {
 	/**
 	 * Data source response configurations
 	 */
-	// the key value of the objects that comes from data source (ex: 'id', '_id', 'objectId')
+	// endpoint url of the http server
+	HTTPServerURI                   string
+
+	// key value of the objects that comes from data source (ex: 'id', '_id', 'objectId')
 	ObjectIdentifier                string
 
-	// the key value of the lists that comes from data source (ex: 'list', 'results').
+	// key value of the lists that comes from data source (ex: 'list', 'results').
 	// leave it empty if array comes in the root of the data received from data source
 	CollectionIdentifier            string
 
@@ -26,4 +29,4 @@ type Config struct {
 	CleanupOnSubscriptionsOver      bool
 }
 
-var DefaultConfig = Config{"objectId", "results", true, true, false}
+var DefaultConfig = Config{"https://api.parse.com/1/classes", "objectId", "results", true, true, false}
