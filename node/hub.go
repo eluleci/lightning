@@ -8,12 +8,11 @@ import (
 	"github.com/eluleci/lightning/adapter"
 	"github.com/eluleci/lightning/util"
 	"github.com/eluleci/lightning/config"
-	"fmt"
 )
 
 type Hub struct {
 	res               string
-	model             ModelHolder
+	model             map[string]interface{}
 	children          map[string]Hub
 	subscribers       map[chan message.Message]chan message.Subscription
 	Inbox             chan message.RequestWrapper
@@ -50,11 +49,21 @@ func (h *Hub) Run() {
 
 				if requestWrapper.Message.Command == "get" {
 
-					if config.DefaultConfig.PersistInMemory && h.model.model["::res"] != nil {
+					if config.DefaultConfig.PersistItemInMemory && h.model != nil {
 						// if persisting in memory and if the model exists, it means we already fetched data before.
 						// so forward request to model holder
-						h.model.handle <- requestWrapper
 
+						var answer message.Message
+						answer.Rid = requestWrapper.Message.Rid
+						answer.Res = h.res
+						answer.Status = 200
+						answer.Body = h.model
+						h.checkAndSend(requestWrapper.Listener, answer)
+
+					} else if config.DefaultConfig.PersistListInMemory && len(h.children) > 0 {
+						// if persisting lists in memory and if there are children hubs, it means we have the data
+						// already. so directly collect the item data from hubs and return it back
+						h.returnChildListToRequest(requestWrapper)
 					} else {
 						// if there is no model, and if there is adapter, get the
 						// data from the adapter first.
@@ -69,15 +78,9 @@ func (h *Hub) Run() {
 }*/
 
 				} else if requestWrapper.Message.Command == "put" {
-					// it is an update request.
-					if config.DefaultConfig.PersistInMemory && h.model.model["::res"] != nil {
-						// if persisting in memory and if the model exists, it means we already fetched data before.
-						// so forward request to model holder
-						h.model.handle <- requestWrapper
-					} else {
-						// if there is no model, and if there is adapter, execute the request from adapter directly
-						h.executePutOnAdapter(requestWrapper)
-					}
+
+					// if there is adapter, execute the request from adapter directly
+					h.executePutOnAdapter(requestWrapper)
 
 				}  else if requestWrapper.Message.Command == "post" {
 					// it is an object creation message under this domain
@@ -87,10 +90,6 @@ func (h *Hub) Run() {
 					// it is an object creation message under this domain
 					h.executeDeleteOnAdapter(requestWrapper)
 
-				} else if requestWrapper.Message.Command == "::initialise" {
-					// this is an object initialisation message. this hub is responsible of an existing object that is
-					// provided in the request wrapper
-					h.initialiseModel(requestWrapper)
 				} else if requestWrapper.Message.Command == "::deleteChild" {
 					// this is a message from child hub for its' deletion. when a parent hub receives this message, it
 					// means that the child hub is deleted explicitly.
@@ -109,7 +108,10 @@ func (h *Hub) Run() {
 						delete(h.children, childRes)
 						util.Log("debug", h.res+": Deleted child "+string(childRes))
 
-						h.checkAndDestroy()
+						if h.checkAndDestroy() {
+							// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
+							break
+						}
 					}
 				} else if requestWrapper.Message.Command == "::destroyChild" {
 
@@ -120,11 +122,11 @@ func (h *Hub) Run() {
 						delete(h.children, childRes)
 						util.Log("debug", h.res+": Destroyed child "+string(childRes))
 
-						h.checkAndDestroy()
+						if h.checkAndDestroy() {
+							// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
+							break
+						}
 					}
-				} else if requestWrapper.Message.Command == "::destroy" {
-					util.Log("debug", h.res+": Destroying self.")
-					break
 				}
 
 			} else {
@@ -160,7 +162,10 @@ func (h *Hub) Run() {
 				delete(h.subscribers, requestWrapper.Listener)
 				util.Log("debug", h.res+": Removed a listener from subscribers. Subscriptions remained: #"+strconv.Itoa(len(h.subscribers)))
 
-				h.checkAndDestroy()
+				if h.checkAndDestroy() {
+					// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
+					break
+				}
 			} else {
 				util.Log("debug", h.res+": The channel to remove doesn't exists in subscriber list.")
 			}
@@ -192,9 +197,8 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 		answer.Body = object
 
 		// creating model holder if PersistInMemory enabled
-		if config.DefaultConfig.PersistInMemory {
-			initialiseRequest := createInitialiseRequest(object, h.res)
-			h.initialiseModel(initialiseRequest)
+		if config.DefaultConfig.PersistItemInMemory {
+			h.initialiseModel(object)
 		}
 
 	} else if objectArray != nil {
@@ -347,11 +351,8 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 	h.checkAndSend(requestWrapper.Listener, answer)
 }
 
-func (h *Hub) initialiseModel(requestWrapper message.RequestWrapper) {
-
-	h.model = createModelHolder(h.res, h.broadcast)
-	go h.model.run()
-	h.model.handle <- requestWrapper
+func (h *Hub) initialiseModel(data map[string]interface{}) {
+	h.model = data
 }
 
 func (h *Hub) generateChild(objectRes string, objectData map[string]interface{}) Hub {
@@ -367,10 +368,9 @@ func (h *Hub) generateChild(objectRes string, objectData map[string]interface{})
 	go hub.Run()
 	util.Log("debug", h.res+": Created a new child for res: "+hub.res+", with subscribers #"+strconv.Itoa(len(h.subscribers)))
 
-	// creating model holder if PersistInMemory enabled
-	if config.DefaultConfig.PersistInMemory {
-		initialiseRequest := createInitialiseRequest(objectData, objectRes)
-		hub.Inbox <- initialiseRequest
+	// saving model if PersistItemInMemory enabled
+	if config.DefaultConfig.PersistItemInMemory {
+		hub.initialiseModel(objectData)
 	}
 	return hub
 }
@@ -406,22 +406,24 @@ func (h *Hub) checkAndSend(c chan message.Message, m message.Message) {
 }
 
 func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
-	list := make([]map[string]interface{}, len(h.children))
-	callback := make(chan message.Message)
 
-	// sending get messages and adding listener channel to all children as subscriber
+	list := make([]map[string]interface{}, len(h.children))
+	callback := make(chan message.Message)        // callback channel to get responses from children
+
 	var getMessage message.Message
 	getMessage.Command = "get"
 	var rw message.RequestWrapper
 	rw.Message = getMessage
 	rw.Listener = callback
+
+	// sending get messages to all children
 	for k, chlidrenHub := range h.children {
 		rw.Res = k
 		chlidrenHub.addSubscription(requestWrapper)
 		chlidrenHub.Inbox <- rw
 	}
-	// receiving responses (receiving response is done after sending all messages for preventing being
-	// blocked by a get message)
+
+	// receiving responses (receiving response is done after sending all messages for preventing being blocked by a child)
 	for i := 0; i < len(h.children); i++ {
 		response := <-callback
 		//						fmt.Println(response.Body)
@@ -432,36 +434,32 @@ func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
 	answer.Res = h.res
 	answer.Status = 200
 	answer.Body = make(map[string]interface{})
-	answer.Body["list"] = list
+	answer.Body["::list"] = list
 	requestWrapper.Listener <- answer
 }
 
-func (h *Hub) checkAndDestroy() {
+func (h *Hub) checkAndDestroy() bool {
 
-	if len(h.subscribers) == 0 && len(h.children) == 0 && !config.DefaultConfig.PersistInMemory {
+	if len(h.subscribers) == 0 && len(h.children) == 0 && config.DefaultConfig.CleanupOnSubscriptionsOver {
 
 		if h.res == "/" {
+			//			time.Sleep(2 * time.Second)
+			//			panic("show the stacks")
 			// don't remove the root hub
-			return
+			return false
 		}
 		util.Log("debug", h.res+": No more subscriber or child remained. Destroying...")
 
-		fmt.Println("Destroying " + h.res)
+		// sending a message to parent to notify that this children is destroying itself
 		var destroyRequest message.RequestWrapper
 		destroyRequest.Res = getParentRes(h.res)
 		destroyRequest.Message.Body = make(map[string]interface{})
 		destroyRequest.Message.Body["::res"] = h.res
 		destroyRequest.Message.Command = "::destroyChild"
 		h.parentInbox <- destroyRequest
-		fmt.Println(destroyRequest)
-
-		destroyRequest.Message.Command = "::destroy"
-		destroyRequest.Res = h.res
-		fmt.Println(destroyRequest)
-		go func() {
-			h.Inbox <- destroyRequest
-		}()
+		return true
 	}
+	return false
 }
 
 func CreateHub(res string, initialSubscribers map[chan message.Message]chan message.Subscription, parentInbox chan message.RequestWrapper) (h Hub) {

@@ -257,6 +257,7 @@ func (c *Connection) writePump() {
 		select {
 		case message, ok := <-c.send:
 			m, _ := json.Marshal(message)
+			util.Log("debug", "WSConnection: Sending message "+string(m))
 
 			if !ok {
 				c.write(websocket.CloseMessage, []byte{})
