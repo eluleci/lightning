@@ -15,10 +15,9 @@ import (
 )
 
 type RestAdapter struct {
-
 }
 
-func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, []map[string]interface{}, *message.RequestError) {
+func (adapter RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, []map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 	object := make(map[string]interface{})
@@ -101,7 +100,7 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 	return nil, nil, nil
 }
 
-func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
+func (adapter RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 
@@ -141,7 +140,7 @@ func (adapter *RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrap
 	return nil, nil
 }
 
-func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
+func (adapter RestAdapter) ExecutePostRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 
@@ -181,7 +180,7 @@ func (adapter *RestAdapter) ExecutePostRequest(requestWrapper message.RequestWra
 	return nil, nil
 }
 
-func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
+func (adapter RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestWrapper) (map[string]interface{}, *message.RequestError) {
 
 	var targetUrl string
 

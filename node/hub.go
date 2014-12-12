@@ -19,7 +19,7 @@ type Hub struct {
 	broadcast         chan message.RequestWrapper
 	parentInbox       chan message.RequestWrapper
 	unsubscribe       chan message.RequestWrapper
-	adapter           adapter.RestAdapter
+	adapter           adapter.Adapter
 }
 
 func (h *Hub) Run() {
