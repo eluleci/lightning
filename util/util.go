@@ -23,6 +23,10 @@ func Log(level, message string) {
 
 //	fmt.Println(message)
 	go func() {
+
+//		if level != "info" {
+//			return
+//		}
 		var err error
 		logFile, err = os.OpenFile("log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {

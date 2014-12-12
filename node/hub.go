@@ -45,10 +45,7 @@ func (h *Hub) Run() {
 				// afterwords and we need to give all subscriptions of this hub to it's children
 				h.addSubscription(requestWrapper)
 
-				// converting command to lower case for string comparison
-				requestWrapper.Message.Command = strings.ToLower(requestWrapper.Message.Command)
-
-				if requestWrapper.Message.Command == "get" {
+				if strings.EqualFold(requestWrapper.Message.Command, "get") {
 
 					if config.DefaultConfig.PersistItemInMemory && h.model != nil {
 						// if persisting in memory and if the model exists, it means we already fetched data before.
@@ -78,20 +75,20 @@ func (h *Hub) Run() {
 
 }*/
 
-				} else if requestWrapper.Message.Command == "put" {
+				} else if strings.EqualFold(requestWrapper.Message.Command, "put") {
 
 					// if there is adapter, execute the request from adapter directly
 					h.executePutOnAdapter(requestWrapper)
 
-				}  else if requestWrapper.Message.Command == "post" {
+				}  else if strings.EqualFold(requestWrapper.Message.Command, "post") {
 					// it is an object creation message under this domain
 					h.executePostOnAdapter(requestWrapper)
 
-				}  else if requestWrapper.Message.Command == "delete" {
+				}  else if strings.EqualFold(requestWrapper.Message.Command, "delete") {
 					// it is an object creation message under this domain
 					h.executeDeleteOnAdapter(requestWrapper)
 
-				} else if requestWrapper.Message.Command == "::deleteChild" {
+				} else if strings.EqualFold(requestWrapper.Message.Command, "::deleteChild") {
 					// this is a message from child hub for its' deletion. when a parent hub receives this message, it
 					// means that the child hub is deleted explicitly.
 
@@ -114,7 +111,7 @@ func (h *Hub) Run() {
 							break
 						}
 					}
-				} else if requestWrapper.Message.Command == "::destroyChild" {
+				} else if strings.EqualFold(requestWrapper.Message.Command, "::destroyChild") {
 
 					childRes := requestWrapper.Message.Body["::res"].(string)
 					if _, exists := h.children[childRes]; exists {

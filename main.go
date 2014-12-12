@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"io/ioutil"
+	"time"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -50,6 +51,9 @@ func serveMaidanPanel(w http.ResponseWriter, r *http.Request) {
 
 func serveHTTP(w http.ResponseWriter, r *http.Request) {
 
+	start := time.Now()
+	util.Log("debug", "HTTP: Received request")
+
 	vars := mux.Vars(r)
 	res := vars["res"]
 
@@ -65,7 +69,7 @@ func serveHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Internal server error", 500)
 	}
-	util.Log("debug", "HTTP: Received request: "+string(bytes))
+	util.Log("info", "HTTP: Received request: "+r.Method)
 
 	responseChannel := make(chan message.Message)
 	requestWrapper.Listener = responseChannel
@@ -78,10 +82,12 @@ func serveHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Internal server error", 500)
 	}
-	util.Log("debug", "HTTP: Sending response: "+string(bytes))
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	io.WriteString(w, string(bytes))
+
+	elapsed := time.Since(start)
+	util.Log("info", "HTTP: Response sent in "+elapsed.String())
 
 	close(responseChannel)
 }
@@ -105,8 +111,8 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/parsePanel", serveParsePanel)
 	r.HandleFunc("/maidanPanel", serveMaidanPanel)
+	r.HandleFunc("/http/{res:[a-zA-Z0-9/]+}", serveHTTP)
 	r.HandleFunc("/ws", serveWs)
-	r.HandleFunc("/{res}", serveHTTP)
 	http.Handle("/", r)
 
 	err := http.ListenAndServe(*addr, nil)

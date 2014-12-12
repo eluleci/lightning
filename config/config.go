@@ -30,3 +30,4 @@ type Config struct {
 }
 
 var DefaultConfig = Config{"https://api.parse.com/1/classes", "objectId", "results", true, true, false}
+//var DefaultConfig = Config{"http://api.maidan.co", "_id", "data", true, true, false}

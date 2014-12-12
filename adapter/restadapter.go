@@ -7,8 +7,11 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
+	"compress/gzip"
 	"bytes"
 	"strconv"
+	"strings"
+	"fmt"
 )
 
 type RestAdapter struct {
@@ -33,10 +36,19 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 
 		defer response.Body.Close()
 
+		reader := response.Body        // default io.Reader is response body
+		if response.Header["Content-Encoding"] != nil && response.Header["Content-Encoding"][0] == "gzip" {
+			var gzipReaderErr error
+			reader, gzipReaderErr = gzip.NewReader(response.Body)
+			if gzipReaderErr != nil {
+				util.Log("error", "RestAdapter: Gzip reader error.")
+			}
+		}
+
 		// getting data from response
-		data, ioErr := ioutil.ReadAll(response.Body)
+		data, ioErr := ioutil.ReadAll(reader)
 		if ioErr != nil {
-			util.Log("error", "RestAdapter: Error occured when reading response from source.")
+			util.Log("error", "RestAdapter: Error occured when reading response from source. Data: "+string(data))
 			return nil, nil, &message.RequestError{500, "Error occured when reading response from source.", nil}
 		}
 
@@ -44,11 +56,13 @@ func (adapter *RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrap
 		// getting object out of the response
 		object, objectParseErr = getJSONObjectFromResponse(data)
 		if objectParseErr != nil {
+			fmt.Println(objectParseErr)
 			// if there is an error while getting object, try getting it as an array
 
 			objects, listParseErr := getJSONArrayFromResponse(data)
 			if listParseErr != nil {
 				util.Log("error", "RestAdapter: Error occured when parsing data.")
+				fmt.Println(string(data))
 				return nil, nil, &message.RequestError{500, "Error occured when parsing data that is received from server.", nil}
 			} else {
 				// if the list is successfully retrieved from the data, return the list
@@ -192,7 +206,7 @@ func (adapter *RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestW
 func buildAndExecuteHttpRequest(requestWrapper message.RequestWrapper, url string) (resp *http.Response, err error) {
 	client := &http.Client{}
 	body, _ := json.Marshal(requestWrapper.Message.Body)
-	request, _ := http.NewRequest(requestWrapper.Message.Command, url, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(strings.ToUpper(requestWrapper.Message.Command), url, bytes.NewBuffer(body))
 	request.Header = requestWrapper.Message.Headers
 	resp, err = client.Do(request)
 	return
