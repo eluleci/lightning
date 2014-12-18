@@ -171,7 +171,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: '::subscribe',
-                    res: '/Comment'
+                    res: document.getElementById("msg").value
                 }
                 sendMessage(message)
                 return false
@@ -184,7 +184,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: '::unsubscribe',
-                    res: '/Comment'
+                    res: document.getElementById("msg").value
                 }
                 sendMessage(message)
                 return false
@@ -252,6 +252,7 @@
             }
             connect();
         });
+
 
 </script>
 <style type="text/css">
