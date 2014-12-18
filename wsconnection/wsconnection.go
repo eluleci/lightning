@@ -152,13 +152,14 @@ func (c *Connection) readPump() {
 			continue
 		}
 
+		shouldSubscribe := true
 		// checking custom messages first
-		// TODO: subscribe to hub
-		// TODO: un-subscribe from hub
 		// TODO: disconnect
 		if msg.Command == "::unsubscribe" {
+			// shouldSubscribe is used for adding subscription info to the requestWrapper or not
+			shouldSubscribe = false
 
-		}else if msg.Command == "::setHeaders" {
+		} else if msg.Command == "::setHeaders" {
 
 			if success := c.setHeaders(msg.Body); success {
 				c.send <- createSuccessMessage(msg.Rid)
@@ -180,7 +181,7 @@ func (c *Connection) readPump() {
 		c.appendHeadersToMessage(&msg)
 
 		// generating request wrapper for the message
-		requestWrapper := c.constructRequestFromMessage(msg)
+		requestWrapper := c.constructRequestFromMessage(msg, shouldSubscribe)
 
 		// finding the best hub to send message
 		inbox := c.findAppropriateInbox(msg.Res)
@@ -188,6 +189,12 @@ func (c *Connection) readPump() {
 		go func() {
 			inbox <- requestWrapper
 		}()
+
+		if msg.Command == "::unsubscribe" {
+			// deleting subscription after sending the message. if you delete it above, it will seek for the hub again
+			delete(c.subscriptions, msg.Res)
+			util.Log("debug", "WSConnection: Un-subscribed from "+msg.Res)
+		}
 	}
 }
 
@@ -229,11 +236,13 @@ func (c *Connection) appendHeadersToMessage(msg *message.Message) {
 	}
 }
 
-func (c *Connection) constructRequestFromMessage(msg message.Message) (rw message.RequestWrapper) {
+func (c *Connection) constructRequestFromMessage(msg message.Message, subscribe bool) (rw message.RequestWrapper) {
 	rw.Res = msg.Res
 	rw.Message = msg
 	rw.Listener = c.send
-	rw.Subscribe = c.subscribed
+	if subscribe {
+		rw.Subscribe = c.subscribed
+	}
 	return
 }
 

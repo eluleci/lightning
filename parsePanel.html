@@ -164,6 +164,32 @@
                 return false
             });
 
+            $("#subscribe").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: '::subscribe',
+                    res: '/Comment'
+                }
+                sendMessage(message)
+                return false
+            });
+
+            $("#unSubscribe").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                var message = {
+                    rid: 123123123,
+                    cmd: '::unsubscribe',
+                    res: '/Comment'
+                }
+                sendMessage(message)
+                return false
+            });
+
             $("#setHeaders").on('click', function () {
                 if (!conn) {
                     return false;
@@ -227,7 +253,6 @@
             connect();
         });
 
-
 </script>
 <style type="text/css">
 
@@ -280,9 +305,10 @@
     <button id="updateComment">updateComment()</button>
     <button id="createComment">createComment()</button>
     <button id="deleteComment">deleteComment()</button>
+    <button id="subscribe">subscribe()</button>
+    <button id="unSubscribe">unSubscribe()</button>
     <button id="setHeaders">setHeaders()</button>
     <button id="deleteHeaders">deleteHeaders()</button>
-    <button id="reconnect" onclick="reconnect()" style="float: right; margin-right: 20px;">reconnect()</button>
 </form>
 </body>
 </html>

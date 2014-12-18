@@ -104,9 +104,25 @@ func (h *Hub) Run() {
 						break
 					}
 
+				} else if strings.EqualFold(requestWrapper.Message.Command, "::subscribe") {
+
+					h.addSubscription(requestWrapper)
+
+					var answer message.Message
+					answer.Rid = requestWrapper.Message.Rid
+					answer.Res = h.res
+					answer.Status = 200
+					h.checkAndSend(requestWrapper.Listener, answer)
+
 				} else if strings.EqualFold(requestWrapper.Message.Command, "::unsubscribe") {
 					// removing listener from subscriptions, no need to notify the listener that it is un-subscribed
 					h.removeSubscription(requestWrapper.Listener, false)
+
+					var answer message.Message
+					answer.Rid = requestWrapper.Message.Rid
+					answer.Res = h.res
+					answer.Status = 200
+					h.checkAndSend(requestWrapper.Listener, answer)
 
 					if h.checkAndDestroy() {
 						// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
