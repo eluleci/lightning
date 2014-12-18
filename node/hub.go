@@ -16,13 +16,16 @@ type Hub struct {
 	children          map[string]Hub
 	subscribers       map[chan message.Message]chan message.Subscription
 	Inbox             chan message.RequestWrapper
-	broadcast         chan message.RequestWrapper
 	parentInbox       chan message.RequestWrapper
 	unsubscribe       chan message.RequestWrapper
 	adapter           adapter.Adapter
 }
 
 func (h *Hub) Run() {
+	defer func() {
+		util.Log("debug", h.res+":  Stopped running.")
+
+	}()
 
 	util.Log("debug", h.res+":  Started running.")
 
@@ -40,7 +43,7 @@ func (h *Hub) Run() {
 			if requestWrapper.Res == h.res {
 				// if the resource of the message is this hub's resource
 
-				// if there is a subscription channel inside the request, subscribed the request sender
+				// if there is a subscription channel inside the request, subscribe the request sender
 				// we need to subscribe the channel before we continue because there may be children hub creation
 				// afterwords and we need to give all subscriptions of this hub to it's children
 				h.addSubscription(requestWrapper)
@@ -49,7 +52,7 @@ func (h *Hub) Run() {
 
 					if config.DefaultConfig.PersistItemInMemory && h.model != nil {
 						// if persisting in memory and if the model exists, it means we already fetched data before.
-						// so forward request to model holder
+						// so return the model to listener
 
 						var answer message.Message
 						answer.Rid = requestWrapper.Message.Rid
@@ -62,18 +65,23 @@ func (h *Hub) Run() {
 						// if persisting lists in memory and if there are children hubs, it means we have the data
 						// already. so directly collect the item data from hubs and return it back
 						h.returnChildListToRequest(requestWrapper)
-					} else {
+
+					} else if h.adapter != nil {
 						// if there is no model, and if there is adapter, get the
 						// data from the adapter first.
 						h.executeGetOnAdapter(requestWrapper)
-					}
-					/* else if len(h.children) > 0 {
-	// if command is 'get', if model doesn't exists, and if there are children hubs, it means that
-	// this is  domain hub and this message is a get message for the list
-	fmt.Println(h.res + ": Returning list of models.")
-	h.returnChildListToRequest(requestWrapper)
 
-}*/
+					} else {
+						var answer message.Message
+						answer.Rid = requestWrapper.Message.Rid
+						answer.Res = h.res
+						answer.Status = 510
+						body := make(map[string]interface{})
+						body["error"] = "No adapter is set for ThunderDock Server."
+						answer.Body = body
+						h.checkAndSend(requestWrapper.Listener, answer)
+
+					}
 
 				} else if strings.EqualFold(requestWrapper.Message.Command, "put") {
 
@@ -85,8 +93,17 @@ func (h *Hub) Run() {
 					h.executePostOnAdapter(requestWrapper)
 
 				}  else if strings.EqualFold(requestWrapper.Message.Command, "delete") {
-					// it is an object creation message under this domain
-					h.executeDeleteOnAdapter(requestWrapper)
+					// it is an object deletion message under this domain
+					if h.executeDeleteOnAdapter(requestWrapper) {
+
+						// removing all subscribers
+						for listenerChannel, _ := range h.subscribers {
+							h.removeSubscription(listenerChannel)
+						}
+
+						// if deletion is successful, break the loop (destroy self)
+						break
+					}
 
 				} else if strings.EqualFold(requestWrapper.Message.Command, "::deleteChild") {
 					// this is a message from child hub for its' deletion. when a parent hub receives this message, it
@@ -98,9 +115,10 @@ func (h *Hub) Run() {
 						// send broadcast message of the object deletion
 						requestWrapper.Message.Command = "delete"
 						requestWrapper.Message.Res = h.res
-						go func() {
-							h.broadcast <- requestWrapper
-						}()
+						//						go func() {
+						//							h.broadcast <- requestWrapper
+						//						}()
+						h.broadcastMessage(requestWrapper)
 
 						// delete the child hub
 						delete(h.children, childRes)
@@ -149,17 +167,6 @@ func (h *Hub) Run() {
 				hub.Inbox <- requestWrapper
 			}
 
-		case requestWrapper := <-h.broadcast:
-			util.Log("debug", h.res+": Broadcasting message. Number of subscribers: #"+strconv.Itoa(len(h.subscribers)))
-
-			// broadcasting a message to all connections. only the owner of the request doesn't receive this broadcast
-			// because we send 'response message' to the request owner
-		for listenerChannel, _ := range h.subscribers {
-			if listenerChannel != requestWrapper.Listener {
-				go h.checkAndSend(listenerChannel, requestWrapper.Message)
-			}
-		}
-
 		case requestWrapper := <-h.unsubscribe:
 
 			// remove listener from subscribers if it is in subscribers list
@@ -176,7 +183,24 @@ func (h *Hub) Run() {
 			}
 		}
 	}
+}
 
+func (h *Hub) broadcastMessage(requestWrapper message.RequestWrapper) {
+
+	util.Log("debug", h.res+": Broadcasting message. Number of subscribers: #"+strconv.Itoa(len(h.subscribers)))
+
+	// removing unnecessary parts of the message if exists
+	requestWrapper.Message.Rid = 0
+	requestWrapper.Message.Headers = nil
+	requestWrapper.Message.Status = 0
+
+	// broadcasting a message to all connections. only the owner of the request doesn't receive this broadcast
+	// because we send 'response message' to the request owner
+	for listenerChannel, _ := range h.subscribers {
+		if listenerChannel != requestWrapper.Listener {
+			go h.checkAndSend(listenerChannel, requestWrapper.Message)
+		}
+	}
 }
 
 func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
@@ -258,17 +282,22 @@ func (h *Hub) executePutOnAdapter(requestWrapper message.RequestWrapper) {
 
 		answer.Status = 200
 		answer.Body = response
-		if response["updatedAt"] != nil {
-			answer.Body["updatedAt"] = response["updatedAt"]
-		}
 
 		// TODO: update the model holder if exists
+		if h.model != nil {
+			if response["updatedAt"] != nil {
+				h.model["updatedAt"] = response["updatedAt"]
+			}
+			for k, v := range requestWrapper.Message.Body {
+				h.model[k] = v
+			}
+		}
 
-		requestWrapper.Message.Rid = 0
 		requestWrapper.Message.Body["updatedAt"] = response["updatedAt"]
-		go func() {
-			h.broadcast <- requestWrapper
-		}()
+		//		go func() {
+		//			h.broadcast <- requestWrapper
+		//		}()
+		h.broadcastMessage(requestWrapper)
 
 	} else {
 		answer.Status = 404
@@ -310,9 +339,10 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 
 		requestWrapper.Message.Rid = 0
 		requestWrapper.Message.Body = objectData
-		go func() {
-			h.broadcast <- requestWrapper
-		}()
+		//		go func() {
+		//			h.broadcast <- requestWrapper
+		//		}()
+		h.broadcastMessage(requestWrapper)
 
 	} else {
 		answer.Status = 500
@@ -322,7 +352,7 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 	h.checkAndSend(requestWrapper.Listener, answer)
 }
 
-func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
+func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) (isDeleted bool) {
 
 	var answer message.Message
 	answer.Rid = requestWrapper.Message.Rid
@@ -336,12 +366,11 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 	} else {
 		// if there is no error, it means that the object is deleted successfully
 		answer.Status = 200
+		isDeleted = true
 
 		// send broadcast message of the object deletion
 		requestWrapper.Message.Rid = 0
-		go func() {
-			h.broadcast <- requestWrapper
-		}()
+		h.broadcastMessage(requestWrapper)
 
 		var deleteRequest message.RequestWrapper
 		deleteRequest.Message.Command = "::deleteChild"
@@ -354,6 +383,7 @@ func (h *Hub) executeDeleteOnAdapter(requestWrapper message.RequestWrapper) {
 
 	// sending result of DELETE message
 	h.checkAndSend(requestWrapper.Listener, answer)
+	return
 }
 
 func (h *Hub) initialiseModel(data map[string]interface{}) {
@@ -393,14 +423,31 @@ func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 
 	// add the connection if it is not already in subscribers list
 	if _, exists := h.subscribers[requestWrapper.Listener]; !exists {
-		subscription := message.Subscription {
-			h.res,
-			h.Inbox,
-			h.unsubscribe,
-		}
+		var subscription message.Subscription
+		subscription.Res = h.res
+		subscription.InboxChannel = h.Inbox
+		subscription.UnsubscriptionChannel = h.unsubscribe
+
 		requestWrapper.Subscribe <- subscription
 		h.subscribers[requestWrapper.Listener] = requestWrapper.Subscribe
 		util.Log("debug", h.res+": Added new listener to subscribers. New size: #"+strconv.Itoa(len(h.subscribers)))
+	}
+}
+
+func (h *Hub) removeSubscription(listenerChannel chan message.Message) {
+	defer func() {
+		if r := recover(); r != nil {
+			// the subscribe channel may be closed. catching the panic
+		}
+	}()
+
+	// remove the connection if it is already in subscribers list
+	if subscribeChannel, exists := h.subscribers[listenerChannel]; exists {
+		var subscription message.Subscription
+		subscription.Res = h.res
+		delete(h.subscribers, listenerChannel)
+		subscribeChannel <- subscription
+		util.Log("debug", h.res+": Removed a listener from subscribers. New size: #"+strconv.Itoa(len(h.subscribers)))
 	}
 }
 
@@ -452,8 +499,6 @@ func (h *Hub) checkAndDestroy() bool {
 	if len(h.subscribers) == 0 && len(h.children) == 0 && config.DefaultConfig.CleanupOnSubscriptionsOver {
 
 		if h.res == "/" {
-			//			time.Sleep(2 * time.Second)
-			//			panic("show the stacks")
 			// don't remove the root hub
 			return false
 		}
@@ -475,10 +520,10 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 	h.res = res
 	h.children = make(map[string]Hub)
 	h.Inbox = make(chan message.RequestWrapper)
-	h.broadcast = make(chan message.RequestWrapper)
 	h.parentInbox = parentInbox
 	h.unsubscribe = make(chan message.RequestWrapper)
 	h.adapter = adapter.RestAdapter{}
+	//	h.adapter = adapter.MongoAdapter{}
 
 	if initialSubscribers != nil {
 		h.subscribers = initialSubscribers
@@ -491,13 +536,6 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 	} else {
 		h.subscribers = make(map[chan message.Message]chan message.Subscription, 0)
 	}
-	return
-}
-
-func createModelHolder(res string, broadcastChannel chan message.RequestWrapper) (mh ModelHolder) {
-	mh.res = res
-	mh.handle = make(chan message.RequestWrapper)
-	mh.broadcastChannel = broadcastChannel
 	return
 }
 

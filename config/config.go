@@ -29,5 +29,5 @@ type Config struct {
 	CleanupOnSubscriptionsOver      bool
 }
 
-var DefaultConfig = Config{"https://api.parse.com/1/classes", "objectId", "results", true, true, false}
+var DefaultConfig = Config{"https://api.parse.com/1/classes", "objectId", "results", false, false, true}
 //var DefaultConfig = Config{"http://api.maidan.co", "_id", "data", true, true, false}

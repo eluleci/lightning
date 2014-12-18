@@ -88,8 +88,17 @@ func (c *Connection) Run() {
 	for {
 		select {
 		case subscription := <-c.subscribed:
-			//			fmt.Println("Connection subscribed to res: " + subscription.res)
-			c.subscriptions[subscription.Res] = subscription
+//			util.Log("debug", "WSConnection: Connection received subscription from "+subscription.Res)
+
+			if _, exists := c.subscriptions[subscription.Res]; exists {
+				if (subscription.InboxChannel == nil) {
+					util.Log("debug", "WSConnection: Connection is un-subscribed from "+subscription.Res)
+					delete(c.subscriptions, subscription.Res)
+				}
+			} else {
+				util.Log("debug", "WSConnection: Connection is subscribed to "+subscription.Res)
+				c.subscriptions[subscription.Res] = subscription
+			}
 		case down := <-c.tearDown:
 			// finishes the run() of connection
 			if down {
@@ -138,7 +147,9 @@ func (c *Connection) readPump() {
 		// TODO: subscribe to hub
 		// TODO: un-subscribe from hub
 		// TODO: disconnect
-		if msg.Command == "::setHeaders" {
+		if msg.Command == "::unsubscribe" {
+
+		}else if msg.Command == "::setHeaders" {
 
 			if success := c.setHeaders(msg.Body); success {
 				c.send <- createSuccessMessage(msg.Rid)
