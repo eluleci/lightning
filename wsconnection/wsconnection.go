@@ -63,12 +63,21 @@ func CreateConnection(w http.ResponseWriter, r *http.Request) (c Connection) {
 func (c *Connection) Run() {
 	defer func() {
 		util.Log("debug", "WSConnection: Connection is teared down. Unsubscribing from channels #"+strconv.Itoa(len(c.subscriptions)))
-		// un-registering from all hubs
+
+		// un-subscribing from all hubs
 		for _, subscription := range c.subscriptions {
 			//			fmt.Println("Unsubscribing from ", subscription.res)
+
+			var unsubscribeMessage message.Message
+			unsubscribeMessage.Res = subscription.Res
+			unsubscribeMessage.Command = "::unsubscribe"
+
 			rw := new(message.RequestWrapper)
+			rw.Res = subscription.Res
 			rw.Listener = c.send
-			subscription.UnsubscriptionChannel <- *rw
+			rw.Message = unsubscribeMessage
+
+			subscription.InboxChannel <- *rw
 		}
 		c.ws.Close()
 		close(c.send)
@@ -88,7 +97,7 @@ func (c *Connection) Run() {
 	for {
 		select {
 		case subscription := <-c.subscribed:
-//			util.Log("debug", "WSConnection: Connection received subscription from "+subscription.Res)
+			//			util.Log("debug", "WSConnection: Connection received subscription from "+subscription.Res)
 
 			if _, exists := c.subscriptions[subscription.Res]; exists {
 				if (subscription.InboxChannel == nil) {

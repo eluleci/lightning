@@ -17,7 +17,6 @@ type Hub struct {
 	subscribers       map[chan message.Message]chan message.Subscription
 	Inbox             chan message.RequestWrapper
 	parentInbox       chan message.RequestWrapper
-	unsubscribe       chan message.RequestWrapper
 	adapter           adapter.Adapter
 }
 
@@ -96,12 +95,21 @@ func (h *Hub) Run() {
 					// it is an object deletion message under this domain
 					if h.executeDeleteOnAdapter(requestWrapper) {
 
-						// removing all subscribers
+						// removing all subscribers and notifying them that they are removed from subscriptions
 						for listenerChannel, _ := range h.subscribers {
-							h.removeSubscription(listenerChannel)
+							h.removeSubscription(listenerChannel, true)
 						}
 
 						// if deletion is successful, break the loop (destroy self)
+						break
+					}
+
+				} else if strings.EqualFold(requestWrapper.Message.Command, "::unsubscribe") {
+					// removing listener from subscriptions, no need to notify the listener that it is un-subscribed
+					h.removeSubscription(requestWrapper.Listener, false)
+
+					if h.checkAndDestroy() {
+						// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
 						break
 					}
 
@@ -165,21 +173,6 @@ func (h *Hub) Run() {
 				}
 				//   forward message to the children hub
 				hub.Inbox <- requestWrapper
-			}
-
-		case requestWrapper := <-h.unsubscribe:
-
-			// remove listener from subscribers if it is in subscribers list
-			if _, exists := h.subscribers[requestWrapper.Listener]; exists {
-				delete(h.subscribers, requestWrapper.Listener)
-				util.Log("debug", h.res+": Removed a listener from subscribers. Subscriptions remained: #"+strconv.Itoa(len(h.subscribers)))
-
-				if h.checkAndDestroy() {
-					// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
-					break
-				}
-			} else {
-				util.Log("debug", h.res+": The channel to remove doesn't exists in subscriber list.")
 			}
 		}
 	}
@@ -426,7 +419,7 @@ func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 		var subscription message.Subscription
 		subscription.Res = h.res
 		subscription.InboxChannel = h.Inbox
-		subscription.UnsubscriptionChannel = h.unsubscribe
+		//		subscription.UnsubscriptionChannel = h.unsubscribe
 
 		requestWrapper.Subscribe <- subscription
 		h.subscribers[requestWrapper.Listener] = requestWrapper.Subscribe
@@ -434,7 +427,7 @@ func (h *Hub) addSubscription(requestWrapper message.RequestWrapper) {
 	}
 }
 
-func (h *Hub) removeSubscription(listenerChannel chan message.Message) {
+func (h *Hub) removeSubscription(listenerChannel chan message.Message, notifyListener bool) {
 	defer func() {
 		if r := recover(); r != nil {
 			// the subscribe channel may be closed. catching the panic
@@ -443,10 +436,13 @@ func (h *Hub) removeSubscription(listenerChannel chan message.Message) {
 
 	// remove the connection if it is already in subscribers list
 	if subscribeChannel, exists := h.subscribers[listenerChannel]; exists {
-		var subscription message.Subscription
-		subscription.Res = h.res
+		subscription := message.Subscription{h.res, nil}
 		delete(h.subscribers, listenerChannel)
-		subscribeChannel <- subscription
+
+		if notifyListener {
+			// notifying listener that it is removed from subscribers
+			subscribeChannel <- subscription
+		}
 		util.Log("debug", h.res+": Removed a listener from subscribers. New size: #"+strconv.Itoa(len(h.subscribers)))
 	}
 }
@@ -521,7 +517,7 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 	h.children = make(map[string]Hub)
 	h.Inbox = make(chan message.RequestWrapper)
 	h.parentInbox = parentInbox
-	h.unsubscribe = make(chan message.RequestWrapper)
+	//	h.unsubscribe = make(chan message.RequestWrapper)
 	h.adapter = adapter.RestAdapter{}
 	//	h.adapter = adapter.MongoAdapter{}
 
@@ -530,7 +526,7 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 
 		// notifying connections that they are subscribed to a new hub
 		for _, subscriptionChannel := range (initialSubscribers) {
-			subscription := message.Subscription {h.res, h.Inbox, h.unsubscribe, }
+			subscription := message.Subscription {h.res, h.Inbox}
 			subscriptionChannel <- subscription
 		}
 	} else {
