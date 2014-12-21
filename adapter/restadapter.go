@@ -5,6 +5,7 @@ import (
 	"github.com/eluleci/lightning/config"
 	"github.com/eluleci/lightning/util"
 	"net/http"
+	"net/url"
 	"io/ioutil"
 	"encoding/json"
 	"compress/gzip"
@@ -24,7 +25,7 @@ func (adapter RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrapp
 
 	// TODO use custom converter for different end points
 
-	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
+	targetUrl = config.SystemConfig.HTTPServerURI+requestWrapper.Res
 	util.Log("debug", "RestAdapter: Target url: "+targetUrl)
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
@@ -71,10 +72,10 @@ func (adapter RestAdapter) ExecuteGetRequest(requestWrapper message.RequestWrapp
 		} else {
 			// if the object is successfully constructed from the data, check that is it list wrapper or not
 
-			if len(config.DefaultConfig.CollectionIdentifier) > 0 {
+			if len(config.SystemConfig.CollectionIdentifier) > 0 {
 				// if there is an arrayIdentifier in configuration, check the list field exists in object or not
 
-				if objectInArrayIdentifierField, exists := object[config.DefaultConfig.CollectionIdentifier]; exists {
+				if objectInArrayIdentifierField, exists := object[config.SystemConfig.CollectionIdentifier]; exists {
 					// if arrayIdentifier field exists in the object, try to extract an array from that field
 
 					arrayData, _ := json.Marshal(objectInArrayIdentifierField)
@@ -106,7 +107,7 @@ func (adapter RestAdapter) ExecutePutRequest(requestWrapper message.RequestWrapp
 
 	// TODO use custom converter for different end points
 
-	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
+	targetUrl = config.SystemConfig.HTTPServerURI+requestWrapper.Res
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
@@ -146,7 +147,7 @@ func (adapter RestAdapter) ExecutePostRequest(requestWrapper message.RequestWrap
 
 	// TODO use custom converter for different end points
 
-	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
+	targetUrl = config.SystemConfig.HTTPServerURI+requestWrapper.Res
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
@@ -186,7 +187,7 @@ func (adapter RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestWr
 
 	// TODO use custom converter for different end points
 
-	targetUrl = config.DefaultConfig.HTTPServerURI+requestWrapper.Res
+	targetUrl = config.SystemConfig.HTTPServerURI+requestWrapper.Res
 
 	response, requestErr := buildAndExecuteHttpRequest(requestWrapper, targetUrl)
 	if requestErr != nil {
@@ -202,10 +203,16 @@ func (adapter RestAdapter) ExecuteDeleteRequest(requestWrapper message.RequestWr
 	return nil, nil
 }
 
-func buildAndExecuteHttpRequest(requestWrapper message.RequestWrapper, url string) (resp *http.Response, err error) {
+func buildAndExecuteHttpRequest(requestWrapper message.RequestWrapper, endpoint string) (resp *http.Response, err error) {
+
+	// adding query params if any
+	queryParams := url.Values{}
+	queryParams = requestWrapper.Message.Parameters
+	endpoint += "?" + queryParams.Encode()
+
 	client := &http.Client{}
 	body, _ := json.Marshal(requestWrapper.Message.Body)
-	request, _ := http.NewRequest(strings.ToUpper(requestWrapper.Message.Command), url, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(strings.ToUpper(requestWrapper.Message.Command), endpoint, bytes.NewBuffer(body))
 	request.Header = requestWrapper.Message.Headers
 	resp, err = client.Do(request)
 	return

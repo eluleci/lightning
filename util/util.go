@@ -21,7 +21,7 @@ var logFile *os.File
 
 func Log(level, message string) {
 
-	fmt.Println(message)
+//	fmt.Println(message)
 	go func() {
 
 //		if level != "info" {

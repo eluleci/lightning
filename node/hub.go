@@ -49,18 +49,14 @@ func (h *Hub) Run() {
 
 				if strings.EqualFold(requestWrapper.Message.Command, "get") {
 
-					if config.DefaultConfig.PersistItemInMemory && h.model != nil {
+					if config.SystemConfig.PersistItemInMemory && h.model != nil {
 						// if persisting in memory and if the model exists, it means we already fetched data before.
 						// so return the model to listener
 
-						var answer message.Message
-						answer.Rid = requestWrapper.Message.Rid
-						answer.Res = h.res
-						answer.Status = 200
-						answer.Body = h.model
-						h.checkAndSend(requestWrapper.Listener, answer)
+						response := createResponse(requestWrapper.Message.Rid, h.res, 200, h.model, "")
+						h.checkAndSend(requestWrapper.Listener, response)
 
-					} else if config.DefaultConfig.PersistListInMemory && len(h.children) > 0 {
+					} else if config.SystemConfig.PersistListInMemory && len(h.children) > 0 {
 						// if persisting lists in memory and if there are children hubs, it means we have the data
 						// already. so directly collect the item data from hubs and return it back
 						h.returnChildListToRequest(requestWrapper)
@@ -71,58 +67,62 @@ func (h *Hub) Run() {
 						h.executeGetOnAdapter(requestWrapper)
 
 					} else {
-						var answer message.Message
-						answer.Rid = requestWrapper.Message.Rid
-						answer.Res = h.res
-						answer.Status = 510
-						body := make(map[string]interface{})
-						body["error"] = "No adapter is set for ThunderDock Server."
-						answer.Body = body
-						h.checkAndSend(requestWrapper.Listener, answer)
-
+						response := createResponse(requestWrapper.Message.Rid, h.res, 501, nil, "No adapter is set for ThunderDock Server.")
+						h.checkAndSend(requestWrapper.Listener, response)
 					}
 
 				} else if strings.EqualFold(requestWrapper.Message.Command, "put") {
 
-					// if there is adapter, execute the request from adapter directly
-					h.executePutOnAdapter(requestWrapper)
+					if h.adapter != nil {
+						// if there is adapter, execute the request from adapter directly
+						h.executePutOnAdapter(requestWrapper)
+					} else {
+						response := createResponse(requestWrapper.Message.Rid, h.res, 501, nil, "No adapter is set for ThunderDock Server.")
+						h.checkAndSend(requestWrapper.Listener, response)
+					}
 
 				}  else if strings.EqualFold(requestWrapper.Message.Command, "post") {
-					// it is an object creation message under this domain
-					h.executePostOnAdapter(requestWrapper)
+
+					if h.adapter != nil {
+						// it is an object creation message under this domain
+						h.executePostOnAdapter(requestWrapper)
+					} else {
+						response := createResponse(requestWrapper.Message.Rid, h.res, 501, nil, "No adapter is set for ThunderDock Server.")
+						h.checkAndSend(requestWrapper.Listener, response)
+					}
 
 				}  else if strings.EqualFold(requestWrapper.Message.Command, "delete") {
-					// it is an object deletion message under this domain
-					if h.executeDeleteOnAdapter(requestWrapper) {
 
-						// removing all subscribers and notifying them that they are removed from subscriptions
-						for listenerChannel, _ := range h.subscribers {
-							h.removeSubscription(listenerChannel, true)
+					if h.adapter != nil {
+						// it is an object deletion message under this domain
+						if h.executeDeleteOnAdapter(requestWrapper) {
+
+							// removing all subscribers and notifying them that they are removed from subscriptions
+							for listenerChannel, _ := range h.subscribers {
+								h.removeSubscription(listenerChannel, true)
+							}
+
+							// if deletion is successful, break the loop (destroy self)
+							break
 						}
-
-						// if deletion is successful, break the loop (destroy self)
-						break
+					} else {
+						response := createResponse(requestWrapper.Message.Rid, h.res, 501, nil, "No adapter is set for ThunderDock Server.")
+						h.checkAndSend(requestWrapper.Listener, response)
 					}
 
 				} else if strings.EqualFold(requestWrapper.Message.Command, "::subscribe") {
 
 					h.addSubscription(requestWrapper)
 
-					var answer message.Message
-					answer.Rid = requestWrapper.Message.Rid
-					answer.Res = h.res
-					answer.Status = 200
-					h.checkAndSend(requestWrapper.Listener, answer)
+					response := createResponse(requestWrapper.Message.Rid, h.res, 200, nil, "")
+					h.checkAndSend(requestWrapper.Listener, response)
 
 				} else if strings.EqualFold(requestWrapper.Message.Command, "::unsubscribe") {
 					// removing listener from subscriptions, no need to notify the listener that it is un-subscribed
 					h.removeSubscription(requestWrapper.Listener, false)
 
-					var answer message.Message
-					answer.Rid = requestWrapper.Message.Rid
-					answer.Res = h.res
-					answer.Status = 200
-					h.checkAndSend(requestWrapper.Listener, answer)
+					response := createResponse(requestWrapper.Message.Rid, h.res, 200, nil, "")
+					h.checkAndSend(requestWrapper.Listener, response)
 
 					if h.checkAndDestroy() {
 						// if checkAndDestroy returns true, it means we're destroying. so break the for loop to destroy
@@ -226,7 +226,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 
 	} else if object != nil {
 		// if object is not null, it means that this is the object that this hub is responsible of
-		util.Log("debug", h.res+": Received one object from adapter with id "+object[config.DefaultConfig.ObjectIdentifier].(string))
+		util.Log("debug", h.res+": Received one object from adapter with id "+object[config.SystemConfig.ObjectIdentifier].(string))
 
 		// adding a new field to object body for subscription purposes
 		object["::res"] = h.res
@@ -235,7 +235,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 		answer.Body = object
 
 		// creating model holder if PersistInMemory enabled
-		if config.DefaultConfig.PersistItemInMemory {
+		if config.SystemConfig.PersistItemInMemory {
 			h.initialiseModel(object)
 		}
 
@@ -249,7 +249,7 @@ func (h *Hub) executeGetOnAdapter(requestWrapper message.RequestWrapper) {
 		for _, objectData := range (objectArray) {
 
 			// generating res of the object: parentRes/objectId
-			childRes := h.res + "/" + objectData[config.DefaultConfig.ObjectIdentifier].(string)
+			childRes := h.res + "/" + objectData[config.SystemConfig.ObjectIdentifier].(string)
 			objectData["::res"] = childRes
 
 			if existingChild, exists := h.children[childRes]; !exists {
@@ -333,7 +333,7 @@ func (h *Hub) executePostOnAdapter(requestWrapper message.RequestWrapper) {
 		objectData := requestWrapper.Message.Body
 
 		// adding a new field 'res' to object body for subscription purposes
-		objectRes := h.res + "/" + response[config.DefaultConfig.ObjectIdentifier].(string)
+		objectRes := h.res + "/" + response[config.SystemConfig.ObjectIdentifier].(string)
 		objectData["::res"] = objectRes
 		objectData["createdAt"] = response["createdAt"]
 		response["::res"] = objectRes
@@ -413,7 +413,7 @@ func (h *Hub) generateChild(objectRes string, objectData map[string]interface{})
 	util.Log("debug", h.res+": Created a new child for res: "+hub.res+", with subscribers #"+strconv.Itoa(len(h.subscribers)))
 
 	// saving model if PersistItemInMemory enabled
-	if config.DefaultConfig.PersistItemInMemory {
+	if config.SystemConfig.PersistItemInMemory {
 		hub.initialiseModel(objectData)
 	}
 	return hub
@@ -508,7 +508,7 @@ func (h *Hub) returnChildListToRequest(requestWrapper message.RequestWrapper) {
 
 func (h *Hub) checkAndDestroy() bool {
 
-	if len(h.subscribers) == 0 && len(h.children) == 0 && config.DefaultConfig.CleanupOnSubscriptionsOver {
+	if len(h.subscribers) == 0 && len(h.children) == 0 && config.SystemConfig.CleanupOnSubscriptionsOver {
 
 		if h.res == "/" {
 			// don't remove the root hub
@@ -533,9 +533,7 @@ func CreateHub(res string, initialSubscribers map[chan message.Message]chan mess
 	h.children = make(map[string]Hub)
 	h.Inbox = make(chan message.RequestWrapper)
 	h.parentInbox = parentInbox
-	//	h.unsubscribe = make(chan message.RequestWrapper)
 	h.adapter = adapter.RestAdapter{}
-	//	h.adapter = adapter.MongoAdapter{}
 
 	if initialSubscribers != nil {
 		h.subscribers = initialSubscribers
@@ -587,5 +585,17 @@ func getParentRes(res string) (path string) {
 		return "/"
 	}
 	path = "/"+res[:li]
+	return
+}
+
+func createResponse(rid int, res string, status int, body map[string]interface{}, errorMessage string) (response message.Message) {
+	response.Rid = rid
+	response.Res = res
+	response.Status = status
+	if body == nil && len(errorMessage) > 0 {
+		body = make(map[string]interface{})
+		body["error"] = errorMessage
+	}
+	response.Body = body
 	return
 }

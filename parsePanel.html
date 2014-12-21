@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Chat Example</title>
-<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-<script type="text/javascript">
+    <title>Chat Example</title>
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript">
         $(function () {
 
             var conn;
@@ -77,7 +77,10 @@
                 messageContainer.id = rid
                 document.body.appendChild(messageContainer)
                 var messageDom = createMessageDom(message)
+                messageDom.className = "request-message-container"
                 if(messageDom) messageContainer.appendChild(messageDom)
+
+                window.scrollTo(0,document.body.scrollHeight);
             }
 
             function createMessageDom(message) {
@@ -95,6 +98,23 @@
                     rid: 123123123,
                     cmd: 'get',
                     res: '/Comment'
+                }
+                sendMessage(message)
+                return false
+            });
+
+            $("#getCommentsHaveLikes").on('click', function () {
+                if (!conn) {
+                    return false;
+                }
+                // discussion/all?p=1&s=10&community=53d21f8f1d41c8127a000001&expand=*&filter=*
+                var message = {
+                    rid: 123123123,
+                    cmd: 'get',
+                    res: '/Comment',
+                    parameters: {
+                        'where': ['{"likes":{"$gt":0}}']
+                    }
                 }
                 sendMessage(message)
                 return false
@@ -171,7 +191,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: '::subscribe',
-                    res: document.getElementById("msg").value
+                    res: '/Comment/' + document.getElementById("msg").value
                 }
                 sendMessage(message)
                 return false
@@ -184,7 +204,7 @@
                 var message = {
                     rid: 123123123,
                     cmd: '::unsubscribe',
-                    res: document.getElementById("msg").value
+                    res: '/Comment/' + document.getElementById("msg").value
                 }
                 sendMessage(message)
                 return false
@@ -236,6 +256,7 @@
                         if(obj.rid){
                             // response message
                             var messageContainer = document.getElementById(obj.rid);
+                            messageContainer.className = "message-container"
                             var messageDom = createMessageDom(obj)
                             if(messageDom) messageContainer.appendChild(messageDom)
 
@@ -253,63 +274,94 @@
             connect();
         });
 
+    </script>
+    <style type="text/css">
 
-</script>
-<style type="text/css">
+        body {
+        box-sizing: border-box;
+        padding-bottom: 40px;
+        }
 
-    body {
-    box-sizing: border-box;
-    padding-bottom: 40px;
-    }
+        h1 {
+        text-align: center;
+        font-family: Tahoma;
+        font-weight: 300;
+        }
 
-    h1 {
-    text-align: center;
-    font-family: Tahoma;
-    font-weight: 300;
-    }
+        pre {outline: 1px solid #ccc; padding: 5px;}
+        .string { color: #888888; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: green; }
 
-    pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
-    .string { color: #888888; }
-    .number { color: darkorange; }
-    .boolean { color: blue; }
-    .null { color: magenta; }
-    .key { color: green; }
+        #form {
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #2980b9;
+        left: 0;
+        }
 
-    #form {
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #2980b9;
-    left: 0;
-    }
+        div {
+            overflow: auto;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
 
-    div {
-    overflow: auto;
-    }
+        div > pre {
+            float: left;
+            width: 48%;
+            overflow-x: scroll;
+            outline: 1px solid #ccc;
+            border: none;
+        }
 
-    div > pre {
-    float: left;
-    width: 48%;
-    overflow-x: scroll;
-    }
-</style>
+        div > pre:last-child {
+            float: right;
+        }
+
+        div > pre:last-child.request-message-container {
+            float: left;
+        }
+
+        pre {
+            border: 5px solid #f39c12;
+        }
+
+        .message-container {
+            border: 5px solid #2980b9;
+            margin-bottom: 10px;
+        }
+
+        .separator {
+            height: 7px;
+            width: 20px;
+            background-color: #e74c3c;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
 
 <div id="log"></div>
 <form id="form">
-    <input type="submit" value="Send"/>
-    <input type="text" id="msg" size="64"/>
-    <button id="getComments">getComments()</button>
-    <button id="getComment">getComment()</button>
-    <button id="updateComment">updateComment()</button>
-    <button id="createComment">createComment()</button>
-    <button id="deleteComment">deleteComment()</button>
-    <button id="subscribe">subscribe()</button>
-    <button id="unSubscribe">unSubscribe()</button>
     <button id="setHeaders">setHeaders()</button>
     <button id="deleteHeaders">deleteHeaders()</button>
+    <span class="separator"></span>
+    <button id="getComments">getComments()</button>
+    <button id="getCommentsHaveLikes">getCommentsHaveLikes()</button>
+    <span class="separator"></span>
+    <button id="createComment">createComment()</button>
+    <span class="separator"></span>
+    <input type="text" id="msg" size="20" placeholder="item id"/>
+    <button id="getComment">getComment()</button>
+    <button id="updateComment">updateComment()</button>
+    <button id="deleteComment">deleteComment()</button>
+    <span class="separator"></span>
+    <button id="subscribe">subscribe()</button>
+    <button id="unSubscribe">unSubscribe()</button>
 </form>
 </body>
 </html>

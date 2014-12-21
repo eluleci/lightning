@@ -6,6 +6,7 @@ type Message struct {
 	Res                      string `json:"res,omitempty"`
 	Command                  string `json:"cmd,omitempty"`
 	Headers                  map[string][]string `json:"headers,omitempty"`
+	Parameters               map[string][]string `json:"parameters,omitempty"`
 	Body                     map[string]interface{} `json:"body,omitempty"`
 	Status                   int `json:"status,omitempty"` // used only in responses
 }
@@ -20,8 +21,6 @@ type RequestWrapper struct {
 type Subscription struct {
 	Res                   string
 	InboxChannel          chan RequestWrapper // inbox channel of hub to send message
-	//	broadcastChannel      chan RequestWrapper // broadcast channel of hub to receive updates
-	//  UnsubscriptionChannel chan RequestWrapper // unsubscription channel of hub for unsubscription
 }
 
 type RequestError struct {

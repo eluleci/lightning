@@ -6,10 +6,11 @@ import (
 	"io"
 	"net/http"
 	"text/template"
+	"github.com/eluleci/lightning/config"
+	"github.com/eluleci/lightning/util"
 	"github.com/eluleci/lightning/roothub"
 	"github.com/eluleci/lightning/wsconnection"
 	"github.com/eluleci/lightning/node"
-	"github.com/eluleci/lightning/util"
 	"github.com/eluleci/lightning/message"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -104,6 +105,30 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	var configuration config.Config
+	// reading configuration
+	configInBytes, configErr := ioutil.ReadFile("config.json")
+	if configErr == nil {
+		configParseErr := json.Unmarshal(configInBytes, &configuration)
+		if configParseErr != nil {
+			util.Log("error", "Main: Parsing config json failed.")
+			return
+		}
+	} else {
+		util.Log("error", "Main: No 'config.json' file found. Creating server failed!")
+		return
+	}
+
+	config.SystemConfig = configuration
+	configJson, configToJsonError := json.Marshal(config.SystemConfig)
+	if configToJsonError != nil {
+		util.Log("error", "Server configuration print error")
+		return
+	}
+	util.Log("debug", "Server running with configuration:")
+	util.Log("debug", string(configJson))
+
 
 	roothub.RootHub = node.CreateHub("/", nil, nil)
 	go roothub.RootHub.Run()
