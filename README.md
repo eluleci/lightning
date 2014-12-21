@@ -398,6 +398,22 @@ It is also possible to add the headers for each request by adding the headers to
 ```
 **NOTE:** If the headers are set both generally and in a specific request, they will be combined while sending request to the REST API.
 
+### Deleting headers
+Deleting headers is done by setting headers with empty values.
+
+**REQUEST**
+
+```
+{
+    "rid": 75961628,
+    "cmd": "::setHeaders",
+    "body": {
+        "X-Parse-Application-Id": [],
+        "X-Parse-REST-API-Key": []
+    }
+}
+```
+
 ## Subscribing and Unsubscribing from resources
 Conections will be subscribed to the resources automatically when they send any message to that resource. But it is also possible to subscribe and unsubscribe with special commands.
 
