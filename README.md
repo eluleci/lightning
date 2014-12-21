@@ -34,9 +34,9 @@ An example 	**config.json** would be like this. (Real configuration for [Parse R
 
 **WARNING:** If the REST API needs a token(like Authentication token) from client for getting some item or list data, the values **persistItemInMemory** and **persistListInMemory** should be false. Because the data that is taken with the access token of a client can be accessed by another client who may not have a token. There will be a way provided in next versions for this problem.
 
-## WS Server API Documentation
+# WS Server API Documentation
 
-### Message Structures
+## Message Structures
 
 **REQUEST MESSAGE STRUCTURE**
 
@@ -68,9 +68,9 @@ An example 	**config.json** would be like this. (Real configuration for [Parse R
 }
 ```
 
-### Request Message
+## Request Message
 
-The methods that are used with **ThunderDock** are exactly same of HTTP Methods. The methods that are supported are GET, POST, DELETE and HEAD. The structure of the request messages are designed for creating an HTTP request from them. The examples below will explain how to create message for each method.
+The methods that are used with **ThunderDock** are exactly same of HTTP Methods. The methods that are supported are GET, POST, PUT, DELETE and HEAD. The structure of the request messages are designed for creating an HTTP request from them. The examples below will explain how to create message for each method.
 
 #### POST (Creation)
 
@@ -136,7 +136,7 @@ Request for update should only contain the changed fields of the object.
 }
 ```
 
-#### GET (Fetch)
+#### GET
 
 **REQUEST**
 
@@ -212,9 +212,31 @@ If requested data is a list of items, then the body will contain a field **"::li
 }
 ```
 
-### Push Message
+#### DELETE
 
-**Web Socket** connection will receive a push message about the object that they're watching.
+**REQUEST**
+
+```
+{
+    "rid": 26195461,
+    "cmd": "delete",
+    "res": "/Comment/olIfG8duiP"
+}
+```
+
+**RESPONSE***
+
+```
+{
+    "rid": 26195461,
+    "res": "/Comment/olIfG8duiP",
+    "status": 200
+}
+```
+
+## Push Message
+
+**Web Socket** connection will receive a push message about the object that it is watching.
 
 #### POST
 
@@ -275,7 +297,7 @@ The connection will receive a push message about a deletion in two cases:
 
 **NOTE:** If the connection is watching both item and the list, it will receive both of the messages.
 
-### Adding Query Parameters to Requests
+## Adding Query Parameters to Requests
 It is possible to set parameters when getting an object list but **subscriptions** on the list that is retrieved with parameters is not supported yet. However the connection will still be subscribed to the **individual objects** in the list.
 
 This is an example of getting **Comment** list ordered by likes (Parse API Example: **https://api.parse.com/1/classes/Comment?order=likes**)
@@ -322,10 +344,10 @@ This is an example of getting **Comment** list ordered by likes (Parse API Examp
 }
 ```
 
-### Adding Headers to Requests
+## Adding Headers to Requests
 There are two ways of adding headers to requests.
 
-####Setting headers for all requests
+###Setting headers for all requests
 Clients can set headers by sending a message with a special command **::setHeaders** and the header map in the body. After setting, the headers will be inserted to all the requests starting from that moment.
 
 **REQUEST**
@@ -354,7 +376,7 @@ Clients can set headers by sending a message with a special command **::setHeade
 }
 ```
 
-#### Setting headers in individual requests
+### Setting headers in individual requests
 It is also possible to add the headers for each request by adding the headers to the request message. Response will be same as examples above.
 
 **REQUEST**
@@ -376,8 +398,8 @@ It is also possible to add the headers for each request by adding the headers to
 ```
 **NOTE:** If the headers are set both generally and in a specific request, they will be combined while sending request to the REST API.
 
-### Subscribing and Un-subscribing from resources
-Conections will be subscribed to the resources automatically when they send any message to that resource. But it is also possible to subscribe and un-subscribe with special commands.
+## Subscribing and Unsubscribing from resources
+Conections will be subscribed to the resources automatically when they send any message to that resource. But it is also possible to subscribe and unsubscribe with special commands.
 
 **REQUEST** (subscripton)
 
