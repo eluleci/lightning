@@ -1,14 +1,50 @@
-# API DOCUMENTATION
+# ThunderDock
+**ThunderDock** is a proxy server that turns an existing **REST API** into a **Real Time Web Sokcet Server** without writing any lines of code.
 
-## Messages
+## How it works?
+**ThunderDock** works with a simple messaging protocol on **Web Socket** connection. The message structure is similar to HTTP request structure. When client sends a data to the **ThunderDock** server, the server converts this message to an HTTP request and executes on the REST server. According to the response from the REST server, **ThunderDock** returns the response to the client and notifies other clients if there is anything to notify. So **ThunderDock** simply communicates between the clients and the server by forwarding the requests and publishing the result to all clients.
+
+## Getting Started
+**ThunderDock** server starts with initial configuration based on your REST API. It gets the configuration from a json file that is named "config.json" which contains the fields below:
+
+**serverURL**(string):The root end-point of the REST API.
+
+**objectIdentifier**(string): The key that defines the **id** of the items in the existing API. (ex: id, _id, objectId, itemId)
+
+**collectionIdentifier**(string): The key that contains the array of the objects when requesting collections. If the root is already the array of items, you should leave this empty.
+
+**persistItemInMemory**(boolean): If set **true**, **ThunderDock** server keeps the data of the item after the item is fetched for the first time. (caching)
+
+**persistListInMemory**(boolean): If set **true**, **ThunderDock** server keeps the data of the item list after the list is fetched for the first time. (caching)
+
+**cleanupOnSubscriptionsOver**(boolean): Destroys the object instance that is kept in the server if there is no more **Web Sokcet** connection is watching the object data.
+
+An example 	**config.json** would be like this. (Real configuration for [Parse REST API](https://parse.com/docs/rest))
+
+```
+{
+  "serverURL": "https://api.parse.com/1/classes",
+  "objectIdentifier": "objectId",
+  "collectionIdentifier": "results",
+  "persistItemInMemory": false,
+  "persistListInMemory": false,
+  "cleanupOnSubscriptionsOver": true
+}
+```
+
+**WARNING:** If the REST API needs a token(like Authentication token) from client for getting some item or list data, the values **persistItemInMemory** and **persistListInMemory** should be false. Because the data that is taken with the access token of a client can be accessed by another client who may not have a token. There will be a way provided in next versions for this problem.
+
+## WS Server API Documentation
+
+### Message Structures
 
 **REQUEST MESSAGE STRUCTURE**
 
 ```
 {
 	rid: 123123123,         // identifier for the request, will be used for replying to the request
-	cmd: 'COMMAND',         // GET-POST-PUT-DELETE
-	res: 'RES',
+	res: 'RES',				// resource path of the object
+	cmd: 'COMMAND',         // GET-POST-PUT-DELETE-HEAD
 	headers: {              // optional
 	},
 	parameters: {           // optional
@@ -25,108 +61,65 @@
 	rid: 123123123,         // identifier that is sent with the request message
 	status: STATUS_CODE,    // status code (HTTP status codes)
 	res: 'RES',             // sent as subscription id
-	headers: {              // response headers
-	},
     body: {                 // response body
     },
-    error: {                // error object that contains detailed information about the error, if there is an error
+    error: {                // error object that contains detailed information about the error if error happens
     }
 }
 ```
 
-## Creating Object
+### Request Message
+
+The methods that are used with **ThunderDock** are exactly same of HTTP Methods. The methods that are supported are GET, POST, DELETE and HEAD. The structure of the request messages are designed for creating an HTTP request from them. The examples below will explain how to create message for each method.
+
+#### POST (Creation)
 
 **REQUEST**
 
-When creating a new object, if there is no specific resource domain, the **res** must be the **className**
-
 ```
 {
-	rid: 123123123,
-	cmd: 'post',
-	res: '/Profile',
-    body: {
-    	className: 'Profile',
-        key: 'value',
+    "rid": 81775406,
+    "cmd": "post",
+    "res": "/Comment",
+    "body": {
+        "content": "new comment",
+        "likes": 0
     }
 }
 ```
 
-If the object will be created under a specific domain, **res** must be that domain.
-
-```
-{
-	rid: 123123123,
-	cmd: 'post',
-	res: '/Profile/1/Address',
-    body: {
-    	className: 'Address',
-        key: 'value',
-    }
-}
-```
 
 **RESPONSE**
 
-After creation, response will contain the **res** of the created object. Also body will contain the id and res.
+After creation, response and the body will contain the **res** of the created object which is inserted by the **ThunderDock** server for managing subscriptions.
 
 ```
 {
-	rid: 123123123,
-	status: 200,                        // status code
-	res: '/Profile/1/Address/ID',
-    body: {
-	    res: '/Profile/1/Address/ID',   // full res of the object
-    	id: 'ID',                       // id of the new object
+    "rid": 81775406,
+    "res": "/Comment/olIfG8duiP",
+    "body": {
+        "::res": "/Comment/olIfG8duiP",
+        "createdAt": "2014-12-21T21:31:49.998Z",
+        "objectId": "olIfG8duiP"
+    },
+    "status": 200
+}
+```
+
+#### PUT (Update)
+
+Request for update should only contain the changed fields of the object.
+
+**REQUEST**
+
+```
+{
+    "rid": 90244175,
+    "cmd": "put",
+    "res": "/Comment/xIDiatcdJk",
+    "body": {
+        "likes": 1
     }
-}
-```
-
-## Updating Data
-
-Update object message must contain the **res** of the object in message and also in the object body. The
-main differentiation between the creation and update is that the request body contains the res or not. If there is no
-res inside the body, this will be accepted as a **create message** for a new object under the given **res**.
-
-**REQUEST**
-
-```
-{
-	rid: 123123123,
-	cmd: 'post',
-	res: '/Profile/1/Address/ID',
-	body: {
-	    res: '/Profile/1/Address/ID',
-        key: 'value',
-	}
-}
-```
-
-**RESPONSE**
-
-After successful update, response message will contain only **rid**,**status**, and **res**. So main difference
-between the create or update responses is that there is a body in the response or not.
-
-```
-{
-	rid: 123123123,
-	status: 200,                    // status code
-	res: '/Profile/1/Address/ID'
-}
-```
-
-## Getting Data
-
-Get message must contain a valid **res** for the object or the list. The body of the response will contain the data of
-the object body.
-
-**REQUEST**
-
-```
-{
-	rid: 123123123,
-	cmd: 'get',
-	res: '/Profile/1'
 }
 ```
 
@@ -134,28 +127,24 @@ the object body.
 
 ```
 {
-	rid: 123123123,
-	status: 200,
-	res: '/Profile/1',
-    body: {
-	    res: '/Profile/1',
-    	id: 'ID',
-    	className: 'Profile',
-    	key: 'value'
-    }
+    "rid": 90244175,
+    "res": "/Comment/xIDiatcdJk",
+    "body": {
+        "updatedAt": "2014-12-21T21:35:29.124Z"
+    },
+    "status": 200
 }
 ```
 
-If requested data is a list of objects, then the body will contain a field **"loList"** which contains
-the list of objects.
+#### GET (Fetch)
 
 **REQUEST**
 
 ```
 {
-	rid: 123123123,
-	cmd: 'get',
-	res: '/Profile/1/Address'
+    "rid": 62599309,
+    "cmd": "get",
+    "res": "/Comment/xIDiatcdJk"
 }
 ```
 
@@ -163,139 +152,260 @@ the list of objects.
 
 ```
 {
-	rid: 123123123,
-	status: 200,
-	res: '/Profile/1/Address',
-    body: {
-    	loList: [
-    	    {
-	            res: '/Profile/1/Address/1',
-                id: 'ID',
-                className: 'Address',
-                key: 'value'
+    "rid": 62599309,
+    "status": 200,
+    "res": "/Comment/xIDiatcdJk",
+    "body": {
+        "::res": "/Comment/xIDiatcdJk",
+        "content": "new comment",
+        "createdAt": "2014-12-18T23:07:34.833Z",
+        "likes": 23,
+        "objectId": "xIDiatcdJk",
+        "updatedAt": "2014-12-21T20:03:41.563Z"
+    }
+}
+```
+
+**Getting List Data**
+
+If requested data is a list of items, then the body will contain a field **"::list"** which contains the array of items. 
+
+**NOTE:** Connection will be subscribed to the **list** and to the all **individual items** in the list as well.
+
+**REQUEST**
+
+```
+{
+    "rid": 24820498,
+    "cmd": "get",
+    "res": "/Comment"
+}
+```
+
+**RESPONSE**
+
+```
+{
+    "rid": 24820498,
+    "status": 200,
+    "res": "/Comment",
+    "body": {
+        "::list": [
+            {
+                "::res": "/Comment/xIDiatcdJk",
+                "content": "comment content",
+                "createdAt": "2014-12-18T23:07:34.833Z",
+                "likes": 23,
+                "objectId": "xIDiatcdJk",
+                "updatedAt": "2014-12-21T20:03:41.563Z"
             },
             {
-	            res: '/Profile/1/Address/2',
-                id: 'ID',
-                className: 'Address',
-                key: 'value'
+                "::res": "/Comment/RSU3edhM2Q",
+                "content": "comment content",
+                "createdAt": "2014-12-21T14:51:22.913Z",
+                "likes": 0,
+                "objectId": "RSU3edhM2Q",
+                "updatedAt": "2014-12-21T15:20:12.945Z"
+            }
+        ]
+    }
+}
+```
+
+### Push Message
+
+**Web Socket** connection will receive a push message about the object that they're watching.
+
+#### POST
+
+If a connection is watching changes of a list, it will receive a push message when a new item created in that list.
+
+The example below shows a push message when a new **Comment** object is created under the resource **/Comment**
+
+```
+{
+    "res": "/Comment",
+    "cmd": "post",
+    "body": {
+        "::res": "/Comment/cgX5fjrpAu",
+        "content": "new comment",
+        "createdAt": "2014-12-21T21:42:12.302Z",
+        "likes": 0
+    }
+}
+```
+
+#### PUT
+
+If connection is watching an object, it will receive a push message when that object is changed. The body of the object will only contain the changed fields of the object.
+
+```
+{
+    "res": "/Comment/cgX5fjrpAu",
+    "cmd": "put",
+    "body": {
+        "likes": 23,
+        "updatedAt": "2014-12-21T21:46:06.818Z"
+    }
+}
+```
+
+#### DELETE
+The connection will receive a push message about a deletion in two cases:
+
+* when it's watching an object and the object is deleted
+
+```
+{
+    "res": "/Comment/xIDiatcdJk",
+    "cmd": "delete"
+}
+```
+* when it's wathcing a list of objects and an item in the list is deleted
+
+```
+{
+    "res": "/Comment",
+    "cmd": "delete",
+    "body": {
+        "::res": "/Comment/xIDiatcdJk"
+    }
+}
+```
+
+**NOTE:** If the connection is watching both item and the list, it will receive both of the messages.
+
+### Adding Query Parameters to Requests
+It is possible to set parameters when getting an object list but **subscriptions** on the list that is retrieved with parameters is not supported yet. However the connection will still be subscribed to the **individual objects** in the list.
+
+This is an example of getting **Comment** list ordered by likes (Parse API Example: **https://api.parse.com/1/classes/Comment?order=likes**)
+
+**REQUEST**
+
+```
+{
+    "rid": 17535539,
+    "cmd": "get",
+    "res": "/Comment",
+    "parameters": {
+        "order": ["likes"]
+    }
+}
+```
+**RESPONSE**
+
+```
+{
+    "rid": 52081573,
+    "res": "/Comment",
+    "body": {
+        "::list": [
+            {
+                "::res": "/Comment/cgX5fjrpAu",
+                "content": "some comment",
+                "createdAt": "2014-12-21T21:42:12.302Z",
+                "likes": 23,
+                "objectId": "cgX5fjrpAu",
+                "updatedAt": "2014-12-21T21:46:06.818Z"
             },
-    	]
+            {
+                "::res": "/Comment/olIfG8duiP",
+                "content": "some other comment",
+                "createdAt": "2014-12-21T21:31:49.998Z",
+                "likes": 13,
+                "objectId": "olIfG8duiP",
+                "updatedAt": "2014-12-21T22:25:05.233Z"
+            }
+        ]
+    },
+    "status": 200
+}
+```
+
+### Adding Headers to Requests
+There are two ways of adding headers to requests.
+
+####Setting headers for all requests
+Clients can set headers by sending a message with a special command **::setHeaders** and the header map in the body. After setting, the headers will be inserted to all the requests starting from that moment.
+
+**REQUEST**
+	
+```
+{
+    "rid": 90866495,
+    "cmd": "::setHeaders",
+    "body": {
+        "X-Parse-Application-Id": [
+            "oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8"
+        ],
+        "X-Parse-REST-API-Key": [
+            "qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"
+        ]
     }
 }
 ```
 
-## Getting Push Message
-
-Connection will receive a push message about the object that they're watching.
-
-### Creation Push
-
-If connection is watching changes of a list, the connection will receive a push message when a new item created.
-The **res** of the message is the **res** of the list and the data of the object will be in the body of the message.
-Assume the **res** of the list is **/Profile** and a new item is created under this domain. The message would be;
-
-**PUSH MESSAGE**
+**RESPONSE**
 
 ```
 {
-	cmd: 'post',
-	res: '/Profile'                 // the resource that the object is created in
-    body: {                         // data of the created item
-	    res: '/Profile/1',
-    	id: 'ID',
-    	className: 'Profile',
-    	key: 'value'
+    "rid": 90866495,
+    "status": 200
+}
+```
+
+#### Setting headers in individual requests
+It is also possible to add the headers for each request by adding the headers to the request message. Response will be same as examples above.
+
+**REQUEST**
+
+```
+{
+    "rid": 10563647,
+    "cmd": "get",
+    "res": "/Comment/olIfG8duiP",
+    "headers": {
+        "X-Parse-Application-Id": [
+            "oxjtnRnmGUKyM9SFd1szSKzO9wKHGlgC6WgyRpq8"
+        ],
+        "X-Parse-REST-API-Key": [
+            "qJcOosDh8pywHdWKkVryWPoQFT1JMyoZYjMvnUul"
+        ]
     }
 }
 ```
+**NOTE:** If the headers are set both generally and in a specific request, they will be combined while sending request to the REST API.
 
-### Update Push
+### Subscribing and Un-subscribing from resources
+Conections will be subscribed to the resources automatically when they send any message to that resource. But it is also possible to subscribe and un-subscribe with special commands.
 
-If connection is watching an object, it will be notified when there is a change in the object. The **res** of the message
-is the **res** of the object and the updated fields are in the body of the message. Only updated fields will be inside
-the body.
-
-**PUSH MESSAGE**
+**REQUEST** (subscripton)
 
 ```
 {
-	cmd: 'post',
-	res: '/Profile/1'               // the resource that the object is created in
-    body: {
-    	key: 'value'                // changed fields
-    }
+    "rid": 27207119,
+    "cmd": "::subscribe",
+    "res": "/Comment/olIfG8duiP"
 }
 ```
 
-## Adding references
-
-When an object needs to keep reference, the field just need to contain the **res** of that reference. For distinguishing
-the reference from any other string, the reference is saved with the prefix **"loRef::"**. So the reference field will
-contain a string like **"loRef::OBJECT_RES"**. As an example, a comment object with an **author** reference would be
-like:
+**REQUEST** (unsubscription)
 
 ```
 {
-	id: OBJECT_ID,
-	className: "Comment",
-	text: "This is a comment text",
-	likes: 13,
-	author: "loRef::/Profile/1"
+    "rid": 27207119,
+    "cmd": "::unsubscribe",
+    "res": "/Comment/olIfG8duiP"
 }
 ```
 
+**RESPONSE** (same for both)
 
-# SYSTEM STRUCTURE
-
-## Actors
-
-### Main
-Is responsbile of
-
-* creating web socket connections and storing them
-* creating main hub
-
-It watches one channel
-
-* **seekHub(<-requestWrapper)**: Finds the requested hub object that is defined inside the message of requestWrapper. Then it gives the requestWrapper to the hub to handle.
-
-### Connection
-Is responsible of
-
-* reading and writing messages to web socket connection
-* keeping references to all hubs that the connection is subscribed to
-
-It watches two channels;
-
-* **send**: Waits for a message to send it to the connection buffer
-* **implicitSubscription(<-hub)**: Connections are automatically subscribed to an object that is created inside the list that they are subscribed.
-* **implicitUnsubscription(<-hub)**: Connections are automatically unsubscribed if the object has been deleted or it is no longer available for subscription.
-
-### Hub
-Is responsible of
-
-* adding and removing subscriptions to itself
-* keeping references to all connections that are subscribed to it
-* sending broadcast messages to all connections in it
-* notifying the **domain hub** if the object is just created. (When the hub object is first created, it needs to notify the hub object which handles the list of the objects for that reference.)
-
-It watches three channels
-
-* **subscribe(requestWrapper)**: Gets a request wrapper object and adds the **listener channel** to subscriptions. Then sends the message in the wrapper to ModelHolder.
-* **unsubscribe(channel)**: Gets a channel and removes it from the subscription list.
-* **broadcast(Message)**: Gets a message and sends it to all subscribed connections.
-
-### ModelHolder
-Is responsible of
-
-* keeping the data of the object
-* keeping the reference to all ModelHolders in the list if it is a domain ModelHolder
-* handling all messages to itself and return response to the given channel
-* requesting broadcast if there is a change that all connections need to receive
-
-Wathces one channel
-
-* **handle(requestWrapper)**: Gets a message, applies the changes and returns a response message. Also broadcasts a message to hub if needed.
-
+```
+{
+    "rid": 27207119,
+    "res": "/Comment/olIfG8duiP",
+    "status": 200
+}
+```
 

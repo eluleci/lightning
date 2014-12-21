@@ -1,0 +1,8 @@
+{
+  "serverURL": "http://api.maidan.co",
+  "objectIdentifier": "_id",
+  "collectionIdentifier": "data",
+  "persistItemInMemory": false,
+  "persistListInMemory": false,
+  "cleanupOnSubscriptionsOver": true
+}
