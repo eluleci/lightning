@@ -10,5 +10,5 @@ ENTRYPOINT /go/bin/lightning
 EXPOSE 8080
 
 # HOW TO RUN IMAGE
-# docker build -t thunderdock .
-# docker run --publish 6060:8080 --name thunderdock -rm thunderdock
+# docker build -t lightning .
+# docker run --publish 6060:8080 --name lightning --rm lightning
