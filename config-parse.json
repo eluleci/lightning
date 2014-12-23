@@ -1,8 +1,0 @@
-{
-  "serverURL": "https://api.parse.com/1/classes",
-  "objectIdentifier": "objectId",
-  "collectionIdentifier": "results",
-  "persistItemInMemory": false,
-  "persistListInMemory": false,
-  "cleanupOnSubscriptionsOver": true
-}

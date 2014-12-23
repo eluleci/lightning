@@ -5,7 +5,7 @@ import (
 	"log"
 	"io"
 	"net/http"
-	"text/template"
+	_ "text/template"
 	"github.com/eluleci/lightning/config"
 	"github.com/eluleci/lightning/util"
 	"github.com/eluleci/lightning/roothub"
@@ -19,8 +19,8 @@ import (
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
-var parsePanel = template.Must(template.ParseFiles("parsePanel.html"))
-var maidanPanel = template.Must(template.ParseFiles("maidanPanel.html"))
+/*
+var parsePanel = template.Must(template.ParseFiles("./parsePanel.html"))
 
 func serveParsePanel(w http.ResponseWriter, r *http.Request) {
 
@@ -35,20 +35,7 @@ func serveParsePanel(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	parsePanel.Execute(w, r.Host)
 }
-
-func serveMaidanPanel(w http.ResponseWriter, r *http.Request) {
-
-	if r.URL.Path != "/maidanPanel" {
-		http.Error(w, "Not found.", 404)
-		return
-	}
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowed.", 405)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	maidanPanel.Execute(w, r.Host)
-}
+*/
 
 func serveHTTP(w http.ResponseWriter, r *http.Request) {
 
@@ -108,7 +95,8 @@ func main() {
 
 	var configuration config.Config
 	// reading configuration
-	configInBytes, configErr := ioutil.ReadFile("config.json")
+	configInBytes, configErr := ioutil.ReadFile("/go/src/github.com/eluleci/lightning/config.json")
+//	configInBytes, configErr := ioutil.ReadFile("config.json")
 	if configErr == nil {
 		configParseErr := json.Unmarshal(configInBytes, &configuration)
 		if configParseErr != nil {
@@ -134,8 +122,7 @@ func main() {
 	go roothub.RootHub.Run()
 
 	r := mux.NewRouter()
-	r.HandleFunc("/parsePanel", serveParsePanel)
-	r.HandleFunc("/maidanPanel", serveMaidanPanel)
+//	r.HandleFunc("/parsePanel", serveParsePanel)
 	r.HandleFunc("/http/{res:[a-zA-Z0-9/]+}", serveHTTP)
 	r.HandleFunc("/ws", serveWs)
 	http.Handle("/", r)
